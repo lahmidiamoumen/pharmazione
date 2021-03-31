@@ -1,0 +1,78 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <LinearLayout
+        android:theme="@style/Theme.MedDwak.DayNight"
+        android:layout_marginStart="@dimen/album_dp_10"
+        android:layout_marginEnd="@dimen/album_dp_10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_marginBottom="@dimen/album_dp_4"
+            android:id="@+id/linearLayoutToll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:drawableTint="?attr/colorControlNormal"
+                android:elevation="3dp"
+                android:layout_margin="5dp"
+                android:id="@+id/filter"
+                android:clickable="true"
+                android:layout_height="wrap_content"
+                android:cursorVisible="false"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:background="?attr/layout_drawable_edit"
+                android:drawableStart="@drawable/ic_filter"
+                android:drawablePadding="17dp"
+                android:ems="10"
+                android:hint="@string/search_hint"
+                android:inputType="textPersonName"
+                android:padding="10dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
+                android:importantForAutofill="no" />
+
+            <ImageButton
+                android:layout_width="55dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="6dp"
+                android:scaleType="fitCenter"
+                android:id="@+id/navigation_icon"
+                app:layout_constraintEnd_toEndOf="@+id/card"
+                app:layout_constraintStart_toStartOf="@+id/card"
+                app:layout_constraintTop_toTopOf="@+id/subject_text_view"
+                android:background="?attr/actionBarItemBackground"
+                android:contentDescription="@string/description"
+                app:srcCompat="@drawable/ic_arrow_down" />
+        </LinearLayout>
+        <TextView
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8"
+            android:layout_marginStart="@dimen/_8"
+            android:text="@string/sp_cialit"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/grid_0_25"
+            android:transitionGroup="true"
+            tools:listitem="@layout/item_speciality"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+            app:spanCount="3"/>
+
+    </LinearLayout>
+
+</layout>

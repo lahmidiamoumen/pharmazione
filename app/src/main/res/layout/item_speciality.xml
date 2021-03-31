@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <variable
+            name="item"
+            type="com.example.pharmazione.ui.speciality.Speciality" />
+
+        <variable
+            name="handler"
+            type="com.example.pharmazione.utils.MedClickListener" />
+
+    </data>
+
+<com.google.android.material.card.MaterialCardView
+    android:onClick="@{view -> handler.onClick(view , item)}"
+    android:layout_marginTop="@dimen/album_dp_6"
+    android:layout_marginStart="@dimen/album_dp_6"
+    android:layout_marginBottom="3dp"
+    android:layout_marginEnd="3dp"
+    app:cardCornerRadius="@dimen/album_dp_10"
+    app:cardElevation="@dimen/grid_0_25"
+    android:layout_width="fill_parent"
+    android:id="@+id/rv_speciality_cll"
+    android:focusable="true"
+    android:clickable="true"
+    android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+    android:padding="@dimen/album_dp_10"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <ImageView
+        app:drawableRes="@{item.mPhoto}"
+        android:id="@+id/speciality_imageview"
+        android:layout_width="@dimen/_40"
+        android:layout_height="@dimen/_40"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/type_speciality"
+        app:layout_constraintBottom_toBottomOf="@id/speciality_imageview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/ic_1" />
+
+    <TextView
+        android:text="@{item.mName}"
+        android:textAlignment="center"
+        android:id="@+id/speciality_text"
+        android:layout_width="0.0dip"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:padding="@dimen/_8"
+        android:singleLine="true"
+        android:textAppearance="?attr/textAppearanceHeadline4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speciality_imageview"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="Specialitey" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
+</layout>

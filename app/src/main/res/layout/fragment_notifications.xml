@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.text.TextUtils"/>
+        <variable
+            name="item"
+            type="com.google.firebase.auth.FirebaseUser" />
+    </data>
+
+<FrameLayout
+    android:id="@+id/baseLayout"
+    android:fontFamily="@font/x_regular_norma"
+    android:layout_gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.MedDwak.DayNight">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginBottom="56dp"
+        android:visibility="gone"
+        android:id="@+id/constraintLayout"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.56882256" />
+
+        <TextView
+            android:id="@+id/intro_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="Med Dwak"
+            android:textColor="?android:colorPrimary"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+        <TextView
+            android:id="@+id/intro_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="80dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="80dp"
+            android:layout_marginRight="80dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/meddwaek_desc"
+            android:textAlignment="center"
+            android:textColor="?android:colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/intro_title"
+            app:layout_constraintVertical_bias="0.13" />
+
+        <ImageView
+            android:id="@+id/intro_img"
+            android:layout_width="wrap_content"
+            android:layout_height="222dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/intro_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_intro3" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:gravity="center"
+            android:id="@+id/btn"
+            android:text="@string/rejoignez_nous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_16dp"
+            android:layout_marginBottom="20dp"
+            android:padding="@dimen/album_dp_15"
+            app:icon="@drawable/ic_med"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/signed"
+        android:clipToPadding="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/_16dp"
+        android:layout_marginEnd="@dimen/_16dp"
+        android:orientation="vertical">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:paddingBottom="@dimen/_8"
+            android:layout_width="match_parent"
+            android:layout_height="330dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.052083332" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.9557292" />
+
+
+
+            <ImageButton
+                android:layout_marginTop="@dimen/album_dp_20"
+                android:layout_width="@dimen/album_dp_45"
+                android:layout_height="@dimen/album_dp_45"
+                app:layout_constraintEnd_toEndOf="@+id/parameters"
+                app:layout_constraintStart_toStartOf="@+id/parameters"
+                app:layout_constraintTop_toTopOf="parent"
+                android:elevation="5dp"
+                android:id="@+id/menu"
+                android:padding="@dimen/album_dp_10"
+                android:layout_marginBottom="3dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="fitCenter"
+                android:background="?attr/layout_drawable_picture"
+                android:tint="?attr/colorControlNormal"
+                android:src="@drawable/ic_nav_settings" />
+            <TextView
+                android:id="@+id/parameters"
+                android:layout_marginTop="@dimen/album_dp_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Parameters"
+                android:textAppearance="?attr/textAppearanceCaption"
+                app:layout_constraintEnd_toEndOf="@id/guideline2"
+                app:layout_constraintTop_toBottomOf="@id/menu"
+                tools:ignore="SmallSp" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:padding="@dimen/album_dp_10"
+                android:elevation="5dp"
+                android:tint="?attr/colorControlNormal"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="fitCenter"
+                android:layout_width="@dimen/album_dp_45"
+                android:layout_height="@dimen/album_dp_45"
+                android:layout_marginTop="@dimen/album_dp_20"
+                android:background="?attr/layout_drawable_picture"
+                android:src="@drawable/ic_ios_notifications"
+                app:layout_constraintEnd_toEndOf="@+id/notifications"
+                app:layout_constraintStart_toStartOf="@+id/notifications"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/album_dp_4"
+                android:text="Notifications"
+                android:id="@+id/notifications"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceCaption"
+                app:layout_constraintStart_toStartOf="@+id/guideline0"
+                app:layout_constraintTop_toBottomOf="@id/imageButton"
+                tools:ignore="SmallSp" />
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/view"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/album_dp_200"
+                android:layout_marginTop="116dp"
+                app:cardElevation="@dimen/album_dp_4"
+                app:cardCornerRadius="@dimen/album_dp_4"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline0"
+                app:layout_constraintTop_toTopOf="parent" >
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline00"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical"
+                        android:id="@+id/textEmail"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/textView10"
+                        android:layout_marginTop="@dimen/_8"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/album_dp_45"
+                        android:layout_marginBottom="@dimen/_8"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_marginStart="@dimen/_8"
+                            android:tint="?attr/colorControlNormal"
+                            android:src="@drawable/ic_ios_mail"
+                            android:layout_marginEnd="@dimen/album_dp_20"
+                            android:layout_width="@dimen/album_dp_30"
+                            android:layout_height="@dimen/album_dp_30"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_8"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_gravity="center"
+                                android:textAppearance="?attr/textAppearanceHeadline4"
+                                tools:text="email@univ.dz"
+                                android:text='@{TextUtils.isEmpty(item.email) ? " vide" : item.email}'
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                />
+                            <TextView
+                                android:textAppearance="?attr/textAppearanceCaption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="#6D6D6D"
+                                android:text="@string/fui_email_hint"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/textView10"
+                        android:layout_gravity="center"
+                        android:id="@+id/view4"
+                        android:layout_width="216dp"
+                        android:background="#535353"
+                        android:layout_height="0.5dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="4dp"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+                    <LinearLayout
+                        android:gravity="center_vertical"
+                        android:id="@+id/textView10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginTop="@dimen/_16"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_marginBottom="@dimen/_8"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/album_dp_45"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_marginStart="@dimen/_8"
+                            android:tint="?attr/colorControlNormal"
+                            android:src="@drawable/ic_ios_call"
+                            android:layout_marginEnd="@dimen/album_dp_20"
+                            android:layout_width="@dimen/album_dp_30"
+                            android:layout_height="@dimen/album_dp_30"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_8"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_gravity="center"
+                                android:textAppearance="?attr/textAppearanceHeadline4"
+                                tools:text="066788787"
+                                android:text='@{TextUtils.isEmpty(item.phoneNumber) ? " vide" : item.phoneNumber}'
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                />
+                            <TextView
+                                android:textAppearance="?attr/textAppearanceCaption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="#6D6D6D"
+                                android:text="@string/fui_idp_name_phone"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_marginBottom="@dimen/_16dp"
+                        android:textAppearance="?attr/textAppearanceHeadline4"
+                        tools:text="066788787"
+                        android:text='@{TextUtils.isEmpty(item.phoneNumber) ? " vide" : item.phoneNumber}'
+                        app:layout_constraintStart_toEndOf="@+id/textView10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:id="@+id/user_phone_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginLeft="8dp" />
+
+                    <TextView
+                        android:id="@+id/user_display_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/album_dp_45"
+                        android:fontFamily="@font/x_regular_thin"
+                        android:text='@{TextUtils.isEmpty(item.displayName) ? " vide" : item.displayName}'
+                        android:textAppearance="?attr/textAppearanceHeadline4"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.497"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Lahmidi Moumen" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardElevation="@dimen/album_dp_4"
+                app:cardCornerRadius="35dp"
+                android:padding="@dimen/_8"
+                android:layout_alignParentTop="true"
+                app:layout_constraintDimensionRatio="w,1:1"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline0"
+                app:layout_constraintBottom_toTopOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                android:layout_alignParentEnd="true">
+            <ImageView
+                app:url="@{item.photoUrl.toString()}"
+                app:glideCircularCrop="@{true}"
+                app:glideCenterCrop="@{true}"
+                android:id="@+id/user_profile_picture"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:src="@drawable/ic_user_home"
+                android:contentDescription="@string/profile_picture_content_desc" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_gravity="center"
+            android:layout_width="216dp"
+            android:background="#646464"
+            android:layout_height="1dp"/>
+
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/album_dp_50"
+            android:id="@+id/swipeContainer">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:id="@+id/empty_layout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/empty_search_list_icon"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:background="@drawable/ic_empty_search" />
+
+                    <TextView
+                        android:id="@+id/empty_search_list_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Aucun médicament ajouté"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:textSize="16sp"
+                        android:gravity="center_horizontal"/>
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="8dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+                    app:spanCount="3"
+                    tools:listitem="@layout/cardview_profile" />
+            </FrameLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
+    </LinearLayout>
+
+</FrameLayout>
+
+</layout>

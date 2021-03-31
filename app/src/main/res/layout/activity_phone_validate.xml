@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:theme="@style/Theme.MedDwak.DayNight"
+    android:layout_height="match_parent"
+    android:background="@drawable/back"
+    android:orientation="vertical"
+    android:gravity="center|top"
+    android:weightSum="4">
+
+
+    <TextView
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:fontFamily="@font/x_regular"
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:text="@string/verification"
+        android:textSize="25sp"/>
+    <TextView
+        android:id="@+id/abstratct_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFF"
+        android:layout_marginTop="25dp"
+        android:textAlignment="center"
+        android:text="@string/vous_recevrez_un_sms_avec_un_code_de_confirmation_ce_num_ro"/>
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:background="#FFF"
+        android:padding="10dp"
+        android:layout_marginTop="30dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:weightSum="2.0"
+                android:gravity="center">
+
+
+
+                <EditText
+                    android:id="@+id/field_phone_number"
+                    android:layout_margin="15dp"
+                    android:layout_height="wrap_content"
+                    android:hint="le nemuro de telephone"
+                    android:inputType="phone"
+                    android:textColorHint="#A0A0A0"
+                    android:textColor="#414141"
+                    android:lines="1"
+                    android:background="@drawable/input_for_photos"
+                    android:textAlignment="center"
+                    android:padding="10dp"
+                    android:enabled="false"
+                    android:textSize="20sp"
+                    android:drawableEnd="@drawable/ic_check"
+                    android:drawablePadding="10dp"
+                    android:layout_width="250dp"
+                    android:layout_marginBottom="20dp"
+                    android:importantForAutofill="no" />
+
+
+
+                <com.jkb.vcedittext.VerificationCodeEditText
+                    android:id="@+id/field_verification_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp"
+                    android:layout_marginTop="5dp"
+                    app:bottomLineHeight="1dp"
+                    app:bottomLineNormalColor="@color/quantum_grey500"
+                    app:selectedBackgroundColor="@color/places_ui_default_primary"
+                    app:bottomLineSelectedColor="@color/colorAccent"
+                    app:figures="6"
+                    app:verCodeMargin="10dp" />
+
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
+
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="10dp"
+                android:layout_marginTop="30dp">
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_marginBottom="@dimen/album_dp_10"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:id="@+id/textVerified"
+                    android:fontFamily="@font/x_regular"
+                    android:textColor="@color/reply_black_800"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Votre numéro de telephone est vérifié"/>
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/iconVerified"
+                    android:layout_width="@dimen/album_dp_50"
+                    android:layout_height="@dimen/album_dp_50"
+                    android:src="@drawable/ic_validate"
+                    android:layout_marginBottom="@dimen/album_dp_20"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:visibility="gone"
+                    android:drawableTint="@color/white"
+                    android:id="@+id/back"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/_16"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_back_white"
+                    android:text="Retour"/>
+
+                <Button
+                    android:drawableLeft="@drawable/ic_check"
+                    android:drawableTint="@color/white"
+                    android:layout_gravity="center"
+                    android:id="@+id/button_verify_phone"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_16"
+                    android:layout_width="150dp"
+                    android:text="Vérifier"/>
+
+                <Button
+                    android:layout_gravity="center"
+                    android:background="#00000000"
+                    android:textColor="@color/colorPrimary"
+                    android:textAllCaps="false"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/button_resend"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resend_phone_auth"/>
+
+        </LinearLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
+</layout>

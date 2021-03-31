@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingVertical="8dp"
+    android:paddingEnd="40dp"
+    android:clipToPadding="false">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/avatar"
+        android:layout_width="34dp"
+        android:layout_alignParentStart="true"
+        android:layout_height="34dp"
+        app:cardCornerRadius="18dp">
+        <ImageView
+            android:id="@+id/comment_image"
+            android:src="@drawable/ic_anon_user_48dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"/>
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:id="@+id/comment_name"
+        android:layout_marginStart="10dp"
+        android:textSize="12sp"
+        android:layout_toEndOf="@+id/avatar"
+        android:layout_alignTop="@+id/avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:text="Rose"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/message_body"
+        android:layout_below="@+id/comment_name"
+        android:layout_alignStart="@+id/comment_name"
+        android:background="@drawable/comment"
+        android:textColor="#252525"
+        android:paddingStart="@dimen/_8"
+        android:paddingEnd="15dp"
+        android:paddingBottom="6dp"
+        android:paddingTop="6dp"
+        android:elevation="1dp"
+        android:textSize="14sp"
+        android:text="How are you doing? This is a long message that should probably wrap."
+        />
+</RelativeLayout>

@@ -1,0 +1,249 @@
+<resources>
+    <string name="facebook_application_id" translatable="false">365929827822476</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb365929827822476</string>
+    <string name="app_name">MedDwak</string>
+    <string name="search_hint">Filtrer les résultats</string>
+
+    <string name="sign_in_cancelled">Sign in cancelled</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="account_disabled">Account is disabled by the administrator</string>
+    <string name="unknown_error">An unknown error occurred</string>
+
+    <string name="profile_picture_content_desc">Profile picture</string>
+
+    <string name="sign_out_failed">Sign out failed</string>
+
+    <string name="resend_phone_auth">Vous n\'avez pas reçu le code de validation ?</string>
+    <string name="vous_recevrez_un_sms_avec_un_code_de_confirmation_ce_num_ro">vous recevrez un SMS\n avec un code de validation à ce numéro</string>
+    <string name="verification">Code de Validation</string>
+
+    <string name="scan_shortcut_short_label">Ajouter médicament</string>
+    <string name="scan_shortcut_long_label">Scanner un médicament</string>
+    <string name="scan_disabled_message">Le scanner est désactivé</string>
+
+    <string name="menu_delete">Contactez nous</string>
+    <string name="menu_rename">Déconnexion</string>
+    <string name="menu_ocr">MedDwak</string>
+
+    <string name="intro_title1">POURQUOI MedDwak ?</string>
+    <string name="intro_desc1">On a tous des médicaments en plus qu\'on n\'utilise pas f dar, n\'est ce pas ?
+        On connait tous aussi des gens qui sont dans le besoin, qui ne peuvent pas acheter des médicaments
+        par défaut de cherté ou de rupture.</string>
+
+    <string name="intro_title2">Les DONS</string>
+    <string name="intro_desc2"> des médicaments qu\'on utilise plus chez soi.\n\n
+ des médicaments achetés spécialement pour subvenir aux besoins postés.\n\n
+ des articles paramédicaux proposés pour la charité.\n</string>
+
+    <string name="cond"> MED dwak n\'accepte pas les échanges de psychotropes ⛔ \n\n
+ pour faire un don, il faut mentionner la date d\'expiration et le conditionnement de chaque médicament.\n\n
+ les échanges sont supervisés et contrôlés par des professionnels de la santé. . .</string>
+
+    <string name="intro_title3">Les BESOINS</string>
+    <string name="commencer">Commencer</string>
+    <string name="suivant">Suivant</string>
+    <string name="passer">Passer</string>
+
+    <string name="title_activity_bottom_navigation">BottomNavigation</string>
+    <string name="title_home">Accueil</string>
+    <string name="title_dashboard">Poster</string>
+    <string name="title_notifications">Compte</string>
+    <string name="dwa_image">Dwa image</string>
+    <string name="publier">Poster</string>
+    <string name="lieu">Région</string>
+    <string name="intro">Intro</string>
+    <string name="image">Image</string>
+    <string name="ferm">Fermé</string>
+    <string name="description">Numéro de lot</string>
+    <string name="besoin_don">Etat neuf / entamé</string>
+    <string name="le_nom_du_m_dicament">Le nom du médicament</string>
+    <string name="poster_un_m_dicament">Poster un médicament</string>
+    <string name="rejoignez_nous">Rejoignez-nous</string>
+    <string name="meddwaek_desc">MED dwak est besoin de vos contributions et de votre support pour atteindre et aider plus de personnes.</string>
+    <string name="orientation">Orientation</string>
+    <string name="besoin">Besoin</string>
+    <string name="don">Don</string>
+
+    <string name="choisir_depuis_la_galerie">Choisir depuis la galerie</string>
+    <string name="prendre_une_nouvelle_photo">Prendre une nouvelle photo</string>
+    <string name="meddwak_search">MedDwak Search</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="date_de_p_remption">Date de péremption</string>
+
+    <!-- to remove-->
+
+    <string name="value_any_city">N\’importe où</string>
+
+
+    <string name="apply">Appliquer</string>
+    <string name="cancel">Annuler</string>
+    <string name="j_ai_un_don">j\'ai un don</string>
+    <string name="en_attente">En attente</string>
+
+    <!-- Types of food I could think of in 5 minutes -->
+    <string-array name="categories">
+        <item>Tous</item>
+        <item>Besoin de médicament</item>
+        <item>Dons de medicaments</item>
+        <item>Orientation vers une pharmacie</item>
+
+    </string-array>
+
+    <string name="email_card_transition_name">email_card_%1$s</string>
+    <string name="email">Email:</string>
+    <string name="rendez_vous">Rendez-vous</string>
+    <string name="type_speciality">type_speciality</string>
+    <string name="sp_cialit">Spécialité</string>
+    <string name="ajouter_une_ordennance_r_cente">Ajouter une ordonnance récente</string>
+    <string name="authentication_error">Authentication error</string>
+    <string name="depasse_limit">Vous avez dépassé la limite.</string>
+    <string name="default_notification_channel_id">MedDwak</string>
+    <string name="msg_subscribe_failed">Failed to subscribe to MedDwak topic</string>
+    <string name="fcm_message">FCM Message</string>
+
+
+    <string-array name="specialities">
+        <item>Dentist</item>
+        <item>Gynécologue</item>
+        <item>Generaliste</item>
+        <item>Sexologie</item>
+        <item>Dermatologue</item>
+        <item>Ophtalmologue</item>
+        <item>Orthopédiste</item>
+        <item>ORL</item>
+        <item>Psychiatre</item>
+        <item>Cardiologue</item>
+        <item>Gastro</item>
+        <item>Pédiatre</item>
+        <item>Urologue</item>
+        <item>Rhumatologue</item>
+        <item>Neurologue</item>
+        <item>Pneumologue</item>
+        <item>Nephrologue</item>
+        <item>Nutritionniste</item>
+        <item>Pédopsychiatrie</item>
+        <item>Diabétologue</item>
+    </string-array>
+
+    <!-- 50 most populous cities in the US -->
+    <string-array name="cities">
+        <item>@string/value_any_city</item>
+        <item>Adrar</item>
+        <item>Chlef</item>
+        <item>Laghouat</item>
+        <item>Oum El Bouaghi</item>
+        <item>Batna</item>
+        <item>Béjaïa</item>
+        <item>Biskra</item>
+        <item>Béchar</item>
+        <item>Blida</item>
+        <item>Bouira</item>
+        <item>Tamanrasset</item>
+        <item>Tébessa</item>
+        <item>Tlemcen</item>
+        <item>Tiaret</item>
+        <item>Tizi Ouzou</item>
+        <item>Alger</item>
+        <item>Djelfa</item>
+        <item>Jijel</item>
+        <item>Sétif</item>
+        <item>Saïda</item>
+        <item>Skikda</item>
+        <item>Sidi Bel Abbès</item>
+        <item>Annaba</item>
+        <item>Guelma</item>
+        <item>Constantine</item>
+        <item>Médéa</item>
+        <item>Mostaganem</item>
+        <item>M\'Sila</item>
+        <item>Mascara</item>
+        <item>Ouargla</item>
+        <item>Oran</item>
+        <item>El Bayadh</item>
+        <item>Illizi</item>
+        <item>Bordj Bou Arreridj</item>
+        <item>Boumerdès</item>
+        <item>El Tarf</item>
+        <item>Tindouf</item>
+        <item>Tissemsilt</item>
+        <item>El Oued</item>
+        <item>Khenchela</item>
+        <item>Souk Ahras</item>
+        <item>Tipaza</item>
+        <item>Mila</item>
+        <item>Aïn Defla</item>
+        <item>Naâma</item>
+        <item>Aïn Témouchent</item>
+        <item>Ghardaïa</item>
+        <item>Relizane</item>
+    </string-array>
+
+    <string-array name="cities2">
+        <item>Adrar</item>
+        <item>Chlef</item>
+        <item>Laghouat</item>
+        <item>Oum El Bouaghi</item>
+        <item>Batna</item>
+        <item>Béjaïa</item>
+        <item>Biskra</item>
+        <item>Béchar</item>
+        <item>Blida</item>
+        <item>Bouira</item>
+        <item>Tamanrasset</item>
+        <item>Tébessa</item>
+        <item>Tlemcen</item>
+        <item>Tiaret</item>
+        <item>Tizi Ouzou</item>
+        <item>Alger</item>
+        <item>Djelfa</item>
+        <item>Jijel</item>
+        <item>Sétif</item>
+        <item>Saïda</item>
+        <item>Skikda</item>
+        <item>Sidi Bel Abbès</item>
+        <item>Annaba</item>
+        <item>Guelma</item>
+        <item>Constantine</item>
+        <item>Médéa</item>
+        <item>Mostaganem</item>
+        <item>M\'Sila</item>
+        <item>Mascara</item>
+        <item>Ouargla</item>
+        <item>Oran</item>
+        <item>El Bayadh</item>
+        <item>Illizi</item>
+        <item>Bordj Bou Arreridj</item>
+        <item>Boumerdès</item>
+        <item>El Tarf</item>
+        <item>Tindouf</item>
+        <item>Tissemsilt</item>
+        <item>El Oued</item>
+        <item>Khenchela</item>
+        <item>Souk Ahras</item>
+        <item>Tipaza</item>
+        <item>Mila</item>
+        <item>Aïn Defla</item>
+        <item>Naâma</item>
+        <item>Aïn Témouchent</item>
+        <item>Ghardaïa</item>
+        <item>Relizane</item>
+    </string-array>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="le_medicament">le medicament</string>
+    <string name="les_dons_li_s_a_votre_besoins">les dons liés a votre besoins</string>
+    <string name="satisfait">satisfait</string>
+    <string name="map">map</string>
+    <string name="filtres_la_recherche">Filtres la recherche</string>
+    <string name="chercher_un_m_dicament">Chercher un médicament</string>
+    <string name="icon">icon</string>
+    <string name="r_gion">Région</string>
+    <string name="plus_de_d_tails">plus de détails...</string>
+    <string name="meddwak_services">MedDwak services</string>
+    <string name="publi">Publié</string>
+    <string name="retour">Retour</string>
+
+
+</resources>
+
+

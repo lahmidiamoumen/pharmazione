@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "526554333170",
+    "firebase_url": "https://data-278806.firebaseio.com",
+    "project_id": "data-278806",
+    "storage_bucket": "data-278806.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526554333170:android:709511d3ac8cc09a56b56b",
+        "android_client_info": {
+          "package_name": "com.example.hello"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2SUVc1DgIUotVLYimIl6oQ8MkeIdxa9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526554333170:android:2fc4b0a8c62026da56b56b",
+        "android_client_info": {
+          "package_name": "com.example.pharmazione"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2SUVc1DgIUotVLYimIl6oQ8MkeIdxa9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526554333170:android:f78f9316d818483856b56b",
+        "android_client_info": {
+          "package_name": "com.moumen.pdfscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "526554333170-g4eb1ggnjjpsb944n49ae335lppbf8bc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moumen.pdfscanner",
+            "certificate_hash": "aa1555d76885307a75e7465e2d3d4f988a9ff514"
+          }
+        },
+        {
+          "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2SUVc1DgIUotVLYimIl6oQ8MkeIdxa9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.text.TextUtils"/>
+        <variable
+            name="item"
+            type="com.example.pharmazione.persistance.Doctors" />
+    </data>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/peek_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:colorBackground"
+        android:fitsSystemWindows="false">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingStart="@dimen/grid_0_5"
+        android:paddingEnd="@dimen/grid_0_5"
+        android:paddingTop="@dimen/default_gap"
+        android:clipToPadding="false">
+
+        <com.google.android.material.card.MaterialCardView
+            android:transitionName="@{@string/email_card_transition_name(item.ID)}"
+            android:id="@+id/email_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/menu_item_constraint_layout"
+                android:layout_marginBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/grid_2"
+                android:paddingEnd="@dimen/grid_2"
+                android:paddingTop="@dimen/grid_3">
+
+                <TextView
+                    android:id="@+id/subject_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    android:text="@{item.mName}"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    app:layout_constraintEnd_toStartOf="@+id/navigation_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@android:string/yes" />
+
+                <ImageButton
+                    android:id="@+id/navigation_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/actionBarItemBackground"
+                    android:contentDescription="@string/description"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintEnd_toEndOf="@+id/card"
+                    app:layout_constraintStart_toStartOf="@+id/card"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_down" />
+
+                <View
+                    android:layout_marginTop="@dimen/album_dp_10"
+                    android:id="@+id/view3"
+                    android:layout_width="170dp"
+                    android:layout_height="0.8dp"
+                    android:background="#717171"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recipient_text_view" />
+
+                <TextView
+                    android:id="@+id/sender_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16dp"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    app:layout_constraintEnd_toStartOf="@+id/card"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subject_text_view"
+                    android:text="@{item.mLocation}"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    tools:text="Alger" />
+
+                <TextView
+                    tools:text="Lahmidi moumen"
+                    android:id="@+id/recipient_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/grid_0_25"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    app:layout_constraintEnd_toStartOf="@+id/card"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sender_text_view"
+                    android:text="@{item.mCategory}"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    android:textColor="@color/color_on_surface_emphasis_medium" />
+
+
+                <ImageView
+                    android:layout_marginTop="@dimen/album_dp_10"
+                    android:id="@+id/card"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:contentDescription="email_sender_colorprofile_content_desc"
+                    app:drawable="@{item.mPhoto}"
+                    app:glideCircularCrop="@{true}"
+                    app:glideCenterCrop="@{true}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/navigation_icon"
+                    tools:src="@drawable/avatar_3" />
+
+
+                <LinearLayout
+                    android:layout_marginTop="@dimen/album_dp_10"
+                    android:id="@+id/desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Qualification professionnelle"
+                        android:textAppearance="?attr/textAppearanceHeadline5" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_marginTop="@dimen/album_dp_10"
+                        android:text="Professionnel de santé"
+                        android:textAppearance="?attr/textAppearanceHeadline2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8"
+                        android:text="Docteur Nacera HAMIDI"
+                        android:textAppearance="?attr/textAppearanceHeadline4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_marginTop="@dimen/_16"
+                        android:text="Spécialités"
+                        android:textAppearance="?attr/textAppearanceHeadline2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8"
+                        android:text="Allergologue Pédiatre"
+                        android:textAppearance="?attr/textAppearanceHeadline4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_marginTop="@dimen/_16"
+                        android:text="Langues parlées"
+                        android:textAppearance="?attr/textAppearanceHeadline2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8"
+                        android:text="Français, Arabe"
+                        android:textAppearance="?attr/textAppearanceHeadline4" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.8dp"
+                        android:layout_marginTop="12dp"
+                        android:background="#717171" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/body_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/album_dp_20"
+                    android:layout_marginBottom="@dimen/album_dp_30"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/desc"
+                     >
+                    <TextView
+                        android:textAppearance="?attr/textAppearanceHeadline5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Informations de contact"/>
+
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/album_dp_10"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:src="@drawable/ic_location_home"
+                            android:layout_width="@dimen/album_dp_20"
+                            android:layout_height="@dimen/album_dp_20"/>
+                        <TextView
+                            android:layout_marginStart="@dimen/_8"
+                            android:layout_gravity="center"
+                            android:textAppearance="?attr/textAppearanceHeadline4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="2"
+                            android:text=" 98 AVENUE ALI KHODJA El Biar 16606 Alger Algérie"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/_8"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:src="@drawable/ic_call_blue"
+                            android:layout_width="@dimen/album_dp_20"
+                            android:layout_height="@dimen/album_dp_20"/>
+                        <TextView
+                            android:layout_marginStart="@dimen/_8"
+                            android:layout_gravity="center"
+                            android:textAppearance="?attr/textAppearanceHeadline4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="+213.554.900.209\n +213.661.537.362"
+                            />
+                    </LinearLayout>
+                    <View
+                        android:layout_marginTop="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.8dp"
+                        android:background="#717171"/>
+                </LinearLayout>
+
+
+
+                <TextView
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/body_text_view"
+                    android:text="Localisation "
+                    android:textAppearance="?attr/textAppearanceHeadline3" />
+
+                <ImageView
+                    app:layout_constraintCircleRadius="@dimen/_8"
+                    android:layout_marginTop="@dimen/album_dp_10"
+                    android:layout_width="match_parent"
+                    android:id="@+id/map"
+                    app:url="@{item.mLocationUrl}"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:layout_height="270dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/location"
+                    tools:src="@drawable/avatar_3" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="end|bottom"
+        app:layout_anchorGravity="right|bottom"
+        app:layout_insetEdge="bottom"
+        android:id="@+id/extended_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_16dp"
+        android:contentDescription="@string/j_ai_un_don"
+        android:text="Rendez-vous"
+        app:icon="@drawable/album_ic_done_white" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

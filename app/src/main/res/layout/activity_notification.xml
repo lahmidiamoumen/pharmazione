@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:background="?android:colorBackground"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.moumen.pdfscanner.ProfileNotifActivity">
+
+
+    <Button
+        android:id="@+id/close"
+        android:onClick="onClick"
+        android:layout_marginTop="@dimen/_16dp"
+        android:padding="@dimen/_8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8"
+        android:text="@string/retour"
+        app:iconSize="@dimen/album_dp_30"
+        app:iconPadding="0dp"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textColor="?attr/colorOnSurface"
+        app:iconTint="?attr/colorOnSurface"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        app:icon="@drawable/ic_ios_arrow_back"
+        android:contentDescription="@string/ferm" />
+
+    <TextView
+        android:fontFamily="@font/x_regular"
+        android:id="@+id/logText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/album_dp_45"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="Les notifications"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        />
+
+    <TextView
+        android:textAppearance="?attr/textAppearanceCaption"
+        android:layout_marginStart="@dimen/album_dp_45"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/les_dons_li_s_a_votre_besoins"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
+        android:id="@+id/rwSearch"
+        android:layout_marginStart="@dimen/album_dp_20"
+        android:layout_marginEnd="@dimen/album_dp_20"
+        android:layout_marginTop="@dimen/_16dp"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
+        tools:listitem="@layout/cardview_notification"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/empty_search_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/empty_search_list_icon"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:background="@drawable/ic_empty_search" />
+
+        <TextView
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:id="@+id/empty_search_list_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Non notification trouvé"
+            android:textColor="?attr/colorOnSurface"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textSize="12sp"
+            android:gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+</LinearLayout>
+</layout>

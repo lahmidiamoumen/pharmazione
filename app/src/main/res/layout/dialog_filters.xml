@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/Theme.MedDwak.DayNight"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/album_dp_30"
+        android:text="@string/filtres_la_recherche" />
+
+    <!-- Food Type -->
+    <RelativeLayout
+        android:background="@drawable/bar2"
+        android:layout_marginBottom="@dimen/album_dp_20"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/album_dp_50">
+
+        <ImageView
+            android:id="@+id/icon_category"
+            style="@style/AppTheme.FilterIcon"
+            android:layout_centerVertical="true"
+            android:tint="?attr/colorControlNormal"
+            app:srcCompat="@drawable/ic_sort_white_24px"/>
+
+        <Spinner
+            android:id="@+id/spinner_category"
+            style="@style/AppTheme.FilterSpinner"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/icon_category"
+            android:entries="@array/categories" />
+
+    </RelativeLayout>
+
+    <!-- Location -->
+    <RelativeLayout
+        android:background="@drawable/bar2"
+        android:layout_marginBottom="@dimen/album_dp_20"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/album_dp_50">
+
+        <ImageView
+            android:id="@+id/icon_city"
+            style="@style/AppTheme.FilterIcon"
+            android:layout_centerVertical="true"
+            android:tint="?attr/colorControlNormal"
+            android:entries="@array/categories"
+            app:srcCompat="@drawable/ic_place_white_24px"
+            android:contentDescription="@string/map" />
+
+        <Spinner
+            android:id="@+id/spinner_city"
+            style="@style/AppTheme.FilterSpinner"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/icon_city"
+            android:entries="@array/cities" />
+
+    </RelativeLayout>
+
+
+
+    <!-- Cancel and apply buttons -->
+    <LinearLayout
+        android:layout_marginTop="@dimen/_16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/button_cancel"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            app:rippleColor="?attr/colorPrimaryDark"
+            android:textColor="@color/quantum_grey800"
+            android:theme="@style/ThemeOverlay.FilterButton" />
+
+
+        <Button
+            android:id="@+id/button_search"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/apply"
+            app:rippleColor="?attr/colorPrimaryDark" />
+
+    </LinearLayout>
+
+</LinearLayout>
+

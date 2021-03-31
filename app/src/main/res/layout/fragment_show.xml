@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.text.TextUtils"/>
+        <variable
+            name="urlEmpty"
+            type="String" />
+        <variable
+            name="item"
+            type="com.example.pharmazione.persistance.Document" />
+    </data>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:background="?android:colorBackground"
+        android:id="@+id/peek_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false">
+
+        <com.google.android.material.appbar.AppBarLayout
+            app:contentScrim="?attr/backgroundColor"
+            android:background="@color/fui_transparent"
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/app_bar_height"
+            android:fitsSystemWindows="true"
+            android:theme="@style/Theme.MedDwak.DayNight">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorOnSecondary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:toolbarId="@+id/toolbar">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/app_bar_height"
+                    android:fitsSystemWindows="true">
+
+                    <ImageView
+                        tools:src="@drawable/avatar_3"
+                        app:url="@{TextUtils.isEmpty(item.path) ? urlEmpty : item.path}"
+                        android:layout_margin="@dimen/album_dp_30"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:id="@+id/image_slider"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:transitionName="idp_secret"/>
+                </RelativeLayout>
+
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:paddingBottom="55dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_margin="10dp"
+                app:cardCornerRadius="@dimen/_16"
+                app:cardElevation="2dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_marginTop="@dimen/_16dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginStart="@dimen/_16dp"
+                    android:layout_marginEnd="@dimen/_16dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:fontFamily="@font/x_regular"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/item_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{item.name}"
+                        tools:text="Medicament"
+                        android:textSize="30sp"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:fontFamily="@font/x_regular_thin"
+                            android:id="@+id/item_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            tools:text="Besoin"
+                            android:text="@{item.category}"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" • "/>
+                        <TextView
+                            android:fontFamily="@font/x_regular_thin"
+                            android:id="@+id/item_author"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            tools:text="Alger"
+                            android:text="@{item.location}"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+
+                    <View
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                        android:layout_width="150dp"
+                        android:layout_height="0.8dp"
+                        android:background="#717171"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <TextView
+                                android:fontFamily="@font/x_regular_thin"
+                                android:id="@+id/text_partage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:textSize="25sp"
+                                android:text="Partagé par"
+                                android:textColor="?attr/colorOnSurface"/>
+
+                            <TextView
+                                android:fontFamily="@font/x_regular_norma"
+                                android:id="@+id/text_user_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:textSize="16sp"
+                                android:text='@{item.userName != null ? item.userName : "Inconnu"}'
+                                android:textColor="?attr/colorOnSurface"/>
+                        </LinearLayout>
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            app:cardCornerRadius="@dimen/album_dp_40"
+                            android:layout_alignParentEnd="true">
+                            <ImageView
+                                app:url="@{item.userUrl}"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                tools:src="@drawable/ic_anon_user_48dp"/>
+                        </androidx.cardview.widget.CardView>
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.8dp"
+                        android:background="#717171"/>
+
+
+                    <TextView
+                        android:fontFamily="@font/x_regular_norma"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:padding="7dp"
+                        android:id="@+id/item_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text='@{TextUtils.isEmpty(item.description) ? "Pas de description" : item.description}'
+                        tools:text="Pas de description"
+                        android:textSize="13sp"
+                        android:layout_marginBottom="12dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="@dimen/album_dp_15"
+                        android:layout_height="@dimen/album_dp_15"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:visibility="gone"
+                        android:id="@+id/comment_receylerView"
+                        android:layout_width="match_parent"
+                        tools:listitem="@layout/empty_activity"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+
+        <RelativeLayout
+            android:elevation="@dimen/album_dp_4"
+            android:layout_marginBottom="@dimen/album_dp_0"
+            android:layout_gravity="bottom"
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:background="?android:colorBackground"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:background="?attr/colorButtonNormal"
+                android:layout_margin="@dimen/_8"
+                app:cardCornerRadius="@dimen/_16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:lines="2"
+                    android:scrollHorizontally="false"
+                    android:maxLength="254"
+                    android:scrollbars="vertical"
+                    android:background="@color/fui_transparent"
+                    android:inputType="textMultiLine|textLongMessage"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:maxLines="2"
+                    android:minLines="1"
+                    android:drawablePadding="17dp"
+                    android:drawableTint="?attr/colorOnSecondary"
+                    android:ems="10"
+                    android:hint="Ajouter commontaire"
+                    android:importantForAutofill="no"
+                    android:padding="10dp"
+                    android:paddingStart="13dp"
+                    android:paddingEnd="13dp"
+                    android:textColor="?attr/colorOnBackground"
+                    android:textSize="14sp"
+                    />
+            </com.google.android.material.card.MaterialCardView>
+
+
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:elevation="@dimen/album_dp_2"
+                android:id="@+id/itemSendButton_id"
+                android:layout_width="@dimen/_40"
+                android:layout_height="@dimen/_40"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="11dp"
+                android:background="?attr/actionBarItemBackground"
+                android:scaleType="fitCenter"
+                android:rotation="-90"
+                app:srcCompat="@drawable/ic_arrow_down"  />
+
+        </RelativeLayout>
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end|bottom"
+            app:layout_anchor="@+id/linearLayout"
+            app:layout_anchorGravity="right|bottom"
+            app:layout_insetEdge="bottom"
+            android:id="@+id/extended_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:fabSize="mini"
+            android:contentDescription="@string/j_ai_un_don"
+            tools:text="J'ai un don"
+            app:icon="@drawable/ic_donation" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</layout>

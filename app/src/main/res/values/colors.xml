@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    <color name="colorPrimary">#00A896</color>-->
+    <color name="colorPrimary">#00A896</color>
+    <color name="colorPrimaryDark">#028090</color>
+    <color name="colorAccent">#A8D5DE</color>
+    <color name="white">#ffffff</color>
+    <color name="tab_indicator_gray">#c0c0c0</color>
+    <color name="albumTransparent">#0000</color>
+
+    <color name="lighten_blue">#C9EFFF</color>
+
+    <!--grey-->
+    <color name="quantum_grey500">#9E9E9E</color>
+    <color name="quantum_grey600">#757575</color>
+    <color name="quantum_grey800">#424242</color>
+    <color name="quantum_grey900">#212121</color>
+    <color name="quantum_black_100">#000000</color>
+
+    <color name="com_facebook_button_background_color_focused_disabled">#3C5A99</color>
+    <color name="com_facebook_button_background_color_focused">#3C5A99</color>
+    <color name="com_facebook_button_border_color_focused">#3C5A99</color>
+
+    <color name="places_ui_default_text">#212121</color>
+    <color name="places_ui_default_primary">#F5F5F5</color>
+    <color name="ui_color">#F9F9F9</color>
+
+    <!--Color palette-->
+    <color name="reply_white_50">#ffffff</color>
+
+    <color name="reply_black_800">#121212</color>
+    <color name="reply_black_500">#2e2e2e</color>
+    <color name="reply_black_900">#000000</color>
+
+    <color name="make">#8CA9AE</color>
+
+    <color name="reply_orange_300">#fbd790</color>
+    <color name="reply_orange_400">#f9be64</color>
+    <color name="reply_orange_500">#f9aa33</color>
+
+    <color name="reply_red_200">#cf7779</color>
+    <color name="reply_red_400">#ff4c5d</color>
+
+    <!--Nav bar color protection for behavior differences between Android P and Q. All sdk-->
+    <!--levels should draw fullscreen. P should color the nav bar with a translucent background -->
+    <!--to guard for contrast. Q should have a transparent nav bar as Q will automatically -->
+    <!--handles contrast by either dynamically coloring the nav bar handle (gesture nav) -->
+    <!--or automatically applying a translucent background (3-button mode).-->
+
+</resources>
