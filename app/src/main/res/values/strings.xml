@@ -242,6 +242,8 @@
     <string name="meddwak_services">MedDwak services</string>
     <string name="publi">Publié</string>
     <string name="retour">Retour</string>
+    <string name="dites_vos_confr_res_ce_que_vous_pensez">Dites à vos confrères ce que vous pensez...</string>
+    <string name="desc">compose_add_recipient_icon_content_desc</string>
 
 
 </resources>

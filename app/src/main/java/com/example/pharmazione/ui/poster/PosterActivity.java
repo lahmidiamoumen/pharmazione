@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.StringRes;
@@ -94,37 +94,7 @@ public class PosterActivity extends AppCompatActivity {
         PermissionUtil.ask(this);
         mAuth = FirebaseAuth.getInstance();
         document = new Document();
-        bottomSheetDialog = new BottomSheetDialog(this,R.style.BottomSheetMenuTheme);
-        bottomSheetDialog.setContentView(R.layout.for_dialog);
 
-
-        String[] mobileArray = {"Besoin de don","Don de médicament","Besoin d’orientation"};
-        ArrayAdapter adpt = new ArrayAdapter<>(this,
-                R.layout.list_text_view, mobileArray);
-
-        ListView listView = bottomSheetDialog.findViewById(R.id.notifications);
-        assert listView != null;
-        listView.setAdapter(adpt);
-        listView.setOnItemClickListener((adapterView, view, i, l) -> {
-            bottomSheetDialog.dismiss();
-            TextView textView = view.findViewById(R.id.label);
-            switch (textView.getText().toString()){
-                case "Besoin de don":
-                    besoin();
-                    break;
-                case "Don de médicament":
-                    don();
-                    break;
-                case "Besoin d’orientation":
-                    oreintation();
-                    break;
-            }
-        });
-
-        String st = getIntent().getStringExtra("needBesoin");
-        if(st != null && st.equals("needBesoin")){
-            besoin();
-        }
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
 
@@ -134,92 +104,27 @@ public class PosterActivity extends AppCompatActivity {
 
 
         parentLayout = findViewById(android.R.id.content);
-        String[] lists = {"Neuve","Entamée"};
+
         String[] cites = getResources().getStringArray(R.array.cities2);
 
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_item, lists);
-        binding.priceTextInput.setAdapter(adapter);
 
 
         ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, cites);
 
-        binding.regoinBesoinEdit.setAdapter(adapter3);
-        binding.lieuEditText.setAdapter(adapter3);
+        binding.wilaya.setAdapter(adapter3);
 
-        binding.priceTextInput.setOnItemClickListener((parent, view, position, rowId) -> sele[0] = (String)parent.getItemAtPosition(position));
-        binding.regoinBesoinEdit.setOnItemClickListener((parent, view, position, rowId) -> sele[1] = (String)parent.getItemAtPosition(position));
-        binding.lieuEditText.setOnItemClickListener((parent, view, position, rowId) -> sele[2] = (String)parent.getItemAtPosition(position));
+        binding.wilaya.setOnItemClickListener((parent, view, position, rowId) -> sele[0] = (String)parent.getItemAtPosition(position));
 
         binding.selectImagesOreden.setOnClickListener(o-> openGallery());
         binding.takeImagesOreden.setOnClickListener(o-> openCamera());
 
-        Objects.requireNonNull(binding.nomBesoin.getEditText()).setOnClickListener(o-> openSearch(true));
-        Objects.requireNonNull(binding.nom.getEditText()).setOnClickListener(o-> openSearch(false));
+//        Objects.requireNonNull(binding.nomBesoin.getEditText()).setOnClickListener(o-> openSearch(true));
+//        Objects.requireNonNull(binding.nom.getEditText()).setOnClickListener(o-> openSearch(false));
 
     }
 
-    public void don(){
-        closeVisibility2(null);
-        binding.chooserText.setText(getResources().getString(R.string.don));
-        binding.donLayout.setVisibility(View.VISIBLE);
-        binding.besoinLayout.setVisibility(View.GONE);
-        binding.poster.setVisibility(View.VISIBLE);
 
 
-        setCalender();
-
-        //ordonnance photo
-        binding.oredenance.setVisibility(View.GONE);
-        binding.oredenanceText.setVisibility(View.GONE);
-    }
-
-    public void besoin(){
-        closeVisibility2(null);
-        ordananceUri = null;
-        binding.chooserText.setText(getResources().getString(R.string.besoin));
-        binding.besoinLayout.setVisibility(View.VISIBLE);
-        binding.donLayout.setVisibility(View.GONE);
-
-        binding.oredenance.setVisibility(View.VISIBLE);
-        binding.oredenanceText.setVisibility(View.VISIBLE);
-
-        binding.poster.setVisibility(View.VISIBLE);
-    }
-
-    public void oreintation(){
-        closeVisibility2(null);
-        ordananceUri = null;
-        binding.chooserText.setText(getResources().getString(R.string.orientation));
-        binding.besoinLayout.setVisibility(View.VISIBLE);
-        binding.donLayout.setVisibility(View.GONE);
-        binding.poster.setVisibility(View.VISIBLE);
-
-        //ordennance photo
-        binding.oredenance.setVisibility(View.GONE);
-        binding.oredenanceText.setVisibility(View.GONE);
-    }
-
-    void setCalender(){
-        final Calendar myCalendar = Calendar.getInstance();
-
-        DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateLabel(myCalendar);
-        };
-        binding.dateEditText.setOnClickListener(v -> new DatePickerDialog(this, date, myCalendar
-                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)).show());
-    }
-
-    private void updateLabel(Calendar myCalendar) {
-        String myFormat = "MM/dd/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        binding.dateEditText.setText(sdf.format(myCalendar.getTime()));
-    }
 
     public void openCamera(){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -261,53 +166,27 @@ public class PosterActivity extends AppCompatActivity {
 
 
     private boolean checkDon(){
-         if (getValue(binding.nom).isEmpty()){
-            binding.nom.setError("le champe est vide");
+         if (getValue(binding.titre).isEmpty()){
+            binding.titre.setError("Le titre est vide");
             return false;
         }
-        if (getValue(binding.lieu).isEmpty()){
-            binding.lieu.setError("le champe est vide");
+        if (getValue(binding.body).isEmpty()){
+            binding.body.setError("Le sujet est vide");
             return false;
         }
-
-        String med = getValue(binding.nom);
-        document.setEtat(sele[0]);
-        document.setName(med);
-        document.setLotNumber(getValue(binding.lot));
-        document.setExpirationDate(getValue(binding.dateLayout));
-        document.setLocation(sele[2]);
+        if(ordananceUri == null){
+            showSandbar(R.string.ajouter_une_ordennance_r_cente);
+            return false;
+        }
+        document.setLocation(sele[0]);
+        document.setTitle(getValue(binding.titre));
         document.setCategory(getResources().getString(R.string.don));
         return true;
     }
 
-    private boolean checkInputs(){
-        if(ordananceUri == null && "Besoin".equals(binding.chooserText.getText().toString())){
-            showSandbar(R.string.ajouter_une_ordennance_r_cente);
-            return false;
-        }
 
-        if (getValue(binding.nomBesoin).isEmpty()){
-            binding.nomBesoin.setError("le champe est vide");
-            return false;
-        }
-        if (getValue(binding.regoinBesoin).isEmpty()){
-            binding.regoinBesoin.setError("le champe est vide");
-            return false;
-        }
-
-        String med = getValue(binding.nomBesoin);
-        med = med.substring(0,1).toUpperCase() + med.substring(1).toLowerCase();
-        document.setName(med);
-        document.setCategory(binding.chooserText.getText().toString());
-        document.setLocation(sele[1]);
-        document.setDescription(getValue(binding.descBesoinLayout));
-
-        return true;
-    }
-
-
-    String getValue(TextInputLayout tx){
-        return Objects.requireNonNull(tx.getEditText()).getText().toString();
+    String getValue(EditText tx){
+        return tx.getText().toString();
     }
 
     @Override
@@ -334,22 +213,6 @@ public class PosterActivity extends AppCompatActivity {
                     load(binding.imageClose2,mImageBitmap);
                     imageDisplay2();
                     compressed = getCompressTaken();
-                }
-                break;
-            case START_ACTIVIY_BESOIN:
-                if(resultCode == RESULT_OK) {
-                    this.medId = data.getStringExtra("id");
-                    this.medPath = data.getStringExtra("path");
-                    String nom = data.getStringExtra("name");
-                    binding.nomBesoin.getEditText().setText(nom);
-                }
-                break;
-            case START_ACTIVIY_DON:
-                if(resultCode == RESULT_OK) {
-                    this.medId = data.getStringExtra("id");
-                    this.medPath = data.getStringExtra("path");
-                    String nom = data.getStringExtra("name");
-                    binding.nom.getEditText().setText(nom);
                 }
                 break;
             case START_ACTIVIY_VALIDATION:
@@ -452,8 +315,7 @@ public class PosterActivity extends AppCompatActivity {
       String id = db.collection("med-dwa").document().getId();
       document.setUserID(mAuth.getUid());
       document.setSatisfied(false);
-      document.setVerified(false);
-      document.setMedicamentID(this.medId);
+      document.setBody(this.medId);
       document.setPath(this.medPath);
       document.setUserName(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
       document.setUserUrl(Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString());
@@ -519,11 +381,7 @@ public class PosterActivity extends AppCompatActivity {
     }
 
     void send2Upload(){
-        if ("Don".equals(binding.chooserText.getText().toString())) {
-            if (checkDon()) upload();
-        } else {
-            if (checkInputs()) upload();
-        }
+        if (checkDon()) upload();
     }
 
     public void onClick(View view) {
@@ -542,9 +400,7 @@ public class PosterActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case R.id.chooser:
-                bottomSheetDialog.show();
-                break;
+
         }
     }
 

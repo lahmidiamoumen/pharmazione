@@ -122,7 +122,7 @@
                 android:background="@drawable/comment_edit"
                 android:backgroundTint="@color/colorPrimary"
                 android:textSize="10sp"
-                android:text="@{item.name}"
+                android:text="@{item.setTitle}"
                 app:text="@string/don"
                 app:ignore="SmallSp" />
 

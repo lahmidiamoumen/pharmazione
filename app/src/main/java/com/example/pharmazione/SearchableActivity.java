@@ -185,7 +185,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     public void onClick(Document item, View sliderLayout) {
         Intent i = new Intent(this, ShowItem.class);
-        i.putExtra("name", item.getName());
+        i.putExtra("name", item.getTitle());
         i.putExtra("location", item.getLocation());
         i.putExtra("description", item.getDescription());
         i.putExtra("category", item.getCategory());

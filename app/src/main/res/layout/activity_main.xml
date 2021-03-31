@@ -1,403 +1,315 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) 2019 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+  in compliance with the License. You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software distributed under the License
+  is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+  or implied. See the License for the specific language governing permissions and limitations under
+  the License.
+  -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.pharmazione.ui.poster.PosterActivity"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
         <variable
-            name="doc"
-            type="Boolean" />
-        <variable
             name="fragment"
-            type="com.example.pharmazione.ui.home.HomeFragment" />
+            type="com.example.pharmazione.persistance.Document" />
     </data>
 
     <androidx.core.widget.NestedScrollView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:id="@+id/nested_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingHorizontal="@dimen/grid_0_5"
+        android:paddingTop="@dimen/grid_1"
+        android:clipToPadding="false"
+        android:background="?android:colorBackground">
 
-            <LinearLayout
-                android:paddingBottom="@dimen/_16dp"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/fragment_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/compose_constraint_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="@dimen/grid_2">
 
-            <!--close button-->
-            <Button
-                android:id="@+id/close"
-                android:onClick="onClick"
-                android:layout_marginTop="@dimen/_16dp"
-                android:padding="@dimen/_8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8"
-                android:text="@string/retour"
-                app:iconSize="@dimen/album_dp_30"
-                app:iconPadding="0dp"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textColor="?attr/colorOnSurface"
-                app:iconTint="?attr/colorOnSurface"
-                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-                app:icon="@drawable/ic_ios_arrow_back"
-                android:contentDescription="@string/ferm" />
+                <ImageButton
+                    android:id="@+id/close_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:padding="12dp"
+                    android:layout_marginStart="@dimen/grid_1"
+                    android:contentDescription="@string/desc"
+                    android:background="?attr/actionBarItemBackground"
+                    app:srcCompat="@drawable/ic_close"
+                    app:tint="@color/color_on_surface_emphasis_disabled" />
 
-            <TextView
-                android:fontFamily="@font/x_regular"
-                android:id="@+id/logText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/album_dp_45"
-                android:layout_marginEnd="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:text="@string/poster_un_m_dicament"
-                android:textAppearance="?attr/textAppearanceHeadline5"
-                />
+                <EditText
+                    android:id="@+id/titre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:paddingVertical="@dimen/grid_1"
+                    app:layout_constraintEnd_toStartOf="@+id/send_icon"
+                    app:layout_constraintStart_toEndOf="@id/close_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="@android:color/transparent"
+                    android:hint="titre"
+                    android:text="@{fragment.title}"
+                    android:textAppearance="?attr/textAppearanceHeadline5" />
+
+                <ImageButton
+                    android:id="@+id/send_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="compose_send_content_desc"
+                    android:background="?attr/actionBarItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:tint="?attr/colorPrimary"
+                    app:srcCompat="@drawable/ic_twotone_send" />
+
+                <ImageView
+                    android:id="@+id/subject_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/titre"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:background="@drawable/divider"
+                    app:backgroundTint="@color/color_on_surface_divider" />
+
+                <Spinner
+                    android:id="@+id/wilaya"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/subject_divider"
+                    android:layout_marginTop="@dimen/grid_0_5"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:popupElevationOverlay="@{@dimen/plane_16}"/>
+
+                <ImageView
+                    android:id="@+id/sender_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/wilaya"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:layout_marginTop="@dimen/grid_0_5"
+                    android:background="@drawable/divider"
+                    app:backgroundTint="@color/color_on_surface_divider" />
+
+                <HorizontalScrollView
+                    android:id="@+id/recipient_scroll_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@id/recipient_add_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sender_divider"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    android:minHeight="48dp"
+                    android:paddingVertical="@dimen/grid_0_25"
+                    android:clipToPadding="false"
+                    android:scrollbars="none"
+                    android:requiresFadingEdge="horizontal"
+                    android:fadingEdgeLength="@dimen/grid_3"
+                    android:overScrollMode="never"
+                    android:contentDescription="compose_recipient_group_content_desc">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/recipient_chip_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/grid_2"
+                        android:scrollbars="none"
+                        app:singleLine="true" />
+
+                </HorizontalScrollView>
+
+                <ImageButton
+                    android:id="@+id/recipient_add_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/recipient_scroll_view"
+                    app:layout_constraintBottom_toBottomOf="@id/recipient_scroll_view"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    android:padding="12dp"
+                    android:contentDescription="@string/desc"
+                    android:background="?attr/actionBarItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:tint="@color/color_on_surface_emphasis_disabled"
+                    app:srcCompat="@drawable/ic_twotone_add_circle_outline"/>
+
+                <ImageView
+                    android:id="@+id/recipient_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recipient_scroll_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:background="@drawable/divider"
+                    app:backgroundTint="@color/color_on_surface_divider"
+                    android:contentDescription="@string/desc" />
+
+                <EditText
+                    android:id="@+id/body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recipient_divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="@dimen/grid_2"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:paddingBottom="32dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/dites_vos_confr_res_ce_que_vous_pensez"
+                    android:text="@{fragment.body}"
+                    android:gravity="top"
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    app:lineHeight="24sp" />
+
+                <!-- An invisible scrim that captures click events when a chip has been expanded.-->
+                <View
+                    android:id="@+id/recipient_card_scrim"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/recipient_card_view"
+                    android:layout_width="360dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:cardElevation="6dp"
+                    app:cardCornerRadius="4dp"
+                    app:layout_constraintStart_toStartOf="@id/close_icon"
+                    android:layout_marginTop="@dimen/grid_2"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintTop_toTopOf="@id/close_icon">
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <RelativeLayout
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/relativeLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:layout_marginStart="@dimen/_16"
+                    android:layout_marginEnd="@dimen/_16">
+
+                    <ImageView
+                        android:layout_height="150dp"
+                        android:layout_width="match_parent"
+                        android:background="@drawable/input_for_photos"
+                        android:layout_gravity="center"
+                        android:id="@+id/image_close2"/>
+                    <ImageButton
+                        android:background="?attr/actionBarItemBackground"
+                        android:onClick="closeVisibility2"
+                        android:layout_alignEnd="@id/image_close2"
+                        app:srcCompat="@drawable/ic_close"
+                        android:layout_width="@dimen/album_dp_30"
+                        android:layout_height="30dp"/>
+
+                </RelativeLayout>
 
                 <LinearLayout
-                    android:paddingTop="@dimen/_16"
-                    android:paddingBottom="@dimen/_16"
-                    android:layout_marginTop="@dimen/album_dp_20"
-                    android:onClick="onClick"
-                    android:id="@+id/chooser"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="30dp"
-                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/oredenance"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:textAppearance="?attr/textAppearanceHeadline3"
-                        android:text="Commencez par choisir un de ces services"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="@dimen/_16"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:textAppearance="?attr/textAppearanceCaption"
-                        android:id="@+id/chooser_text"
-                        android:text="Cliquez pour sélectionner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <View
-                        android:layout_marginTop="7dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/quantum_grey500"/>
-                </LinearLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_marginEnd="10dp"
+                        android:layout_height="wrap_content">
 
-
-                <FrameLayout
-                    android:layout_marginTop="@dimen/album_dp_20"
-                    android:id="@+id/frame_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                     <!--don   -->
-                     <LinearLayout
-                         android:visibility="gone"
-                            android:id="@+id/don_layout"
+                        <ImageButton
+                            android:id="@+id/takeImagesOreden"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_input_image"
+                            android:background="@drawable/input_for_photos"
+                            android:contentDescription="@string/image"
+                            android:textColor="#FFF" />
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="vertical">
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/nom"
-                                style="@style/TextInput"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                android:hint="@string/le_nom_du_m_dicament"
-                                android:background="?attr/actionBarItemBackground"
-                                app:startIconDrawable="@drawable/ic_med"
-                                android:layout_height="wrap_content"
-                                android:layout_width="match_parent"
-                                app:errorEnabled="true">
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:textSize="@dimen/album_dp_10"
+                            android:text="@string/prendre_une_nouvelle_photo"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="@dimen/_16"
+                        android:layout_height="wrap_content">
 
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/title_edit_text"
-                                    android:layout_width="match_parent"
-                                    android:clickable="true"
-                                    android:cursorVisible="false"
-                                    android:focusable="true"
-                                    android:focusableInTouchMode="false"
-                                    android:layout_height="wrap_content"
-                                    android:inputType="textPersonName"
-                                    android:maxLines="1" />
-                            </com.google.android.material.textfield.TextInputLayout>
-
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                android:id="@+id/etat"
-                                android:hint="@string/besoin_don"
-                                app:startIconDrawable="@drawable/ic_selection"
-                                android:padding="@dimen/album_dp_10"
-                                android:layout_height="wrap_content"
-                                android:layout_width="match_parent"
-                                app:errorEnabled="true"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
-
-                                <AutoCompleteTextView
-                                    android:id="@+id/price_text_input"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:inputType="none"
-                                    />
-                            </com.google.android.material.textfield.TextInputLayout>
-
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/lot"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                style="@style/TextInput"
-                                app:startIconDrawable="@drawable/ic_lots"
-                                android:hint="@string/description"
-                                app:errorEnabled="true"
-                                app:endIconMode="clear_text">
-
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/lot_edit_text"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:maxLines="1"
-                                    android:inputType="textAutoCorrect"
-                                    />
-                            </com.google.android.material.textfield.TextInputLayout>
-
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/date_layout"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                style="@style/TextInput"
-                                app:startIconDrawable="@drawable/ic_calender"
-                                android:hint="@string/date_de_p_remption"
-                                app:endIconMode="clear_text">
-
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/date_edit_text"
-                                    android:clickable="true"
-                                    android:cursorVisible="false"
-                                    android:focusable="true"
-                                    android:focusableInTouchMode="false"
-                                    android:inputType="date"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:maxLines="1"
-                                    />
-                            </com.google.android.material.textfield.TextInputLayout>
-
-
-
-                         <com.google.android.material.textfield.TextInputLayout
-                             android:layout_marginStart="20dp"
-                             android:layout_marginEnd="20dp"
-                             android:id="@+id/lieu"
-                             app:startIconDrawable="@drawable/ic_map"
-                             android:hint="@string/r_gion"
-                             android:padding="@dimen/album_dp_10"
-                             android:layout_height="wrap_content"
-                             android:layout_width="match_parent"
-                             app:errorEnabled="true"
-                             app:helperTextEnabled="true"
-                             app:helperText="Wilaya"
-                             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
-
-                             <AutoCompleteTextView
-                                 android:id="@+id/lieu_edit_text"
-                                 android:layout_width="match_parent"
-                                 android:layout_height="wrap_content"
-                                 android:inputType="none"
-                                 />
-                         </com.google.android.material.textfield.TextInputLayout>
-
-
-
-                        </LinearLayout>
-                     <LinearLayout
-                         android:visibility="gone"
-                        android:layout_marginTop="5dp"
-                        android:id="@+id/besoin_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                         <TextView
-                             android:id="@+id/oredenance_text"
-                             android:layout_width="match_parent"
-                             android:layout_height="match_parent"
-                             android:textColor="?attr/colorOnSurface"
-                             android:layout_marginStart="30dp"
-                             android:layout_marginEnd="10dp"
-                             android:textSize="@dimen/album_sp_16"
-                             android:text="@string/ajouter_une_ordennance_r_cente"/>
-
-                         <LinearLayout
-                             android:id="@+id/oredenance"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:layout_marginBottom="@dimen/_16dp"
-                             android:layout_marginTop="5dp"
-                             android:orientation="horizontal">
-
-
-                             <LinearLayout
-                                 android:orientation="vertical"
-                                 android:layout_width="0dp"
-                                 android:layout_weight="0.5"
-                                 android:layout_marginStart="30dp"
-                                 android:layout_marginEnd="10dp"
-                                 android:layout_height="wrap_content">
-
-                                 <ImageButton
-                                     android:id="@+id/takeImagesOreden"
-                                     android:layout_width="match_parent"
-                                     android:layout_height="150dp"
-                                     android:layout_gravity="center"
-                                     android:src="@drawable/ic_input_image"
-                                     android:background="@drawable/input_for_photos"
-                                     android:contentDescription="@string/image"
-                                     android:textColor="#FFF" />
-                                 <TextView
-                                     android:layout_width="match_parent"
-                                     android:layout_height="match_parent"
-                                     android:textAppearance="?attr/textAppearanceCaption"
-                                     android:textSize="@dimen/album_dp_10"
-                                     android:text="@string/prendre_une_nouvelle_photo"/>
-                             </LinearLayout>
-                             <LinearLayout
-                                 android:orientation="vertical"
-                                 android:layout_width="0dp"
-                                 android:layout_weight="0.5"
-                                 android:layout_marginStart="10dp"
-                                 android:layout_marginEnd="30dp"
-                                 android:layout_height="wrap_content">
-
-                                 <ImageButton
-                                     android:id="@+id/selectImagesOreden"
-                                     android:layout_width="match_parent"
-                                     android:layout_height="150dp"
-                                     android:layout_gravity="center"
-                                     android:tint="#606770"
-                                     android:src="@drawable/ic_photo"
-                                     android:background="@drawable/input_for_photos"
-                                     android:contentDescription="@string/image"
-                                     android:textColor="?android:colorBackground" />
-                                 <TextView
-                                     android:layout_marginStart="@dimen/album_dp_1"
-                                     android:textAppearance="?attr/textAppearanceCaption"
-                                     android:textSize="10sp"
-                                     android:layout_width="match_parent"
-                                     android:layout_height="match_parent"
-                                     android:text="@string/choisir_depuis_la_galerie"
-                                     tools:ignore="SmallSp" />
-                             </LinearLayout>
-                         </LinearLayout>
-                         <RelativeLayout
-                             android:visibility="gone"
-                             android:id="@+id/relativeLayout2"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:layout_marginBottom="@dimen/_16dp"
-                             android:layout_marginStart="30dp"
-                             android:layout_marginEnd="30dp"
-                             android:layout_marginTop="@dimen/_16dp">
-
-                             <ImageView
-                                 android:layout_height="150dp"
-                                 android:layout_width="match_parent"
-                                 android:background="@drawable/input_for_photos"
-                                 android:layout_gravity="center"
-                                 android:id="@+id/image_close2"/>
-                             <ImageButton
-                                 android:background="?attr/actionBarItemBackground"
-                                 android:onClick="closeVisibility2"
-                                 android:layout_alignEnd="@id/image_close2"
-                                 app:srcCompat="@drawable/ic_close"
-                                 android:layout_width="@dimen/album_dp_30"
-                                 android:layout_height="30dp"/>
-
-
-                         </RelativeLayout>
-
-
-                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/nom_besoin"
-                            style="@style/TextInput"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
-                            android:hint="@string/le_nom_du_m_dicament"
-                            app:startIconDrawable="@drawable/ic_med"
-                            app:errorEnabled="true">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:clickable="true"
-                                android:cursorVisible="false"
-                                android:focusable="true"
-                                android:focusableInTouchMode="false"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="textPersonName"
-                                android:maxLines="1" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                         <com.google.android.material.textfield.TextInputLayout
-                             android:layout_marginStart="20dp"
-                             android:layout_marginEnd="20dp"
-                             android:id="@+id/regoin_besoin"
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:padding="@dimen/album_dp_10"
-                             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                             app:startIconDrawable="@drawable/ic_map"
-                             android:hint="@string/lieu"
-                             app:errorEnabled="true">
-
-                             <AutoCompleteTextView
-                                 android:id="@+id/regoin_besoin_edit"
-                                 android:layout_width="match_parent"
-                                 android:layout_height="wrap_content"
-                                 android:inputType="none"
-                                 />
-                         </com.google.android.material.textfield.TextInputLayout>
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/desc_besoin_layout"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
-                            style="@style/TextInput"
-                            app:startIconDrawable="@drawable/ic_detail"
-                            android:hint="@string/plus_de_d_tails"
-                            app:errorEnabled="true"
-                            app:counterEnabled="true"
-                            app:counterMaxLength="128"
-                            app:endIconMode="clear_text">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/desc_besoin"
-                                android:inputType="textAutoCorrect"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:maxLines="1"
-                                />
-                        </com.google.android.material.textfield.TextInputLayout>
+                        <ImageButton
+                            android:id="@+id/selectImagesOreden"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:tint="#606770"
+                            android:src="@drawable/ic_photo"
+                            android:background="@drawable/input_for_photos"
+                            android:contentDescription="@string/image"
+                            android:textColor="?android:colorBackground" />
+                        <TextView
+                            android:layout_marginStart="@dimen/album_dp_1"
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:textSize="10sp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/choisir_depuis_la_galerie"
+                            tools:ignore="SmallSp" />
+                    </LinearLayout>
                 </LinearLayout>
 
-                </FrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/poster"
-                    app:icon="@drawable/ic_upload_"
-                    android:visibility="gone"
-                    android:drawableTint="@color/white"
-                    android:paddingStart="@dimen/album_dp_30"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_16dp"
-                    android:layout_marginBottom="@dimen/album_dp_20"
-                    android:onClick="onClick"
-                    android:padding="@dimen/album_dp_15"
-                    android:text="@string/publier"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.core.widget.NestedScrollView>
+
 </layout>

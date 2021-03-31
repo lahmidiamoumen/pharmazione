@@ -1,6 +1,5 @@
 package com.example.pharmazione.ui.home;
 
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
@@ -76,7 +75,7 @@ public class ShowItem extends AppCompatActivity {
 
 
         Document item = new Document();
-        item.setName(getIntent().getStringExtra("name"));
+        item.setTitle(getIntent().getStringExtra("name"));
         item.setDescription(getIntent().getStringExtra("description"));
         item.setLocation(getIntent().getStringExtra("location"));
         item.setCategory(getIntent().getStringExtra("category"));

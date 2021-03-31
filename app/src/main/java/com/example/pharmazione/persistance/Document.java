@@ -7,7 +7,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.PropertyName;
 import com.google.firebase.firestore.ServerTimestamp;
 
-import java.util.Date;
+import org.jetbrains.annotations.NotNull;
 
 //@IgnoreExtraProperties
 @Keep
@@ -18,17 +18,10 @@ public class Document {
     @ServerTimestamp
     public Timestamp scanned;
 
-    public String expirationDate;
-
-    public String ordPath;
-
-
-    public  String lotNumber;
-
     @NonNull
-    public String name;
+    public String title;
 
-    public String medicamentID;
+    public String body;
 
     @NonNull
     public String category;
@@ -38,7 +31,6 @@ public class Document {
     @NonNull
     public String path;
 
-    @NonNull
     public String location;
 
     public String description;
@@ -49,20 +41,18 @@ public class Document {
 
     public String userName;
 
-    public Boolean isVerified;
-
     public Boolean satisfied;
 
 
 //------------Methods--------
 
 
-    public String getMedicamentID() {
-        return medicamentID;
+    public String getBody() {
+        return body;
     }
 
-    public void setMedicamentID(String medicamentID) {
-        this.medicamentID = medicamentID;
+    public void setBody(String body) {
+        this.body = body;
     }
 
     @PropertyName("etat")
@@ -102,24 +92,6 @@ public class Document {
         this.scanned = scanned;
     }
 
-    public String getExpirationDate() {
-        return expirationDate;
-    }
-
-    public String getLotNumber() {
-        return lotNumber;
-    }
-
-    @PropertyName("isVerified")
-    @NonNull
-    public Boolean getVerified() {
-        return isVerified;
-    }
-
-    public void setVerified(Boolean verified) {
-        isVerified = verified;
-    }
-
     @PropertyName("satisfied")
     @NonNull
     public Boolean getSatisfied() {
@@ -130,20 +102,11 @@ public class Document {
         this.satisfied = satisfied;
     }
 
-    @PropertyName("ordPath")
-    public String getOrdPath() {
-        return ordPath;
-    }
-
-    public void setOrdPath(String ordPath) {
-        this.ordPath = ordPath;
-    }
-
 
     @PropertyName("name")
     @NonNull
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
 
@@ -168,11 +131,11 @@ public class Document {
 
 
 
+    @NotNull
     @PropertyName("location")
     public String getLocation() {
         return location;
     }
-
 
     public void setLocation(@NonNull String pageCount) {
         this.location = pageCount;
@@ -192,18 +155,8 @@ public class Document {
         this.description = description;
     }
 
-
-    public void setLotNumber(String lotNumber) {
-        this.lotNumber = lotNumber;
-    }
-
-
-    public void setExpirationDate(String expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setCategory(String category) {

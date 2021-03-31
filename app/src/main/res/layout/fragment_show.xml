@@ -94,7 +94,7 @@
                         android:id="@+id/item_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{item.name}"
+                        android:text="@{item.setTitle}"
                         tools:text="Medicament"
                         android:textSize="30sp"
                         />

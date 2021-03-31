@@ -29,7 +29,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,13 +49,11 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.auth.User;
 import com.example.pharmazione.R;
 import com.example.pharmazione.SharedViewModel;
 import com.example.pharmazione.databinding.FragmentShowBinding;
 import com.example.pharmazione.persistance.Comment;
 import com.example.pharmazione.persistance.Document;
-import com.example.pharmazione.persistance.DonBesoin;
 import com.example.pharmazione.ui.poster.PosterActivity;
 
 import java.util.HashMap;
@@ -153,7 +150,7 @@ public class ShowFragment extends Fragment {
 
             FirebaseUser user = mAuth.getCurrentUser();
             data.put("seen",false );
-            data.put("name", document.getName());
+            data.put("name", document.getTitle());
             data.put("path",  document.getPath());
             data.put("donneur_phone", user.getPhoneNumber());
             data.put("donneur_name", user.getDisplayName());
