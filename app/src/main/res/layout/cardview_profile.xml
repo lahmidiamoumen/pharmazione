@@ -43,7 +43,7 @@
             <ImageView
                 android:layout_centerInParent="true"
                 android:layout_margin="@dimen/album_dp_10"
-                app:url="@{TextUtils.isEmpty(item.path) ? urlEmpty : item.path}"
+                app:url="@{item.path == null || item.path.size() == 0 ? urlEmpty : item.path}"
                 android:id="@+id/imageSlider"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -122,7 +122,7 @@
                 android:background="@drawable/comment_edit"
                 android:backgroundTint="@color/colorPrimary"
                 android:textSize="10sp"
-                android:text="@{item.setTitle}"
+                android:text="@{item.title}"
                 app:text="@string/don"
                 app:ignore="SmallSp" />
 

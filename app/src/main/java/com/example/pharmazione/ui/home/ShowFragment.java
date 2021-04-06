@@ -31,9 +31,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pharmazione.ui.poster.AlbumAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
@@ -47,6 +51,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.example.pharmazione.R;
@@ -55,8 +60,14 @@ import com.example.pharmazione.databinding.FragmentShowBinding;
 import com.example.pharmazione.persistance.Comment;
 import com.example.pharmazione.persistance.Document;
 import com.example.pharmazione.ui.poster.PosterActivity;
+import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.api.widget.Widget;
+import com.yanzhenjie.album.widget.divider.Api21ItemDivider;
+import com.yanzhenjie.album.widget.divider.Divider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -67,11 +78,9 @@ public class ShowFragment extends Fragment {
     private FragmentShowBinding binding;
     private SharedViewModel sharedViewModel;
     private long duration;
-    private FirestorePagingAdapter<Comment, RecyclerView.ViewHolder> adapter;
+    private FirestoreRecyclerAdapter<Comment, RecyclerView.ViewHolder> adapter;
     private CollectionReference dbCollection;
     private FirebaseAuth mAuth;
-    private static String typeButton = "J'ai un besoin";
-    private static String typeButtonDon = "J'ai un don";
     private Drawable icon;
     private FirebaseFirestore db;
 
@@ -98,103 +107,42 @@ public class ShowFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        binding.attachmentRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        Divider divider = new Api21ItemDivider(Color.TRANSPARENT, 10, 10);
+        binding.attachmentRecyclerView.addItemDecoration(divider);
+
+
 
 
         sharedViewModel.getDocData().observe(getViewLifecycleOwner(), doc ->  {
-            String type = doc.category.toLowerCase();
-            if(doc.userID.equals(mAuth.getUid()) || type.equals("orientation")){
-                binding.extendedFab.setVisibility(View.GONE);
-            }
-            else if(type.equals("besoin")){
-                binding.extendedFab.setText(typeButtonDon);
-                binding.extendedFab.setExtended(true);
-                binding.extendedFab.setOnClickListener(o -> showDig(doc));
-            }
-            else {
-                binding.extendedFab.setText(typeButton);
-                binding.extendedFab.setExtended(true);
-                binding.extendedFab.setOnClickListener(o -> jaiBesoin());
-            }
-            binding.setItem(doc);
+
+            AlbumAdapter mAdapter = new AlbumAdapter(getContext(),null, (views, position) -> previewImage(position, doc.path), 0);
+            binding.attachmentRecyclerView.setAdapter(mAdapter);
+
+            binding.setEmail(doc);
             binding.setUrlEmpty(EMPTY_IMAGE);
             binding.itemSendButtonId.setOnClickListener(o->sendMessage());
-            dbCollection = db.collection("med-dwa")
+            dbCollection = db.collection("med-dwa-pharmazion")
                     .document(doc.documentID)
                     .collection("message");
-            setUpComments();
+            setUpComments(dbCollection.orderBy("created", Query.Direction.DESCENDING).limit(30));
         });
+        binding.navigationIcon.setOnClickListener(o-> {});
         toolBarIcon();
         startTransitions();
     }
 
-    private void jaiBesoin() {
-        if(mAuth.getCurrentUser() != null){
-            showToast("vous devez s'inscrire d'abord");
-            return;
-        }
-        Intent intent = new Intent(getContext(), PosterActivity.class);
-        intent.putExtra("needBesoin","needBesoin");
-        new AlertDialog.Builder(getContext())
-                .setMessage("Votre besoin est pris en considération, vous devez ajouter une ordonnance pour valider le bsoin")
-                .setPositiveButton("Continuer", (dialogInterface, i) -> startActivity(intent))
-                .setNegativeButton("Sortie", null)
-                .show();
+    private void previewImage(int position, List<String> mAlbumFiles) {
+            Album.gallery(getContext())
+                .checkedList(new ArrayList<>(mAlbumFiles))
+                .currentPosition(position)
+                .widget(
+                        Widget.newDarkBuilder(getContext())
+                            .title("Presentation")
+                            .build()
+                ).start();
     }
 
-    private void extendAction(Document document) {
-        if(mAuth.getCurrentUser() != null) {
-            Map<String, Object> data = new HashMap<>();
-            Map<String, Boolean> satisfied = new HashMap<>();
-
-            satisfied.put("satisfied",true);
-
-            FirebaseUser user = mAuth.getCurrentUser();
-            data.put("seen",false );
-            data.put("name", document.getTitle());
-            data.put("path",  document.getPath());
-            data.put("donneur_phone", user.getPhoneNumber());
-            data.put("donneur_name", user.getDisplayName());
-            data.put("user_id",document.getUserID() );
-
-            db.collection("med-dwa-users")
-                    .document(document.getUserID()).get().addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
-                    String token =  task.getResult().getData().get("token").toString();
-                    System.out.println("Token is "+token);
-                    data.put("token", token);
-                    db.collection("don-besoin-binds").document().set(data,SetOptions.merge())
-                      .addOnSuccessListener(o->{
-                        binding.extendedFab.setBackgroundColor(Color.rgb(90,158,11));
-                        binding.extendedFab.setTextColor(Color.BLACK);
-                        binding.extendedFab.setExtended(false);
-                        binding.extendedFab.setOnClickListener(d-> {});
-                    });
-                    db.collection("'med-dwa").document(document.documentID).set(satisfied,SetOptions.merge());
-                }
-            });
-
-//            data.put("id_med", document.medicamentID);
-//            data.put("id_added_on", document.documentID);
-//            data.put("name_med", document.name);
-//            data.put("photo_med", document.path);
-//            data.put("id_user", user.getUid());
-//            data.put("name_user", user.getDisplayName());
-//            data.put("photo_user", user.getPhotoUrl().toString());
-//            data.put("phone_user", user.getPhoneNumber());
-//            data.put("bind_user_id", "");
-//
-//
-//            db.collection("don-besoin")
-//                    .document().set(data).addOnSuccessListener(o->{
-//                        binding.extendedFab.setBackgroundColor(Color.rgb(90,158,11));
-//                        binding.extendedFab.setTextColor(Color.BLACK);
-//                        binding.extendedFab.setExtended(false);
-//                        binding.extendedFab.setOnClickListener(d-> {});
-//            });
-        } else {
-            showToast("Vous devez s'inscrire d'abord");
-        }
-    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -227,28 +175,11 @@ public class ShowFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator( getResources().getDrawable(R.drawable.ic_back_white));
 
         AppBarLayout appBarLayout = binding.appBar;
+        appBarLayout.setVisibility(View.GONE);
 
 
-        final View v = toolbar.getChildAt(0);
         final CollapsingToolbarLayout collapsingToolbar = binding.toolbarLayout;
-        collapsingToolbar.setContentScrimColor(MaterialColors.getColor(getContext(), R.attr.colorOnSecondary, Color.WHITE));
-
-        // int color1 = MaterialColors.getColor(getContext(), R.attr.colorOnSurface, Color.BLACK);
-
-        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
-            if ((collapsingToolbar.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(collapsingToolbar)) && icon != null) {
-                icon.setColorFilter(getResources().getColor(R.color.quantum_black_100), PorterDuff.Mode.SRC_ATOP);
-                if(v instanceof ImageButton) {
-                    ((ImageButton)v).getDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.quantum_black_100), PorterDuff.Mode.SRC_IN);
-                }
-            } else if(icon != null) {
-               icon.setColorFilter(getResources().getColor(R.color.quantum_grey600), PorterDuff.Mode.SRC_ATOP);
-                if(v instanceof ImageButton) {
-                    ((ImageButton)v).getDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.quantum_grey600), PorterDuff.Mode.SRC_IN);
-                }
-            }
-        });
-
+        collapsingToolbar.setContentScrimColor(MaterialColors.getColor(getContext(), R.attr.colorOnSecondary, Color.TRANSPARENT));
     }
 
     private void startTransitions() {
@@ -292,21 +223,15 @@ public class ShowFragment extends Fragment {
 //                .setDuration(duration));
     }
 
-    private void setUpComments(){
-        Query baseQuery  = dbCollection.orderBy("created", Query.Direction.DESCENDING);
+    private void setUpComments(Query baseQuery){
 
-        PagedList.Config config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPrefetchDistance(7)
-                .setPageSize(5)
-                .build();
-
-        FirestorePagingOptions<Comment> options = new FirestorePagingOptions.Builder<Comment>()
+        FirestoreRecyclerOptions<Comment> options = new FirestoreRecyclerOptions.Builder<Comment>()
                 .setLifecycleOwner(this)
-                .setQuery(baseQuery, config, Comment.class)
+                .setQuery(baseQuery, Comment.class)
+                .setLifecycleOwner(getViewLifecycleOwner())
                 .build();
 
-        adapter = new FirestorePagingAdapter<Comment, RecyclerView.ViewHolder>(options) {
+        adapter = new FirestoreRecyclerAdapter<Comment, RecyclerView.ViewHolder>(options) {
             @NonNull
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -324,34 +249,21 @@ public class ShowFragment extends Fragment {
             }
 
             @Override
-            protected void onLoadingStateChanged(@NonNull LoadingState state) {
-                switch (state) {
-                    case LOADING_INITIAL:
-                        System.out.println("Load INITIAL");
-
-                    case LOADING_MORE:
-                        //swipeRefreshLayout.setRefreshing(true);
-                        break;
-                    case LOADED:
-                        //swipeRefreshLayout.setRefreshing(false);
-                        break;
-                    case FINISHED:
-                        //swipeRefreshLayout.setRefreshing(false);
-                        //add(true);
-                        break;
-                    case ERROR:
-                        showToast("An error occurred.");
-                        retry();
-                        break;
-                }
+            public void onDataChanged() {
+                // Called each time there is a new query snapshot. You may want to use this method
+                // to hide a loading spinner or check for the "no documents" state and update your UI.
+                // ...
+                //this.notifyItemInserted(getItemCount()-1);
             }
+
             @Override
-            protected void onError(@NonNull Exception e) {
-                //swipeRefreshLayout.setRefreshing(false);
+            public void onError(@NonNull FirebaseFirestoreException e) {
+                super.onError(e);
                 Log.e("Home Layout", e.getMessage(), e);
                 showToast( "Pas de résultats");
             }
-        };
+
+         };
         binding.commentReceylerView.setAdapter(adapter);
         binding.commentReceylerView.setLayoutManager(new LinearLayoutManager(getContext()));
         commentsDelay();
@@ -361,9 +273,15 @@ public class ShowFragment extends Fragment {
     private void commentsDelay(){
         new Handler().postDelayed(() -> {
             binding.commentReceylerView.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
+            //binding.progressBar.setVisibility(View.GONE);
         }, 300L);
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     private void showToast(String s){
@@ -391,7 +309,7 @@ public class ShowFragment extends Fragment {
         updates.put("userID", content);
         updates.put("userURL", user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString());
         updates.put("userName", Objects.requireNonNull(user.getDisplayName()));
-        dbCollection.document().set(updates, SetOptions.merge()).addOnSuccessListener(o-> adapter.refresh());
+        dbCollection.document().set(updates, SetOptions.merge());
         System.out.println("In Message end");
     }
 
@@ -407,111 +325,9 @@ public class ShowFragment extends Fragment {
         new AlertDialog.Builder(getContext())
                 .setTitle("J'ai un "+doc.category.toLowerCase())
                 .setMessage("Un message sera envoyé à la personne une question et elle vous contactera par téléphone")
-                .setPositiveButton("Continuer", (dialogInterface, i) -> extendAction(doc))
+                .setPositiveButton("Continuer", (dialogInterface, i) -> {})
                 .setNegativeButton("Annuler", null)
                 .show();
     }
 
 }
-
-//
-//package com.example.pharmazione.ui.home;
-//
-//        import android.content.Context;
-//        import android.content.res.TypedArray;
-//        import android.graphics.Color;
-//        import android.os.Bundle;
-//        import android.view.LayoutInflater;
-//        import android.view.View;
-//        import android.view.ViewGroup;
-//        import android.view.animation.AnimationUtils;
-//        import android.view.animation.Interpolator;
-//
-//        import androidx.annotation.NonNull;
-//        import androidx.annotation.Nullable;
-//        import androidx.fragment.app.Fragment;
-//        import androidx.lifecycle.Observer;
-//        import androidx.lifecycle.ViewModelProviders;
-//        import androidx.navigation.fragment.NavHostFragment;
-//
-//        import com.google.android.material.transition.MaterialContainerTransform;
-//        import com.google.android.material.transition.MaterialSharedAxis;
-//        import com.example.pharmazione.R;
-//        import com.example.pharmazione.SharedViewModel;
-//        import com.example.pharmazione.databinding.FragmentShowBinding;
-//        import com.example.pharmazione.persistance.Document;
-//
-//        import org.jetbrains.annotations.NotNull;
-//
-//        import java.util.Objects;
-//        import java.util.concurrent.TimeUnit;
-//
-//        import kotlin.jvm.internal.Intrinsics;
-//
-//        import static com.example.pharmazione.utils.Util.load;
-//
-//public class ShowFragment extends Fragment {
-//    FragmentShowBinding binding;
-//    private SharedViewModel sharedViewModel;
-//
-//
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
-//
-//        startPostponedEnterTransition();
-//        prepareTransitions();
-//
-//    }
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        binding = FragmentShowBinding.inflate(inflater, container, false);
-//
-//        return binding.getRoot();
-//    }
-//
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        binding.navigationIcon.setOnClickListener(o->{
-//            NavHostFragment.findNavController(this).navigateUp();
-//        });
-//
-//        sharedViewModel.getDocData().observe(getViewLifecycleOwner(), doc ->  {
-//            binding.setItem(doc);
-//            load(binding.imageSlider,doc.getPath());
-//            load(binding.userPhoto,doc.getUserUrl());
-//        });
-//        startTransitions();
-//    }
-//
-//    private void startTransitions() {
-//        binding.executePendingBindings();
-//        startPostponedEnterTransition();
-//    }
-//
-//    private void prepareTransitions() {
-//        postponeEnterTransition(300L, TimeUnit.MILLISECONDS);
-//        Interpolator interpolator =  AnimationUtils.loadInterpolator(getContext(),android.R.interpolator.fast_out_slow_in);
-//        MaterialContainerTransform mat = new MaterialContainerTransform();
-//        mat.setDuration(300L);
-//        mat.setDrawingViewId(R.id.showFragment);
-//        mat.setInterpolator(interpolator);
-//
-//        setSharedElementEnterTransition(mat);
-//
-//        this.setEnterTransition(  new MaterialSharedAxis(MaterialSharedAxis.Z, true)
-//                .setDuration(300L).setInterpolator(interpolator));
-//
-//        setSharedElementReturnTransition(mat);
-//
-//        this.setReturnTransition(  new MaterialSharedAxis(MaterialSharedAxis.Z, false)
-//                .setDuration(300L).setInterpolator(interpolator));
-//    }
-//
-//
-//
-//}

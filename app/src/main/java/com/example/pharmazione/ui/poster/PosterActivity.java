@@ -1,11 +1,12 @@
 package com.example.pharmazione.ui.poster;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,35 +22,41 @@ import android.widget.TextView;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.example.pharmazione.R;
+import com.example.pharmazione.SearchableMedecinActivity;
+import com.example.pharmazione.databinding.ActivityMainBinding;
+import com.example.pharmazione.persistance.Document;
+import com.example.pharmazione.utils.ClickListener;
+import com.example.pharmazione.utils.PermissionUtil;
+import com.example.pharmazione.utils.Util;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.example.pharmazione.R;
-import com.example.pharmazione.SearchableMedecinActivity;
-import com.example.pharmazione.databinding.ActivityMainBinding;
-import com.example.pharmazione.persistance.Document;
-import com.example.pharmazione.utils.PermissionUtil;
-import com.example.pharmazione.utils.Util;
+import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumFile;
+import com.yanzhenjie.album.api.widget.Widget;
+import com.yanzhenjie.album.widget.divider.Api21ItemDivider;
+import com.yanzhenjie.album.widget.divider.Divider;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import id.zelory.compressor.Compressor;
@@ -60,37 +68,36 @@ import static com.example.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 import static com.example.pharmazione.utils.Util.load;
 
 
-public class PosterActivity extends AppCompatActivity {
+public class PosterActivity extends AppCompatActivity implements View.OnClickListener, ClickListener {
 
-    private static final String TAG = "Poster medicament";
+    private static final String PATH = "med-dwa-pharmazion";
     AlertDialog alertDialogAndroid;
-    File compressed = null;
+    
     FirebaseStorage storage;
     FirebaseFirestore db;
     private FirebaseAuth mAuth;
     Document document;
     String mCurrentPhotoPath;
     private List<AuthUI.IdpConfig> providers;
+    private AlbumAdapter mAdapter;
 
     private final Context c = this;
     View parentLayout;
     TextView dialogText = null;
-    Uri ordananceUri;
+    private ArrayList<AlbumFile> mAlbumFiles;
+
 
     ActivityMainBinding binding;
-    BottomSheetDialog bottomSheetDialog;
-
 
     final String[] sele = new String[3];
-    private String medId;
-    private String medPath;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         PermissionUtil.ask(this);
         mAuth = FirebaseAuth.getInstance();
         document = new Document();
@@ -107,53 +114,85 @@ public class PosterActivity extends AppCompatActivity {
 
         String[] cites = getResources().getStringArray(R.array.cities2);
 
-
-
         ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, cites);
 
         binding.wilaya.setAdapter(adapter3);
 
-        binding.wilaya.setOnItemClickListener((parent, view, position, rowId) -> sele[0] = (String)parent.getItemAtPosition(position));
+        binding.wilaya.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sele[0] = parent.getItemAtPosition(position).toString();
+            }
 
-        binding.selectImagesOreden.setOnClickListener(o-> openGallery());
-        binding.takeImagesOreden.setOnClickListener(o-> openCamera());
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
 
-//        Objects.requireNonNull(binding.nomBesoin.getEditText()).setOnClickListener(o-> openSearch(true));
-//        Objects.requireNonNull(binding.nom.getEditText()).setOnClickListener(o-> openSearch(false));
+        binding.recyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+        Divider divider = new Api21ItemDivider(Color.TRANSPARENT, 10, 10);
+        binding.recyclerView.addItemDecoration(divider);
 
+        mAdapter = new AlbumAdapter(this,this, (view, position) -> previewImage(position), 1);
+        binding.recyclerView.setAdapter(mAdapter);
+
+        binding.takeImagesOreden.setOnClickListener(o-> selectImage());
+        binding.sendIcon.setOnClickListener(this);
+        binding.closeIcon.setOnClickListener(v-> finish());
     }
 
+    private void selectImage() {
+        Album.image(this)
+                .multipleChoice()
+                .camera(true)
+                .columnCount(3)
+                .selectCount(8)
+                .checkedList(mAlbumFiles)
+                .widget(
+                        Widget.newLightBuilder(this)
+                                .statusBarColor(Color.WHITE)
+                                .toolBarColor(Color.WHITE)
+//                                .mediaItemCheckSelector(Color.BLUE, Color.GREEN)
+//                                .bucketItemCheckSelector(Color.RED, Color.YELLOW)
+                                .buttonStyle(
+                                        Widget.ButtonStyle.newLightBuilder(this)
+                                                .setButtonSelector(Color.WHITE, Color.WHITE)
+                                                .build()
+                                )
+                                .build()
+                )
+                .onResult( result -> {
+                    mAlbumFiles = result;
+                    mAdapter.notifyDataSetChanged(mAlbumFiles);
+                    binding.recyclerView.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
+                    binding.takeImagesOreden.setVisibility(result.size() > 0 ? View.GONE : View.VISIBLE);
+                })
+                .onCancel( result -> showSandbar("selection annuler"))
+                .start();
+    }
 
-
-
-    public void openCamera(){
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                Log.i(TAG, "IOException");
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri imageUri = FileProvider.getUriForFile(
-                        PosterActivity.this,
-                        "com.example.pharmazione.provider",
-                        photoFile);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(cameraIntent, Util.START_CAMERA_REQUEST_CODE);
-            }
+    private void previewImage(int position) {
+        if (mAlbumFiles == null || mAlbumFiles.size() == 0) {
+            showSandbar("No Selection");
+        } else {
+            Album.galleryAlbum(this)
+                .checkable(true)
+                .checkedList(mAlbumFiles)
+                .currentPosition(position)
+                .widget(
+                        Widget.newDarkBuilder(this)
+                            .title("Select Images")
+                            .build()
+                )
+                .onResult(result -> {
+                    mAlbumFiles = result;
+                    mAdapter.notifyDataSetChanged(mAlbumFiles);
+                    binding.recyclerView.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
+                    binding.linearLayout.setVisibility( result.size() > 0 ? View.GONE : View.VISIBLE);
+                })
+                .start();
         }
     }
 
-    public void openGallery(){
-        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto , Util.PICKFILE_REQUEST_CODE);//one can be replaced with any action code
-    }
 
     public void openSearch(Boolean besoin){
         Intent i = new Intent(this, SearchableMedecinActivity.class);
@@ -174,13 +213,10 @@ public class PosterActivity extends AppCompatActivity {
             binding.body.setError("Le sujet est vide");
             return false;
         }
-        if(ordananceUri == null){
-            showSandbar(R.string.ajouter_une_ordennance_r_cente);
-            return false;
-        }
         document.setLocation(sele[0]);
         document.setTitle(getValue(binding.titre));
-        document.setCategory(getResources().getString(R.string.don));
+        document.setBody(getValue(binding.body));
+
         return true;
     }
 
@@ -192,73 +228,40 @@ public class PosterActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case Util.PICKFILE_REQUEST_CODE:
-                if(resultCode == RESULT_OK){
-                    ordananceUri = data.getData();
-                    load(binding.imageClose2,ordananceUri);
-                    imageDisplay2();
-                    compressed = getCompressed();
-                }
-                break;
-            case Util.START_CAMERA_REQUEST_CODE:
-                if(resultCode == RESULT_OK){
-                    Bitmap mImageBitmap = null;
-                    ordananceUri = Uri.parse(mCurrentPhotoPath);
-                    try {
-                        mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), ordananceUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    load(binding.imageClose2,mImageBitmap);
-                    imageDisplay2();
-                    compressed = getCompressTaken();
-                }
-                break;
-            case START_ACTIVIY_VALIDATION:
-                 if( resultCode == RESULT_OK )
-                     send2Upload();
-                 else
-                     showDigAskPhone();
-                break;
-            case RC_SIGN_IN:
-            {
-                IdpResponse response = IdpResponse.fromResultIntent(data);
-                if (resultCode == RESULT_OK && response != null)
-                {
-                     if(Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
-                        send2Upload();
-                     else
-                         startActivityForResult(ValidatePhone.createIntent(this, response),START_ACTIVIY_VALIDATION);
-                } else {
-                    if (response == null) {
-                        showSandbar(R.string.sign_in_cancelled); return;
-                    }
-                    else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                        showSandbar(R.string.no_internet_connection);  return;
-                    }
-                    else if (response.getError().getErrorCode() == ErrorCodes.ERROR_USER_DISABLED) {
-                        showSandbar(R.string.account_disabled);  return;
-                    }
-                    else  showSandbar(R.string.unknown_error);
-                    Log.e("Auth Frag", "Sign-in error: ", response.getError());
-                }
-                break;
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            if (resultCode == RESULT_OK && response != null) {
+                if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
+                    send2Upload();
+                else
+                    startActivityForResult(ValidatePhone.createIntent(this, response), START_ACTIVIY_VALIDATION);
+            } else {
+                if (response == null) {
+                    showSandbar(R.string.sign_in_cancelled);
+                    return;
+                } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    showSandbar(R.string.no_internet_connection);
+                    return;
+                } else if (response.getError().getErrorCode() == ErrorCodes.ERROR_USER_DISABLED) {
+                    showSandbar(R.string.account_disabled);
+                    return;
+                } else showSandbar(R.string.unknown_error);
+                Log.e("Auth Frag", "Sign-in error: ", response.getError());
             }
-            default:
-                if (resultCode == RESULT_CANCELED)
-                    showSandbar("Operation annuler");
+        } else {
+            if (resultCode == RESULT_CANCELED)
+                showSandbar("Operation annuler");
         }
     }
 
-    private File getCompressTaken () {
+
+    private File getCompressTaken (String uriPath) {
         File file = null;
         try {
-            file = new Compressor(this).compressToFile(new File(ordananceUri.getPath()));
+            file = new Compressor(this).compressToFile(new File(uriPath));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert file != null;
         return file;
     }
 
@@ -274,103 +277,72 @@ public class PosterActivity extends AppCompatActivity {
                 RC_SIGN_IN);
     }
 
-    private File getCompressed() {
-        String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-        Cursor cursor = getContentResolver().query(ordananceUri,
-                filePathColumn, null, null, null);
-        cursor.moveToFirst();
-
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String picturePath = cursor.getString(columnIndex);
-        cursor.close();
-
-        File file = new File(picturePath);
-
-        File compressedImageFile = null;
-        try {
-            compressedImageFile = new Compressor(this).compressToFile(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assert compressedImageFile != null;
-        return compressedImageFile;
-    }
-
-    void imageDisplay2(){
-        binding.relativeLayout2.setVisibility(View.VISIBLE);
-        binding.oredenance.setVisibility(View.GONE);
-    }
-
-
-    public void closeVisibility2(View v){
-        binding.relativeLayout2.setVisibility(View.GONE);
-        binding.oredenance.setVisibility(View.VISIBLE);
-    }
-
-
     void upload()
   {
       dialog("");
-      String id = db.collection("med-dwa").document().getId();
+      String id = db.collection(PATH).document().getId();
       document.setUserID(mAuth.getUid());
-      document.setSatisfied(false);
-      document.setBody(this.medId);
-      document.setPath(this.medPath);
+      document.setSatisfied(true);
       document.setUserName(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
       document.setUserUrl(Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString());
       document.setDocumentID(id);
-      if(ordananceUri != null){
-          db.collection("med-dwa").document(id).set(document);
-          uploadImage(id);
+      if(mAlbumFiles != null || mAlbumFiles.size() > 0){
+          db.collection(PATH)
+              .document(id)
+              .set(document)
+              .addOnSuccessListener(s-> uploadImage(id,  new ArrayList<>()));
       }else {
-          // upload data without-image
-          // used to check connection...
-          writToFireBae(id);
+          db.collection(PATH)
+              .document(id)
+              .set(document)
+              .addOnSuccessListener(aVoid2 -> dialog("don"))
+              .addOnFailureListener(e -> dialog("Upload suspendu"));
       }
   }
 
-   private void uploadImage(String id){
-        if(compressed == null){
-            dialog("Problem avec la photo d'ordonnance!");
-            return;
-        }
-        Uri file = Uri.fromFile(compressed);
+
+
+   private void uploadImage(String id, List<String> urlsDownloded){
+
        StorageReference storageRef = storage.getReference();
        // Create the file metadata
        StorageMetadata metadata = new StorageMetadata.Builder()
                .setContentType("image/jpeg")
                .build();
-       StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
-       UploadTask uploadTask = riversRef.putFile(file,metadata);
 
-       uploadTask.continueWithTask(task ->
-       {
+       AlbumFile image = mAlbumFiles.get(urlsDownloded.size());
+       Uri file = Uri.fromFile(getCompressTaken(image.getPath()));
+       StorageReference riversRef = storageRef.child("images/" + file.getLastPathSegment());
+       UploadTask uploadTask = riversRef.putFile(file, metadata);
+
+       uploadTask.continueWithTask(task -> {
            if (!task.isSuccessful()) {
                throw Objects.requireNonNull(task.getException());
            }
            return riversRef.getDownloadUrl();
-       }).addOnSuccessListener(uri ->
-               db.collection("med-dwa").document(id).update("ordPath",uri.toString()));
+       }).addOnSuccessListener(uri -> {
 
-       // Listen for state changes, errors, and completion of the upload.
-       uploadTask.addOnProgressListener(taskSnapshot -> {
-           double progress = ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-           dialog("Chargement photo d'ordonnance " +((int) progress )+"%");
-       })
-        .addOnPausedListener(taskSnapshot -> dialog("Upload suspendu"))
-        .addOnCompleteListener(t ->{
-           alertDialogAndroid.dismiss();
-           showEndDig("Upload terminé");
-        });
+           urlsDownloded.add(uri.toString());
+           if(urlsDownloded.size() == mAlbumFiles.size()){
+               db.collection(PATH).document(id).update("path", urlsDownloded).addOnSuccessListener(s->{
+                   alertDialogAndroid.dismiss();
+                   showEndDig("Upload terminé");
+               });
+           }else {
+               uploadImage(id, urlsDownloded);
+           }
+       } );
+
+       int finalI = urlsDownloded.size() + 1;
+       uploadTask
+        .addOnProgressListener(taskSnapshot -> {
+           double progress = (( 100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+           dialog("Chargement photo  "+ finalI +" " +((int) progress )+"%");
+            })
+        .addOnPausedListener(taskSnapshot -> dialog("Upload suspendu"));
+
    }
-
-   public void writToFireBae(String id){
-      db.collection("med-dwa").document(id).set(document)
-          .addOnSuccessListener(aVoid2 -> dialog("don"))
-          .addOnFailureListener(e -> dialog("Upload suspendu"));
-   }
-
+   
 
     void showSandbar(String text){
         Snackbar.make(parentLayout,text,Snackbar.LENGTH_SHORT).show();
@@ -382,26 +354,6 @@ public class PosterActivity extends AppCompatActivity {
 
     void send2Upload(){
         if (checkDon()) upload();
-    }
-
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.close:
-                finish();
-                break;
-            case R.id.poster:{
-                if(mAuth.getCurrentUser() == null)
-                    showDig();
-                else {
-                    if(mAuth.getCurrentUser().getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().isEmpty())
-                        send2Upload();
-                    else
-                        showDigAskPhone();
-                }
-                break;
-            }
-
-        }
     }
 
     private void showDig() {
@@ -443,14 +395,6 @@ public class PosterActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (bottomSheetDialog.isShowing()) {
-            bottomSheetDialog.dismiss();
-        }
-    }
-
     void initDialog(){
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
         View mView = layoutInflaterAndroid.inflate(R.layout.dialog_upload_status, null);
@@ -477,4 +421,20 @@ public class PosterActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        if(mAuth.getCurrentUser() == null)
+            showDig();
+        else {
+            if(mAuth.getCurrentUser().getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().isEmpty())
+                send2Upload();
+            else
+                showDigAskPhone();
+        }
+    }
+
+    @Override
+    public void onClick() {
+        selectImage();
+    }
 }

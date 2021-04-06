@@ -89,7 +89,7 @@
                     android:id="@+id/item_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{item.setTitle}"
+                    android:text="@{item.title}"
                     tools:text="Medicament"
                     android:textSize="30sp"
                     />
@@ -168,7 +168,7 @@
                     android:id="@+id/item_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text='@{TextUtils.isEmpty(item.description) ? "Pas de description" : item.description}'
+                    android:text='@{TextUtils.isEmpty(item.body) ? "Pas de description" : item.body}'
                     tools:text="Pas de description"
                     android:textSize="13sp"
                     android:layout_marginBottom="12dp"

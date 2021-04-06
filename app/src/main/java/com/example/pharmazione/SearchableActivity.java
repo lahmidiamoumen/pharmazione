@@ -23,10 +23,9 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pharmazione.databinding.CardviewBinding;
+import com.example.pharmazione.databinding.EmailItemLayoutBinding;
 import com.example.pharmazione.persistance.Document;
 import com.example.pharmazione.ui.home.DocumentViewHolder;
-import com.example.pharmazione.ui.home.ShowItem;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
@@ -132,7 +131,7 @@ public class SearchableActivity extends AppCompatActivity {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
                 LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-                CardviewBinding binding = CardviewBinding.inflate(layoutInflater, viewGroup, false);
+                EmailItemLayoutBinding binding = EmailItemLayoutBinding.inflate(layoutInflater, viewGroup, false);
                 return new DocumentViewHolder(binding, (item, sliderLayout) -> onClick(item,sliderLayout));
             }
 
@@ -184,17 +183,17 @@ public class SearchableActivity extends AppCompatActivity {
     }
 
     public void onClick(Document item, View sliderLayout) {
-        Intent i = new Intent(this, ShowItem.class);
-        i.putExtra("name", item.getTitle());
-        i.putExtra("location", item.getLocation());
-        i.putExtra("description", item.getDescription());
-        i.putExtra("category", item.getCategory());
-        i.putExtra("scanned", item.getScanned().toString());
-        i.putExtra("path", item.getPath());
-        i.putExtra("userID", item.getUserID());
-        i.putExtra("userURL", item.getUserUrl());
-        i.putExtra("userName", item.getUserName());
-        i.putExtra("documentID", item.getDocumentID());
-        startActivity(i, ActivityOptions.makeSceneTransitionAnimation(this,sliderLayout,"idp_secret").toBundle());
+        //Intent i = new Intent(this, ShowItem.class);
+//        i.putExtra("name", item.getTitle());
+//        i.putExtra("location", item.getLocation());
+//        i.putExtra("description", item.getDescription());
+//        i.putExtra("category", item.getCategory());
+//        i.putExtra("scanned", item.getScanned().toString());
+//        i.putExtra("path", item.getPath());
+//        i.putExtra("userID", item.getUserID());
+//        i.putExtra("userURL", item.getUserUrl());
+//        i.putExtra("userName", item.getUserName());
+//        i.putExtra("documentID", item.getDocumentID());
+//        startActivity(i, ActivityOptions.makeSceneTransitionAnimation(this,sliderLayout,"idp_secret").toBundle());
     }
 }

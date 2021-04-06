@@ -23,8 +23,6 @@ public class DocumentViewHolderProfile extends  RecyclerView.ViewHolder
     {
         if(word.satisfied)
             binding.isSatisfiedText.setVisibility(View.VISIBLE);
-        else if(word.isVerified)
-            binding.published.setVisibility(View.VISIBLE);
         else
             binding.waiting.setVisibility(View.VISIBLE);
 

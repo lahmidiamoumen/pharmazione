@@ -1,83 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:theme="@style/Theme.MedDwak.DayNight"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/album_dp_30"
-    android:gravity="center_horizontal">
-    <TextView
-        android:textAppearance="?attr/textAppearanceHeadline5"
-        android:fontFamily="@font/x_regular"
-        android:layout_marginBottom="@dimen/album_dp_20"
+    android:layout_height="match_parent">
+    <LinearLayout
         android:layout_width="match_parent"
+        android:theme="@style/Theme.MedDwak.DayNight"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="Veuillez remplir les champs suivants"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_width="match_parent"
-        app:counterEnabled="true"
-        app:counterMaxLength="10"
-        android:layout_height="wrap_content"
-        style="@style/TextInput"
-        app:startIconDrawable="@drawable/ic_call_blue"
-        android:hint="Numéro de téléphone"
-        app:errorEnabled="true"
-        app:endIconMode="clear_text">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/phone_edit_text"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/album_dp_30"
+        android:gravity="center_horizontal">
+        <TextView
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:fontFamily="@font/x_regular"
+            android:layout_marginBottom="@dimen/album_dp_20"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:inputType="phone"
-            android:digits="0123456789"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginHorizontal="20dp"
+            android:text="Veuillez remplir les champs suivants"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_width="match_parent"
-        app:counterMaxLength="2"
-        android:layout_height="wrap_content"
-        style="@style/TextInput"
-        app:startIconDrawable="@drawable/ic_calender"
-        android:hint="L'age"
-        app:errorEnabled="true"
-        app:endIconMode="clear_text">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/age_edit_text"
+        <TextView
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:layout_marginHorizontal="26dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:inputType="numberDecimal"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="vous êtes :"/>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:layout_gravity="end"
-        android:id="@+id/poster"
-        app:icon="@drawable/ic_check"
-        android:drawableTint="@color/white"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="@dimen/album_dp_20"
-        android:layout_marginBottom="@dimen/album_dp_20"
-        android:onClick="onClick"
-        android:orientation="horizontal"
-        android:padding="@dimen/album_dp_15"
-        android:text="@string/publier"
-        android:textColor="@android:color/white" />
+        <RadioGroup
+            android:layout_marginHorizontal="40dp"
+            android:id="@+id/radioGroup"
+            android:checkedButton="@+id/radio_button_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:id="@+id/radio_button_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="pharmacien titulaire"/>
+            <RadioButton
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:id="@+id/radio_button_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="pharmacien assistant"/>
+        </RadioGroup>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextInput"
+            android:hint="Nom de l’officine"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nom_officine_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="numberDecimal"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextInput"
+            android:hint="Numéro d’agrément"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/agrement_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="numberDecimal"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextInput"
+            app:startIconDrawable="@drawable/ic_calender"
+            android:hint="Registre de commerce"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/registre_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="numberDecimal"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:id="@+id/lieu"
+            app:startIconDrawable="@drawable/ic_map"
+            android:hint="@string/wilaya"
+            android:padding="@dimen/album_dp_10"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            app:helperTextEnabled="true"
+            app:helperText="Wilaya"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/wilaya_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            app:counterEnabled="true"
+            app:counterMaxLength="10"
+            android:layout_height="wrap_content"
+            style="@style/TextInput"
+            app:startIconDrawable="@drawable/ic_call_blue"
+            android:hint="Numéro de téléphone"
+            app:errorEnabled="true"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/phone_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="phone"
+                android:digits="0123456789"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextInput"
+            app:startIconDrawable="@drawable/ic_location_home"
+            android:hint="Adresse de votre officine"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/address_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="numberDecimal"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:layout_gravity="end"
+            android:id="@+id/poster"
+            app:icon="@drawable/ic_check"
+            android:drawableTint="@color/white"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/album_dp_20"
+            android:layout_marginBottom="@dimen/album_dp_20"
+            android:onClick="onClick"
+            android:orientation="horizontal"
+            android:padding="@dimen/album_dp_15"
+            android:text="@string/publier"
+            android:textColor="@android:color/white" />
 
 
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

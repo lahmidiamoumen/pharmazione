@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.pharmazione.utils.SquareImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/button_at_end"
+    style="@style/Album.MatchParent"
+    android:src="@drawable/ic_input_image"
+    android:background="@drawable/input_for_photos"
+    android:scaleType="center"
+    android:contentDescription="@string/album_loading"
+    android:textColor="#FFF" >
+
+</com.example.pharmazione.utils.SquareImageButton>

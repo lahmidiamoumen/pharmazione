@@ -128,7 +128,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/swipeContainer">
 
-
             <androidx.recyclerview.widget.RecyclerView
                 android:transitionName="shared_element"
                 android:id="@+id/listView"
@@ -139,11 +138,10 @@
                 android:paddingBottom="8dp"
                 android:transitionGroup="true"
                 android:clipToPadding="false"
-                tools:listitem="@layout/cardview"/>
+                tools:listitem="@layout/email_item_layout"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.core.widget.NestedScrollView>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

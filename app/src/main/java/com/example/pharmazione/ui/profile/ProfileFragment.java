@@ -468,24 +468,10 @@ public class ProfileFragment extends Fragment {
                 extras);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (adapter != null) {
-            adapter.startListening();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-        }
-    }
 
     private void onBindNotification() {
         binding.imageButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @SuppressLint("UnsafeExperimentalUsageError")
             @Override
             public void onGlobalLayout() {
                 BadgeDrawable badgeDrawable = BadgeDrawable.create(context);

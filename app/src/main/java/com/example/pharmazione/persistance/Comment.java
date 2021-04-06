@@ -2,6 +2,7 @@ package com.example.pharmazione.persistance;
 
 import androidx.annotation.Keep;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.PropertyName;
 import com.google.firebase.firestore.ServerTimestamp;
 
@@ -14,7 +15,7 @@ public class Comment {
     private String userURL;
     private String userName;
     @ServerTimestamp
-    public Date created;
+    public Timestamp created;
 
     public String getContent() {
         return content;
@@ -48,7 +49,7 @@ public class Comment {
         this.userName = userName;
     }
 
-    public Date getCreated() {
+    public Timestamp getCreated() {
         return created;
     }
 }

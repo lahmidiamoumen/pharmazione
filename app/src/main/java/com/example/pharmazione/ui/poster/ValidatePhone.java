@@ -8,9 +8,12 @@ import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
@@ -209,22 +213,36 @@ public class ValidatePhone extends AppCompatActivity implements
         View mView = layoutInflaterAndroid.inflate(R.layout.dialog_phon_input, null);
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c);
         alertDialogBuilderUserInput.setView(mView);
+
         TextInputEditText phone = mView.findViewById(R.id.phone_edit_text);
-        TextInputEditText age = mView.findViewById(R.id.age_edit_text);
+        TextInputEditText registre = mView.findViewById(R.id.registre_edit_text);
+        TextInputEditText officine = mView.findViewById(R.id.nom_officine_edit_text);
+        TextInputEditText address = mView.findViewById(R.id.address_edit_text);
+        AutoCompleteTextView wilaya = mView.findViewById(R.id.wilaya_edit_text);
+        TextInputEditText agrement = mView.findViewById(R.id.agrement_edit_text);
+        RadioGroup radioGroup = mView.findViewById(R.id.radioGroup);
+
+        String[] sele = new String[1];
+        String[] cites = getResources().getStringArray(R.array.cities2);
+        ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, cites);
+        wilaya.setAdapter(adapter3);
+        wilaya.setOnItemClickListener((parent, view, position, rowId) -> sele[0] = (String)parent.getItemAtPosition(position));
+
         Button save = mView.findViewById(R.id.poster);
         save.setOnClickListener(o->{
             if(phone.getText() == null || !phone.getText().toString().matches("0[567][0-9]{8,}")){
                 phone.setError("Numéro de téléphone erroné");
-            }else if(age.getText() == null || !age.getText().toString().matches("[1-9][0-9]?"))
-                phone.setError("age erreur");
-            else {
-                int d = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(age.getText().toString());
+            } else {
                 initialData = new HashMap<>();
                 initialData.put("mPhoneNumber", phone.getText().toString());
-                initialData.put("dateOfBirth", d);
+                initialData.put("registreCommerce", registre.getText().toString());
+                initialData.put("nomOffificine", officine.getText().toString());
+                initialData.put("addresseOfficine", address.getText().toString());
+                initialData.put("wilaya", wilaya.getText().toString());
+                initialData.put("agrement", agrement.getText().toString());
+                initialData.put("type", radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
 
                 String st = phone.getText().toString().replaceFirst("0","+213");
-
                 mPhoneNumberField.setText(st);
                 mPhoneNumberField.setText(phone.getText());
                 startPhoneNumberVerification(st);

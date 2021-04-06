@@ -9,6 +9,8 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 //@IgnoreExtraProperties
 @Keep
 public class Document {
@@ -28,8 +30,7 @@ public class Document {
 
     public String etat;
 
-    @NonNull
-    public String path;
+    public List<String> path;
 
     public String location;
 
@@ -121,11 +122,11 @@ public class Document {
 
     @NonNull
     @PropertyName("path")
-    public String getPath() {
+    public List<String> getPath() {
         return path;
     }
 
-    public void setPath(@NonNull String path) {
+    public void setPath(@NonNull List<String> path) {
         this.path = path;
     }
 

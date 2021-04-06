@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingVertical="8dp"
+    android:paddingVertical="4dp"
     android:paddingEnd="40dp"
     android:clipToPadding="false">
 
@@ -23,13 +23,13 @@
 
     <TextView
         android:id="@+id/comment_name"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="8dp"
         android:textSize="12sp"
         android:layout_toEndOf="@+id/avatar"
         android:layout_alignTop="@+id/avatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
+        android:paddingBottom="1dp"
         android:text="Rose"/>
 
     <TextView
@@ -42,8 +42,8 @@
         android:textColor="#252525"
         android:paddingStart="@dimen/_8"
         android:paddingEnd="15dp"
-        android:paddingBottom="6dp"
-        android:paddingTop="6dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
         android:elevation="1dp"
         android:textSize="14sp"
         android:text="How are you doing? This is a long message that should probably wrap."

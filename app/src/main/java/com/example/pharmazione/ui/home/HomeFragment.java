@@ -22,6 +22,7 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.pharmazione.databinding.EmailItemLayoutBinding;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
@@ -34,7 +35,6 @@ import com.example.pharmazione.Filters;
 import com.example.pharmazione.R;
 import com.example.pharmazione.SearchableActivity;
 import com.example.pharmazione.SharedViewModel;
-import com.example.pharmazione.databinding.CardviewBinding;
 import com.example.pharmazione.databinding.FragmentHomeBinding;
 import com.example.pharmazione.persistance.Document;
 import com.example.pharmazione.persistance.HorizantallContent;
@@ -62,8 +62,9 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
 
 //        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 //        setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
-        Query dbCollection = FirebaseFirestore.getInstance().collection("med-dwa");
-        query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
+        Query dbCollection = FirebaseFirestore.getInstance().collection("med-dwa-pharmazion");
+        //query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
+        query = dbCollection.orderBy("scanned", Query.Direction.DESCENDING);
         adapter = getPaging();
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
         mFilterDialog = FilterDialogFragment.getInstance();
@@ -120,22 +121,6 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
 
     private void showToast() {
         Toast.makeText(getContext(), "An error occurred.", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (adapter != null) {
-            adapter.startListening();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-        }
     }
 
 
@@ -239,7 +224,7 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
         }
     }
 
-    private FirestorePagingAdapter getPaging(){
+    private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> getPaging(){
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -248,6 +233,7 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
                 .build();
 
         FirestorePagingOptions<Document> options = new FirestorePagingOptions.Builder<Document>()
+                .setLifecycleOwner(this)
                 .setQuery(query, config, Document.class)
                 .build();
 
@@ -256,7 +242,7 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
                 LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-                CardviewBinding binding = CardviewBinding.inflate(layoutInflater, viewGroup, false);
+                EmailItemLayoutBinding binding = EmailItemLayoutBinding.inflate(layoutInflater, viewGroup, false);
                 return new DocumentViewHolder(binding, HomeFragment.this);
             }
 
@@ -284,6 +270,7 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
                         swipeRefreshLayout.setRefreshing(false);
                         break;}
                     case ERROR:
+                        swipeRefreshLayout.setRefreshing(false);
                         showToast();
                         //retry();
                         break;
@@ -315,6 +302,24 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
                 null,
                 extras);
     }
+
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        if (adapter != null) {
+//            adapter.startListening();
+//        }
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        if (adapter != null) {
+//            adapter.stopListening();
+//        }
+//    }
+
 
 //    private void setHorizontalScroll() {
 //        List<HorizantallContent> list = new ArrayList<>();

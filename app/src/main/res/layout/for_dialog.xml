@@ -28,7 +28,7 @@
         />
     <TextView
         android:textColor="#F0F0F0"
-        android:text="@string/meddwak_services"
+        android:text="@string/pharmazione_services"
         android:layout_marginTop="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

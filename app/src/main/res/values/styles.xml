@@ -37,7 +37,7 @@
     </style>
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:statusBarColor">#FFFFFF</item>
     </style>
 
 

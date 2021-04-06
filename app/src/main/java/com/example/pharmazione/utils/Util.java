@@ -86,6 +86,11 @@ public class Util {
                 .start();
     }
 
+    @BindingAdapter({"goneIf"})
+    public static  void visibility(View v,Boolean gone){
+        v.setVisibility(gone ? View.GONE : View.VISIBLE);
+    }
+
     @BindingAdapter({"drawableRes"})
     public static void loadUrlImage(ImageView imageView,@DrawableRes int drawableRes)
     {

@@ -1,13 +1,15 @@
 <resources>
     <string name="facebook_application_id" translatable="false">365929827822476</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb365929827822476</string>
-    <string name="app_name">MedDwak</string>
+    <string name="app_name">pharmazione</string>
     <string name="search_hint">Filtrer les résultats</string>
 
     <string name="sign_in_cancelled">Sign in cancelled</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="account_disabled">Account is disabled by the administrator</string>
     <string name="unknown_error">An unknown error occurred</string>
+    <string name="email_card_transition_name">email_card_%1$s</string>
+    <string name="email_card_detail_transition_name">email_card_detail</string>
 
     <string name="profile_picture_content_desc">Profile picture</string>
 
@@ -23,9 +25,9 @@
 
     <string name="menu_delete">Contactez nous</string>
     <string name="menu_rename">Déconnexion</string>
-    <string name="menu_ocr">MedDwak</string>
+    <string name="menu_ocr">pharmazione</string>
 
-    <string name="intro_title1">POURQUOI MedDwak ?</string>
+    <string name="intro_title1">POURQUOI pharmazione ?</string>
     <string name="intro_desc1">On a tous des médicaments en plus qu\'on n\'utilise pas f dar, n\'est ce pas ?
         On connait tous aussi des gens qui sont dans le besoin, qui ne peuvent pas acheter des médicaments
         par défaut de cherté ou de rupture.</string>
@@ -66,7 +68,7 @@
 
     <string name="choisir_depuis_la_galerie">Choisir depuis la galerie</string>
     <string name="prendre_une_nouvelle_photo">Prendre une nouvelle photo</string>
-    <string name="meddwak_search">MedDwak Search</string>
+    <string name="pharmazione_search">pharmazione Search</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="date_de_p_remption">Date de péremption</string>
@@ -90,7 +92,6 @@
 
     </string-array>
 
-    <string name="email_card_transition_name">email_card_%1$s</string>
     <string name="email">Email:</string>
     <string name="rendez_vous">Rendez-vous</string>
     <string name="type_speciality">type_speciality</string>
@@ -98,8 +99,8 @@
     <string name="ajouter_une_ordennance_r_cente">Ajouter une ordonnance récente</string>
     <string name="authentication_error">Authentication error</string>
     <string name="depasse_limit">Vous avez dépassé la limite.</string>
-    <string name="default_notification_channel_id">MedDwak</string>
-    <string name="msg_subscribe_failed">Failed to subscribe to MedDwak topic</string>
+    <string name="default_notification_channel_id">pharmazione</string>
+    <string name="msg_subscribe_failed">Failed to subscribe to pharmazione topic</string>
     <string name="fcm_message">FCM Message</string>
 
 
@@ -239,11 +240,12 @@
     <string name="icon">icon</string>
     <string name="r_gion">Région</string>
     <string name="plus_de_d_tails">plus de détails...</string>
-    <string name="meddwak_services">MedDwak services</string>
+    <string name="pharmazione_services">pharmazione services</string>
     <string name="publi">Publié</string>
     <string name="retour">Retour</string>
     <string name="dites_vos_confr_res_ce_que_vous_pensez">Dites à vos confrères ce que vous pensez...</string>
     <string name="desc">compose_add_recipient_icon_content_desc</string>
+    <string name="wilaya">Wilaya</string>
 
 
 </resources>
