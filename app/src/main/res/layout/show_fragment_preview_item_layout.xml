@@ -12,7 +12,8 @@
   or implied. See the License for the specific language governing permissions and limitations under
   the License.
   -->
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -26,6 +27,7 @@
         android:layout_height="match_parent"
         android:layout_width="150dp"
         android:layout_margin="@dimen/grid_0_25"
+        tools:src="@drawable/avatar_3"
         android:contentDescription="@string/desc"
         app:url="@{emailAttachment}"
         app:glideCenterCrop="@{true}" />

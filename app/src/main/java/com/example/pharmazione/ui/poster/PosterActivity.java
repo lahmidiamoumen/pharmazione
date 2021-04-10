@@ -89,8 +89,6 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 
     ActivityMainBinding binding;
 
-    final String[] sele = new String[3];
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,17 +114,17 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 
         ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, cites);
 
-        binding.wilaya.setAdapter(adapter3);
-
-        binding.wilaya.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sele[0] = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-        });
+//        binding.wilaya.setAdapter(adapter3);
+//
+//        binding.wilaya.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                sele[0] = parent.getItemAtPosition(position).toString();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) { }
+//        });
 
         binding.recyclerView.setLayoutManager(new GridLayoutManager(this, 5));
         Divider divider = new Api21ItemDivider(Color.TRANSPARENT, 10, 10);
@@ -164,7 +162,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                     mAlbumFiles = result;
                     mAdapter.notifyDataSetChanged(mAlbumFiles);
                     binding.recyclerView.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
-                    binding.takeImagesOreden.setVisibility(result.size() > 0 ? View.GONE : View.VISIBLE);
+                    binding.linearLayout.setVisibility(result.size() > 0 ? View.GONE : View.VISIBLE);
                 })
                 .onCancel( result -> showSandbar("selection annuler"))
                 .start();
@@ -213,7 +211,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
             binding.body.setError("Le sujet est vide");
             return false;
         }
-        document.setLocation(sele[0]);
+//        document.setLocation(sele[0]);
         document.setTitle(getValue(binding.titre));
         document.setBody(getValue(binding.body));
 

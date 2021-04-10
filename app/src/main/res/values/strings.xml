@@ -1,7 +1,7 @@
 <resources>
     <string name="facebook_application_id" translatable="false">365929827822476</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb365929827822476</string>
-    <string name="app_name">pharmazione</string>
+    <string name="app_name">Pharmazione</string>
     <string name="search_hint">Filtrer les résultats</string>
 
     <string name="sign_in_cancelled">Sign in cancelled</string>
@@ -67,7 +67,7 @@
     <string name="don">Don</string>
 
     <string name="choisir_depuis_la_galerie">Choisir depuis la galerie</string>
-    <string name="prendre_une_nouvelle_photo">Prendre une nouvelle photo</string>
+    <string name="prendre_une_nouvelle_photo">Ajouter des images</string>
     <string name="pharmazione_search">pharmazione Search</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -99,7 +99,7 @@
     <string name="ajouter_une_ordennance_r_cente">Ajouter une ordonnance récente</string>
     <string name="authentication_error">Authentication error</string>
     <string name="depasse_limit">Vous avez dépassé la limite.</string>
-    <string name="default_notification_channel_id">pharmazione</string>
+    <string name="default_notification_channel_id">Pharmazione</string>
     <string name="msg_subscribe_failed">Failed to subscribe to pharmazione topic</string>
     <string name="fcm_message">FCM Message</string>
 

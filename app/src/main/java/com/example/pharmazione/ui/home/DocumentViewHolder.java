@@ -21,7 +21,7 @@ public class DocumentViewHolder extends RecyclerView.ViewHolder
     public void bindTo(Document word)
     {
         binding.setItem(word);
-        ShowFragmentImagesAdapter adapter = new ShowFragmentImagesAdapter();
+        ShowFragmentImagesAdapter adapter = new ShowFragmentImagesAdapter(null);
         if(word.path != null){
             adapter.submitList(word.path);
             binding.attachmentRecyclerView.setAdapter(adapter);

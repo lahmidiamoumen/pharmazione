@@ -61,6 +61,7 @@ import com.example.pharmazione.persistance.Comment;
 import com.example.pharmazione.persistance.Document;
 import com.example.pharmazione.ui.poster.PosterActivity;
 import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.api.widget.Widget;
 import com.yanzhenjie.album.widget.divider.Api21ItemDivider;
 import com.yanzhenjie.album.widget.divider.Divider;
@@ -83,6 +84,7 @@ public class ShowFragment extends Fragment {
     private FirebaseAuth mAuth;
     private Drawable icon;
     private FirebaseFirestore db;
+    private Context c;
 
 
     @Override
@@ -104,20 +106,18 @@ public class ShowFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        c = getContext();
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        binding.attachmentRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        Divider divider = new Api21ItemDivider(Color.TRANSPARENT, 10, 10);
-        binding.attachmentRecyclerView.addItemDecoration(divider);
-
-
-
-
         sharedViewModel.getDocData().observe(getViewLifecycleOwner(), doc ->  {
 
-            AlbumAdapter mAdapter = new AlbumAdapter(getContext(),null, (views, position) -> previewImage(position, doc.path), 0);
-            binding.attachmentRecyclerView.setAdapter(mAdapter);
+            ShowFragmentImagesAdapter adapter = new ShowFragmentImagesAdapter(c);
+            if(doc.path != null){
+                adapter.submitList(doc.path);
+                binding.attachmentRecyclerView.setAdapter(adapter);
+            }
+
 
             binding.setEmail(doc);
             binding.setUrlEmpty(EMPTY_IMAGE);
@@ -132,16 +132,6 @@ public class ShowFragment extends Fragment {
         startTransitions();
     }
 
-    private void previewImage(int position, List<String> mAlbumFiles) {
-            Album.gallery(getContext())
-                .checkedList(new ArrayList<>(mAlbumFiles))
-                .currentPosition(position)
-                .widget(
-                        Widget.newDarkBuilder(getContext())
-                            .title("Presentation")
-                            .build()
-                ).start();
-    }
 
 
     @Override

@@ -24,7 +24,6 @@ public class SplashScreen extends AppCompatActivity {
 
         if (restorePrefData()) {
 
-
                 Intent i = new Intent(SplashScreen.this, BottomNavigation.class);
                 startActivity(i);
                 finish();

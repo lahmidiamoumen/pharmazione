@@ -25,7 +25,6 @@ public class Document {
 
     public String body;
 
-    @NonNull
     public String category;
 
     public String etat;

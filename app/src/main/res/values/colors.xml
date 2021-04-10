@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--    <color name="colorPrimary">#00A896</color>-->
-    <color name="colorPrimary">#00a896</color>
-    <color name="colorPrimaryDark">#028090</color>
-    <color name="colorAccent">#A8D5DE</color>
+    <color name="colorPrimary">#344955</color>
+    <color name="colorPrimaryDark">#4a6572</color>
+    <color name="colorAccent">#8ca2ae</color>
     <color name="white">#ffffff</color>
     <color name="tab_indicator_gray">#c0c0c0</color>
     <color name="albumTransparent">#0000</color>
 
+    <color name="reply_blue_50">#eef0f2</color>
+    <color name="reply_blue_100">#d2dbe0</color>
+    <color name="reply_blue_200">#adbbc4</color>
+    <color name="reply_blue_300">#8ca2ae</color>
+    <color name="reply_blue_600">#4a6572</color>
+    <color name="reply_blue_700">#344955</color>
+    <color name="reply_blue_800">#232f34</color>
+    
     <color name="lighten_blue">#C9EFFF</color>
 
     <!--grey-->

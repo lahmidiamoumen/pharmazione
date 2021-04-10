@@ -54,7 +54,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         buttonEnd = bool;
     }
 
-    void notifyDataSetChanged(List<AlbumFile> imagePathList) {
+    public void notifyDataSetChanged(List<AlbumFile> imagePathList) {
         this.mAlbumFiles = imagePathList;
         super.notifyDataSetChanged();
     }
@@ -108,7 +108,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final OnItemClickListener mItemClickListener;
-        private ImageView mIvImage;
+        private final ImageView mIvImage;
 
         ImageViewHolder(View itemView, OnItemClickListener itemClickListener) {
             super(itemView);
