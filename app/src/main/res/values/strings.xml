@@ -25,17 +25,13 @@
 
     <string name="menu_delete">Contactez nous</string>
     <string name="menu_rename">Déconnexion</string>
-    <string name="menu_ocr">pharmazione</string>
+    <string name="menu_ocr">Pharmazione</string>
 
     <string name="intro_title1">POURQUOI pharmazione ?</string>
-    <string name="intro_desc1">On a tous des médicaments en plus qu\'on n\'utilise pas f dar, n\'est ce pas ?
-        On connait tous aussi des gens qui sont dans le besoin, qui ne peuvent pas acheter des médicaments
-        par défaut de cherté ou de rupture.</string>
+    <string name="intro_desc1">Pharmazione est une application conçue par des pharmaciens\n pour des pharmaciens afin de créer un réseau solidaire\n et des opportunités commerciales.</string>
 
-    <string name="intro_title2">Les DONS</string>
-    <string name="intro_desc2"> des médicaments qu\'on utilise plus chez soi.\n\n
- des médicaments achetés spécialement pour subvenir aux besoins postés.\n\n
- des articles paramédicaux proposés pour la charité.\n</string>
+    <string name="intro_title2">Nos conditions</string>
+    <string name="intro_desc2"> Pharmazione est un espace réservé exclusivement aux pharmaciens d\’officine\n</string>
 
     <string name="cond"> MED dwak n\'accepte pas les échanges de psychotropes ⛔ \n\n
  pour faire un don, il faut mentionner la date d\'expiration et le conditionnement de chaque médicament.\n\n
@@ -61,7 +57,7 @@
     <string name="le_nom_du_m_dicament">Le nom du médicament</string>
     <string name="poster_un_m_dicament">Poster un médicament</string>
     <string name="rejoignez_nous">Rejoignez-nous</string>
-    <string name="meddwaek_desc">MED dwak est besoin de vos contributions et de votre support pour atteindre et aider plus de personnes.</string>
+    <string name="meddwaek_desc">PHARMAZIONE est une plateforme digitale de mise en relation dans le domaine pharmaceutique.</string>
     <string name="orientation">Orientation</string>
     <string name="besoin">Besoin</string>
     <string name="don">Don</string>
@@ -236,16 +232,19 @@
     <string name="satisfait">satisfait</string>
     <string name="map">map</string>
     <string name="filtres_la_recherche">Filtres la recherche</string>
-    <string name="chercher_un_m_dicament">Chercher un médicament</string>
+    <string name="chercher_un_m_dicament">chercher quelque chose…</string>
     <string name="icon">icon</string>
     <string name="r_gion">Région</string>
-    <string name="plus_de_d_tails">plus de détails...</string>
+    <string name="plus_de_d_tails">plus de détails…</string>
     <string name="pharmazione_services">pharmazione services</string>
     <string name="publi">Publié</string>
     <string name="retour">Retour</string>
-    <string name="dites_vos_confr_res_ce_que_vous_pensez">Dites à vos confrères ce que vous pensez...</string>
+    <string name="dites_vos_confr_res_ce_que_vous_pensez">Dites à vos confrères ce que vous pensez…</string>
     <string name="desc">compose_add_recipient_icon_content_desc</string>
     <string name="wilaya">Wilaya</string>
+    <string name="dites_nous_ce_que_vous_pensez">dites-nous ce que vous pensez…</string>
+    <string name="parameters">Parameters</string>
+    <string name="vide">Vide!</string>
 
 
 </resources>

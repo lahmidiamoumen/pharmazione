@@ -22,11 +22,11 @@
   <data>
     <variable
         name="course"
-        type="com.example.pharmazione.persistance.HorizantallContent"/>
+        type="com.moumen.pharmazione.persistance.HorizantallContent"/>
 
     <variable
         name="clickHandler"
-        type="com.example.pharmazione.utils.MedClickListener"/>
+        type="com.moumen.pharmazione.utils.MedClickListener"/>
 
   </data>
   <com.google.android.material.card.MaterialCardView

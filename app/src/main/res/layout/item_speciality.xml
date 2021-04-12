@@ -6,11 +6,11 @@
     <data>
         <variable
             name="item"
-            type="com.example.pharmazione.ui.speciality.Speciality" />
+            type="com.moumen.pharmazione.ui.speciality.Speciality" />
 
         <variable
             name="handler"
-            type="com.example.pharmazione.utils.MedClickListener" />
+            type="com.moumen.pharmazione.utils.MedClickListener" />
 
     </data>
 

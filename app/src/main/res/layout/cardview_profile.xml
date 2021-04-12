@@ -1,132 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedAttribute">
 
     <data>
-        <import type="android.view.View"/>
         <import type="android.text.TextUtils"/>
         <variable
             name="item"
-            type="com.example.pharmazione.persistance.Document"/>
+            type="com.moumen.pharmazione.persistance.Document"/>
 
-        <variable
-            name="urlEmpty"
-            type="String" />
 
         <variable
             name="handler"
-            type="com.example.pharmazione.utils.ItemClickListener" />
-
+            type="com.moumen.pharmazione.utils.ItemClickListener" />
     </data>
 
-
-    <com.google.android.material.card.MaterialCardView
-        android:transitionName="@{@string/email_card_transition_name(item.documentID)}"
-        android:onClick="@{view -> handler.onClick(item,view)}"
-        android:id="@+id/cardView"
-        android:theme="@style/Theme.MedDwak.DayNight"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        xmlns:app="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/item_frame"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        card_view:cardCornerRadius="5dp"
-        card_view:cardElevation="2dp"
-        android:elevation="2dp">
+        android:layout_width="match_parent"
+        android:layout_marginVertical="@dimen/grid_0_25"
+        android:layout_marginHorizontal="@dimen/grid_0_5"
+        android:background="?attr/colorSecondary">
 
-        <RelativeLayout
-            android:orientation="horizontal"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_view"
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{view -> handler.onClick(item,view)}"
+            app:cardPreventCornerOverlap="false"
+            android:transitionName="@{@string/email_card_transition_name(item.title)}">
 
-            <ImageView
-                android:layout_centerInParent="true"
-                android:layout_margin="@dimen/album_dp_10"
-                app:url="@{item.path == null || item.path.size() == 0 ? urlEmpty : item.path}"
-                android:id="@+id/imageSlider"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"/>
-
-            <TextView
-                android:visibility="gone"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_marginBottom="@dimen/_16dp"
-                android:id="@+id/waiting"
-                android:textStyle="bold"
-                android:textColor="@color/places_ui_default_primary"
-                android:layout_width="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/comment_edit"
-                android:backgroundTint="@color/reply_red_400"
-                android:textSize="10sp"
-                android:text="@string/en_attente"
-                app:ignore="SmallSp" />
+                android:paddingTop="@dimen/grid_1">
 
-            <TextView
-                android:visibility="gone"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_marginBottom="@dimen/_16dp"
-                android:id="@+id/published"
-                android:textStyle="bold"
-                android:textColor="@color/places_ui_default_primary"
-                android:layout_width="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="5dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/comment_edit"
-                android:backgroundTint="@color/reply_orange_500"
-                android:textSize="10sp"
-                android:text="@string/publi"
-                app:ignore="SmallSp" />
 
-            <TextView
-                android:visibility="gone"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_marginBottom="@dimen/_16dp"
-                android:id="@+id/is_satisfied_text"
-                android:textStyle="bold"
-                android:textColor="@color/places_ui_default_primary"
-                android:layout_width="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="5dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/comment_edit"
-                android:backgroundTint="#1CA33A"
-                android:textSize="10sp"
-                android:text="@string/satisfait"
-                app:ignore="SmallSp" />
 
-            <TextView
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_marginBottom="@dimen/_16dp"
-                android:id="@+id/categ_text"
-                android:textStyle="bold"
-                android:textColor="@color/places_ui_default_primary"
-                android:layout_width="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="5dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/comment_edit"
-                android:backgroundTint="@color/colorPrimary"
-                android:textSize="10sp"
-                android:text="@{item.title}"
-                app:text="@string/don"
-                app:ignore="SmallSp" />
+                <TextView
+                    android:id="@+id/subject_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    app:layout_goneMarginEnd="@dimen/grid_2"
+                    android:maxLines="1"
+                    android:text="@{item.title}"
+                    android:textSize="@dimen/album_sp_18"
+                    tools:text="Package Shipped!"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-        </RelativeLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:id="@+id/body_preview_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    android:maxLines="2"
+                    android:text="@{item.body}"
+                    tools:text="Cucumber mask facial has shipped. It'll be on your front door by the end of the week!"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subject_text_view"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/attachment_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="96dp"
+                    android:layout_marginTop="@dimen/grid_2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/body_preview_text_view"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    app:goneIf="@{item.path == null || item.path.size() == 0 }"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="horizontal" />
+
+
+                <TextView
+                    android:id="@+id/sender_text_view2"
+                    android:layout_width="0dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginHorizontal="@dimen/album_dp_4"
+                    android:contentDescription="@string/description"
+                    android:maxLines="1"
+                    android:gravity="end"
+                    android:text='@{item.scanned.toDate().toString()}'
+                    android:textAppearance="?attr/helperText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/subject_text_view"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Google Express - 12m" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
 
 </layout>

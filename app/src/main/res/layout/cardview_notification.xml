@@ -10,7 +10,7 @@
         <import type="android.text.TextUtils"/>
         <variable
             name="item"
-            type="com.example.pharmazione.persistance.DonBesoin"/>
+            type="com.moumen.pharmazione.persistance.DonBesoin"/>
 
         <variable
             name="urlEmpty"
@@ -18,7 +18,7 @@
 
         <variable
             name="handler"
-            type="com.example.pharmazione.utils.MedClickListener" />
+            type="com.moumen.pharmazione.utils.MedClickListener" />
 
     </data>
 

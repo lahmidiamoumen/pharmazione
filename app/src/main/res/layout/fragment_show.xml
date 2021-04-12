@@ -9,7 +9,7 @@
             type="String" />
         <variable
             name="email"
-            type="com.example.pharmazione.persistance.Document" />
+            type="com.moumen.pharmazione.persistance.Document" />
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:background="?android:colorBackground"
@@ -81,14 +81,13 @@
                         tools:text="High school reunion lahmidi saldkjasd laksjdlk" />
 
                     <ImageButton
-                        android:id="@+id/navigation_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:alpha="?attr/emphasisMediumAlpha"
+                        android:id="@+id/navigation_icon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="?attr/actionBarItemBackground"
                         android:contentDescription="@string/desc"
-                        android:padding="@dimen/grid_2"
-                        app:layout_constraintBottom_toTopOf="@+id/sender_profile_image_view"
+                        android:scaleType="fitCenter"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/sender_profile_image_view"
                         app:layout_constraintTop_toTopOf="@+id/subject_text_view"
@@ -122,8 +121,8 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/sender_text_view"
                         android:text="@{email.location}"
-                        android:textAppearance="?attr/textAppearanceCaption"
-                        android:textColor="@color/color_on_surface_emphasis_medium" />
+                        tools:text="adrar"
+                        android:textAppearance="?attr/textAppearanceCaption"/>
 
                     <ImageView
                         android:id="@+id/sender_profile_image_view"
@@ -132,10 +131,10 @@
                         android:contentDescription="@string/desc"
                         android:scaleType="centerCrop"
                         app:glideCircularCrop="@{true}"
-                        app:url="@{email.userUrl}"
-                        app:layout_constraintTop_toTopOf="@id/sender_text_view"
                         app:layout_constraintBottom_toBottomOf="@+id/recipient_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/navigation_icon"
+                        app:url="@{email.userUrl}"
                         tools:src="@drawable/avatar_3" />
 
                     <TextView
@@ -143,11 +142,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/grid_3"
+                        android:padding="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
+                        android:fontFamily="@font/camphor_regular"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/sender_profile_image_view"
                         android:text="@{email.body}"
-                        android:textAppearance="?attr/textAppearanceBody1" />
+                        tools:text="High school reunion lahmidi saldkjasd laksjdlk"
+                        android:textAppearance="?attr/textAppearanceBody2" />
                     <ImageView
                         android:layout_marginVertical="@dimen/album_dp_10"
                         android:id="@+id/recipient_divider"
@@ -156,14 +158,14 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/body_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_marginTop="@dimen/album_dp_10"
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:background="@drawable/divider"
                         app:backgroundTint="@color/color_on_surface_divider"
                         android:contentDescription="@string/desc" />
 
                     <TextView
-                        android:layout_marginTop="@dimen/grid_3"
+                        android:layout_marginTop="@dimen/_8"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/recipient_divider"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -177,7 +179,7 @@
                         android:id="@+id/attachment_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
-                        android:layout_marginTop="@dimen/grid_3"
+                        android:layout_marginTop="@dimen/album_dp_4"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:clipToPadding="false"
@@ -201,16 +203,16 @@
                         android:text="Commantaires"/>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:visibility="visible"
                         android:id="@+id/comment_receylerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_8"
+                        android:layout_marginTop="4dp"
+                        android:overScrollMode="never"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/textComontair"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:overScrollMode="never"
-                        tools:listitem="@layout/empty_activity"/>
+                        tools:listitem="@layout/empty_activity" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -219,12 +221,11 @@
         </androidx.core.widget.NestedScrollView>
 
         <RelativeLayout
-            android:elevation="@dimen/album_dp_4"
             android:layout_marginBottom="@dimen/album_dp_0"
             android:layout_gravity="bottom"
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:background="?android:colorBackgroundCacheHint"
+            android:background="?android:colorBackground"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -232,9 +233,8 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.card.MaterialCardView
-                android:background="?attr/colorButtonNormal"
                 android:layout_margin="@dimen/_8"
-                app:cardCornerRadius="@dimen/_16"
+                app:cardCornerRadius="@dimen/album_dp_4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -269,13 +269,13 @@
                 android:id="@+id/itemSendButton_id"
                 android:layout_width="@dimen/_40"
                 android:layout_height="@dimen/_40"
+                android:padding="@dimen/_8"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="11dp"
                 android:background="?attr/actionBarItemBackground"
                 android:scaleType="fitCenter"
-                android:rotation="-90"
-                app:srcCompat="@drawable/ic_arrow_down"  />
+                app:srcCompat="@drawable/ic_twotone_send"  />
 
         </RelativeLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

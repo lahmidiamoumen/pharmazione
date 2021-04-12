@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+    <TextView
+        android:layout_marginTop="@dimen/album_dp_4"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/album_sp_20"
+        android:text="LAISSEZ NOUS VOTRE AVIS"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        />
+
+    <ImageView
+        android:id="@+id/subject_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titre"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/_16"
+        android:layout_marginHorizontal="@dimen/grid_2"
+        android:background="@drawable/divider"
+        app:backgroundTint="@color/color_on_surface_divider"
+        android:contentDescription="@string/desc" />
+
+    <EditText
+        android:id="@+id/bodyss"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="250dp"
+        android:layout_marginTop="@dimen/grid_2"
+        android:layout_marginHorizontal="@dimen/grid_2"
+        android:paddingBottom="32dp"
+        android:background="@android:color/transparent"
+        android:hint="@string/dites_nous_ce_que_vous_pensez"
+        android:gravity="top"
+        android:textAppearance="?attr/textAppearanceBody1"
+        app:lineHeight="24sp"
+        android:inputType="textAutoComplete"
+        android:importantForAutofill="no" />
+</LinearLayout>

@@ -8,7 +8,7 @@
         <import type="android.text.TextUtils"/>
         <variable
             name="item"
-            type="com.example.pharmazione.persistance.Doctors" />
+            type="com.moumen.pharmazione.persistance.Doctors" />
     </data>
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout

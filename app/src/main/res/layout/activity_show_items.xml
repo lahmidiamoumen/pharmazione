@@ -6,7 +6,7 @@
         <import type="android.text.TextUtils"/>
         <variable
             name="item"
-            type="com.example.pharmazione.persistance.Document" />
+            type="com.moumen.pharmazione.persistance.Document" />
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:background="?android:colorBackground"

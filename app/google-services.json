@@ -44,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "526554333170-095ngse22a824eevc470jsoe1u0s11vd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pharmazione",
+            "certificate_hash": "e4cfdbe167145e7b24f859276a8f78e3ef1fec1d"
+          }
+        },
+        {
           "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -78,6 +86,43 @@
           "android_info": {
             "package_name": "com.moumen.pdfscanner",
             "certificate_hash": "aa1555d76885307a75e7465e2d3d4f988a9ff514"
+          }
+        },
+        {
+          "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2SUVc1DgIUotVLYimIl6oQ8MkeIdxa9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526554333170:android:92025b995996150b56b56b",
+        "android_client_info": {
+          "package_name": "com.moumen.pharmazione"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "526554333170-lshi1mhain4gdtvq4ev4tr2ekdsujuah.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moumen.pharmazione",
+            "certificate_hash": "e4cfdbe167145e7b24f859276a8f78e3ef1fec1d"
           }
         },
         {

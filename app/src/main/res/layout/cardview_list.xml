@@ -8,11 +8,11 @@
     <data>
         <variable
             name="item"
-            type="com.example.pharmazione.persistance.MedicamentList"/>
+            type="com.moumen.pharmazione.persistance.MedicamentList"/>
 
         <variable
             name="handler"
-            type="com.example.pharmazione.utils.MedClickListener" />
+            type="com.moumen.pharmazione.utils.MedClickListener" />
 
 
     </data>

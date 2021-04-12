@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.pharmazione.ui.home.HomeFragment"
+        android:name="com.moumen.pharmazione.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
 
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/specialityFrag"
-        android:name="com.example.pharmazione.ui.speciality.SpecialityFragment"
+        android:name="com.moumen.pharmazione.ui.speciality.SpecialityFragment"
         android:label="SpecialityFragment">
         <action
             android:id="@+id/action_specialityFrag_to_doctorsFragment"
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/doctorsFrag"
-        android:name="com.example.pharmazione.ui.doctors.DoctorsFragment"
+        android:name="com.moumen.pharmazione.ui.doctors.DoctorsFragment"
         android:label="DoctorsFragment">
         <action
             android:id="@+id/action_doctorsFrag_to_doctorsShowFrag"
@@ -38,18 +38,19 @@
 
     <fragment
         android:id="@+id/doctorsShowFrag"
-        android:name="com.example.pharmazione.ui.doctors.ShowDoctorFragment"
+        android:name="com.moumen.pharmazione.ui.doctors.ShowDoctorFragment"
         android:label="ShowDoctorsFragment"/>
+
 
 
     <fragment
         android:id="@+id/showFragment"
-        android:name="com.example.pharmazione.ui.home.ShowFragment"
+        android:name="com.moumen.pharmazione.ui.home.ShowFragment"
         android:label="ShowFragment"/>
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.pharmazione.ui.profile.ProfileFragment"
+        android:name="com.moumen.pharmazione.ui.profile.ProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" >
         <action

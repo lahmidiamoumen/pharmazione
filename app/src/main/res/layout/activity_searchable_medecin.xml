@@ -7,7 +7,7 @@
     android:background="?android:colorBackground"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.pharmazione.SearchableActivity">
+    tools:context="com.moumen.pharmazione.SearchableActivity">
 
 
 

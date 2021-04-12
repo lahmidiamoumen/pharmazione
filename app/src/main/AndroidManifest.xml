@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.pharmazione">
+    package="com.moumen.pharmazione">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -40,27 +39,27 @@
             android:resource="@color/colorAccent" />
 
         <service
-            android:name=".utils.MyFirebaseMessaginService"
+            android:name="com.moumen.pharmazione.utils.MyFirebaseMessaginService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
+
         <activity
-            android:name="com.google.firebase.auth.internal.FederatedSignInActivity"
-            android:launchMode="standard"
-            tools:replace="android:launchMode" />
-        <activity
-            android:name=".BottomNavigation"
+            android:name="com.moumen.pharmazione.BottomNavigation"
             android:label="@string/title_activity_bottom_navigation" />
         <activity
-            android:name=".ui.poster.ValidatePhone"
-            android:parentActivityName=".ui.poster.PosterActivity"
+            android:name="com.moumen.pharmazione.BottomNav2Show"
+            android:label="Show" />
+        <activity
+            android:name="com.moumen.pharmazione.ui.poster.ValidatePhone"
+            android:parentActivityName="com.moumen.pharmazione.ui.poster.PosterActivity"
             android:theme="@style/Theme.MedDwak.DayNight" />
         <activity
-            android:name=".SearchableActivity"
-            android:parentActivityName=".BottomNavigation"
+            android:name="com.moumen.pharmazione.SearchableActivity"
+            android:parentActivityName="com.moumen.pharmazione.BottomNavigation"
             android:theme="@style/Theme.MedDwak.DayNight">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -71,8 +70,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".SearchableMedecinActivity"
-            android:parentActivityName=".ui.poster.PosterActivity"
+            android:name="com.moumen.pharmazione.SearchableMedecinActivity"
+            android:parentActivityName="com.moumen.pharmazione.ui.poster.PosterActivity"
             android:theme="@style/Theme.MedDwak.DayNight">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -83,26 +82,20 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".ProfileNotifActivity"
-            android:parentActivityName=".BottomNavigation"
+            android:name="com.moumen.pharmazione.ProfileNotifActivity"
+            android:parentActivityName="com.moumen.pharmazione.BottomNavigation"
             android:theme="@style/Theme.MedDwak.DayNight" >
             <intent-filter>
                 <action android:name="ProfileNotifActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".ui.home.ShowItem"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="Show"
-            android:parentActivityName=".BottomNavigation"
-            android:theme="@style/Theme.MedDwak.DayNight"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".IntroActivity"
+            android:name="com.moumen.pharmazione.IntroActivity"
             android:theme="@style/Theme.MedDwak.DayNight" />
         <activity
-            android:name=".SplashScreen"
+            android:name="com.moumen.pharmazione.SplashScreen"
             android:theme="@style/AppThemeSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -115,9 +108,9 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".ui.poster.PosterActivity"
+            android:name="com.moumen.pharmazione.ui.poster.PosterActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:parentActivityName=".BottomNavigation"/> <!-- <meta-data -->
+            android:parentActivityName="com.moumen.pharmazione.BottomNavigation"/> <!-- <meta-data -->
         <!-- android:name="com.google.android.geo.API_KEY" -->
         <!-- android:value="AIzaSyDyHgN3_5qTd0w4Gp7ldiLuiSC7DoNAaxY" /> -->
 
