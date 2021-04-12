@@ -166,7 +166,7 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
         }else {
             setQuery(null,null);
         }
-        binding.filter.setText(Html.fromHtml(filters.getSearchDescription()));
+        binding.textCat.setText(Html.fromHtml(filters.getSearchDescription()));
     }
 
 

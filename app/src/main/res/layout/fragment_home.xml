@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="8sp"
+                android:layout_marginTop="@dimen/album_dp_4"
                 android:paddingTop="3dp"
                 android:fitsSystemWindows="true">
                 <LinearLayout
@@ -45,39 +45,52 @@
                     android:id="@+id/linearLayoutToll"
                     android:layout_marginStart="@dimen/album_dp_10"
                     android:layout_marginEnd="@dimen/album_dp_10"
+                    android:layout_marginBottom="@dimen/_16"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
-                        android:drawableTint="?attr/colorControlNormal"
+<!--                    <ImageButton-->
+<!--                        android:id="@+id/editTextLogo"-->
+<!--                        android:elevation="3dp"-->
+<!--                        android:layout_width="65dp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_height="45dp"-->
+<!--                        android:background="@color/fui_transparent"-->
+<!--                        android:clickable="true"-->
+<!--                        android:tint="?attr/colorControlNormal"-->
+<!--                        android:focusable="true"-->
+<!--                        android:scaleType="centerInside"-->
+<!--                        android:src="@drawable/logo"-->
+<!--                        android:contentDescription="@string/icon" />-->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="@dimen/_16"
+                        android:layout_weight="0.5"
+                        android:text="Accueil"
+                        android:textAppearance="?attr/textAppearanceHeadline5" />
+
+                    <ImageButton
+                        android:tint="?attr/colorControlNormal"
                         android:elevation="3dp"
                         android:layout_margin="5dp"
                         android:id="@+id/filter"
-                        android:clickable="true"
                         android:layout_height="wrap_content"
-                        android:cursorVisible="false"
-                        android:focusable="true"
-                        android:focusableInTouchMode="false"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.5"
-                        android:background="?attr/layout_drawable_edit"
-                        android:drawableStart="@drawable/ic_menu_search"
-                        android:drawablePadding="17dp"
-                        android:ems="10"
+                        android:layout_width="45dp"
+                        android:background="?attr/layout_drawable_picture"
+                        android:src="@drawable/ic_menu_search"
                         android:hint="@string/chercher_un_m_dicament"
-                        android:inputType="textPersonName"
                         android:padding="10dp"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
-                        android:importantForAutofill="no" />
+                        android:contentDescription="@string/desc" />
                     <ImageButton
                         android:id="@+id/editText"
                         android:elevation="3dp"
-                        android:layout_width="55dp"
-                        android:layout_height="45dp"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="6dp"
+                        android:padding="10dp"
                         android:background="?attr/layout_drawable_picture"
                         android:clickable="true"
                         android:tint="?attr/colorControlNormal"
@@ -85,6 +98,17 @@
                         android:src="@drawable/ic_sort_white_24px"
                         android:contentDescription="@string/icon" />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/textCat"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/album_dp_20"
+                    android:textSize="12sp"
+                    android:text="Tous"/>
+
+
 <!--                <androidx.recyclerview.widget.RecyclerView-->
 <!--                    android:layout_marginStart="@dimen/album_dp_10"-->
 <!--                    android:layout_marginTop="@dimen/_16dp"-->
@@ -118,6 +142,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
