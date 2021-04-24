@@ -214,12 +214,12 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
     private void  setQuery(String opt,String location){
         if(location == null && opt == null)
             setUp(query);
-        else if(location == null)
-            setUp(query.whereEqualTo("category",opt));
-        else if (opt == null){
+//        else if(location == null)
+//            setUp(query.whereEqualTo("category",opt));
+//        else if (opt == null){
+//            setUp(query.whereEqualTo("location",location));
+        else {
             setUp(query.whereEqualTo("location",location));
-        }else {
-            setUp(query.whereEqualTo("location",location).whereEqualTo("category",opt));
         }
     }
 

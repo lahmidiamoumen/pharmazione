@@ -41,6 +41,7 @@
                 android:paddingTop="3dp"
                 android:fitsSystemWindows="true">
                 <LinearLayout
+                    android:background="?attr/layout_drawable_picture"
                     android:orientation="horizontal"
                     android:id="@+id/linearLayoutToll"
                     android:layout_marginStart="@dimen/album_dp_10"
@@ -64,7 +65,7 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginStart="@dimen/_16"
                         android:layout_weight="0.5"
                         android:text="Accueil"
@@ -104,7 +105,7 @@
                     android:layout_gravity="center_vertical"
                     android:id="@+id/textCat"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/album_dp_20"
+                    android:layout_marginStart="22dp"
                     android:textSize="12sp"
                     android:text="Tous"/>
 
@@ -135,8 +136,6 @@
 
 
     <androidx.core.widget.NestedScrollView
-        android:layout_marginStart="@dimen/album_dp_10"
-        android:layout_marginEnd="@dimen/album_dp_10"
         android:id="@+id/scroll"
         android:fillViewport="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"

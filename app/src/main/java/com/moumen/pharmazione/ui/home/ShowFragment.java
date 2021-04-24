@@ -297,11 +297,11 @@ public class ShowFragment extends Fragment {
             return;
         }
         new AlertDialog.Builder(getContext())
-                .setTitle("J'ai un "+doc.category.toLowerCase())
-                .setMessage("Un message sera envoyé à la personne une question et elle vous contactera par téléphone")
-                .setPositiveButton("Continuer", (dialogInterface, i) -> {})
-                .setNegativeButton("Annuler", null)
-                .show();
+            .setTitle("J'ai un "+doc.category.toLowerCase())
+            .setMessage("Un message sera envoyé à la personne une question et elle vous contactera par téléphone")
+            .setPositiveButton("Continuer", (dialogInterface, i) -> {})
+            .setNegativeButton("Annuler", null)
+            .show();
     }
 
 }

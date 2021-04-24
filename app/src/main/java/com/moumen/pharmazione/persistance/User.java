@@ -16,6 +16,37 @@ public class User {
     private  String mPhoneNumber;
     private  String mName;
     private  String mPhotoUri;
+    private  String token;
+    private  String wilaya;
+    private  String type;
+
+    public void setmPhotoUri(String mPhotoUri) {
+        this.mPhotoUri = mPhotoUri;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getWilaya() {
+        return wilaya;
+    }
+
+    public void setWilaya(String wilaya) {
+        this.wilaya = wilaya;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public User(String mEmail, String mPhoneNumber, String mName, String mPhotoUri) {
         this.mEmail = mEmail;

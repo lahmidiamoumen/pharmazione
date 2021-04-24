@@ -18,10 +18,14 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SearchableMedecinActivity;
 import com.moumen.pharmazione.databinding.ActivityPosterBinding;
 import com.moumen.pharmazione.persistance.Document;
+import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.utils.ClickListener;
 import com.moumen.pharmazione.utils.PermissionUtil;
 import com.firebase.ui.auth.AuthUI;
@@ -102,7 +106,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 
         String[] cites = getResources().getStringArray(R.array.cities2);
 
-        ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, cites);
+        //ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, cites);
 
 //        binding.wilaya.setAdapter(adapter3);
 //
@@ -260,7 +264,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                         .setIsSmartLockEnabled(false)
                         .setAvailableProviders(providers)
                         .setTheme(R.style.FullscreenTheme)      // Set theme
-                        .setLogo(R.drawable.start_logo)
+                        .setLogo(R.drawable.logo)
                         .build(),
                 RC_SIGN_IN);
     }
@@ -269,22 +273,32 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
   {
       dialog("");
       String id = db.collection(PATH).document().getId();
+      Task<DocumentSnapshot> task =  db.collection("med-dwa-users").document(mAuth.getUid()).get();
       document.setUserID(mAuth.getUid());
       document.setSatisfied(true);
       document.setUserName(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
       document.setUserUrl(Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString());
       document.setDocumentID(id);
       if(mAlbumFiles != null || mAlbumFiles.size() > 0){
-          db.collection(PATH)
-              .document(id)
-              .set(document)
-              .addOnSuccessListener(s-> uploadImage(id,  new ArrayList<>()));
+          task.addOnSuccessListener(documentSnapshot -> {
+              User user = documentSnapshot.toObject(User.class);
+              document.setLocation(user.getWilaya());
+              db.collection(PATH)
+                      .document(id)
+                      .set(document)
+                      .addOnSuccessListener(s-> uploadImage(id,  new ArrayList<>()));
+          });
+
       }else {
-          db.collection(PATH)
-              .document(id)
-              .set(document)
-              .addOnSuccessListener(aVoid2 -> dialog("don"))
-              .addOnFailureListener(e -> dialog("Upload suspendu"));
+          task.addOnSuccessListener(documentSnapshot -> {
+              User user = documentSnapshot.toObject(User.class);
+              document.setLocation(user.getWilaya());
+              db.collection(PATH)
+                      .document(id)
+                      .set(document)
+                      .addOnSuccessListener(aVoid2 -> dialog("don"))
+                      .addOnFailureListener(e -> dialog("Upload suspendu"));
+          });
       }
   }
 

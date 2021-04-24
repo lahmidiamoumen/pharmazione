@@ -142,14 +142,6 @@
           }
         },
         {
-          "client_id": "526554333170-s556u43u76sfqhkgieddtignjn1fisbr.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.moumen.pharmazione",
-            "certificate_hash": "30c9136acddd75b1257be7c58c3e17e401d361e9"
-          }
-        },
-        {
           "client_id": "526554333170-7scbj25oac7rre6vtipq67puciph2b73.apps.googleusercontent.com",
           "client_type": 3
         }

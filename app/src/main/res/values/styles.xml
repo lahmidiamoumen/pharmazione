@@ -24,6 +24,12 @@
 
     </style>
 
+    <style name="SplashScreen">
+        <item name="android:src">@drawable/logo_for_stat</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
 
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>

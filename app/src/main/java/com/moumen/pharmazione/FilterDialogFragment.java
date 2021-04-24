@@ -61,7 +61,7 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
                              @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.dialog_filters, container, false);
 
-        mCategorySpinner = mRootView.findViewById(R.id.spinner_category);
+        //mCategorySpinner = mRootView.findViewById(R.id.spinner_category);
         mCitySpinner = mRootView.findViewById(R.id.spinner_city);
 
         mRootView.findViewById(R.id.button_search).setOnClickListener(this);
@@ -142,7 +142,7 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
         Filters filters = new Filters();
 
         if (mRootView != null) {
-            filters.setCategory(getSelectedCategory());
+            //filters.setCategory(getSelectedCategory());
             filters.setCity(getSelectedCity());
         }
 

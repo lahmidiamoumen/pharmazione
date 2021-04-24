@@ -15,27 +15,27 @@
         android:text="@string/filtres_la_recherche" />
 
     <!-- Food Type -->
-    <RelativeLayout
-        android:background="@drawable/bar2"
-        android:layout_marginBottom="@dimen/album_dp_20"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/album_dp_50">
+<!--    <RelativeLayout-->
+<!--        android:background="@drawable/bar2"-->
+<!--        android:layout_marginBottom="@dimen/album_dp_20"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="@dimen/album_dp_50">-->
 
-        <ImageView
-            android:id="@+id/icon_category"
-            style="@style/AppTheme.FilterIcon"
-            android:layout_centerVertical="true"
-            android:tint="?attr/colorControlNormal"
-            app:srcCompat="@drawable/ic_sort_white_24px"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/icon_category"-->
+<!--            style="@style/AppTheme.FilterIcon"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:tint="?attr/colorControlNormal"-->
+<!--            app:srcCompat="@drawable/ic_sort_white_24px"/>-->
 
-        <Spinner
-            android:id="@+id/spinner_category"
-            style="@style/AppTheme.FilterSpinner"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/icon_category"
-            android:entries="@array/categories" />
+<!--        <Spinner-->
+<!--            android:id="@+id/spinner_category"-->
+<!--            style="@style/AppTheme.FilterSpinner"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_toEndOf="@+id/icon_category"-->
+<!--            android:entries="@array/categories" />-->
 
-    </RelativeLayout>
+<!--    </RelativeLayout>-->
 
     <!-- Location -->
     <RelativeLayout
@@ -48,7 +48,7 @@
             android:id="@+id/icon_city"
             style="@style/AppTheme.FilterIcon"
             android:layout_centerVertical="true"
-            android:tint="?attr/colorControlNormal"
+            app:tint="?attr/colorControlNormal"
             android:entries="@array/categories"
             app:srcCompat="@drawable/ic_place_white_24px"
             android:contentDescription="@string/map" />
