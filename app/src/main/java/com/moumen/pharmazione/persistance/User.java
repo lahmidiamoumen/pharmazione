@@ -20,9 +20,7 @@ public class User {
     private  String wilaya;
     private  String type;
 
-    public void setmPhotoUri(String mPhotoUri) {
-        this.mPhotoUri = mPhotoUri;
-    }
+    public User() {}
 
     public String getToken() {
         return token;
@@ -92,7 +90,7 @@ public class User {
         return mPhotoUri;
     }
 
-    public void setmPhotoUri(Uri mPhotoUri) {
-        this.mPhotoUri = mPhotoUri.toString();
+    public void setmPhotoUri(String mPhotoUri) {
+        this.mPhotoUri = mPhotoUri;
     }
 }

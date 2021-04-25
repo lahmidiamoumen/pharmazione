@@ -63,11 +63,11 @@
                     android:id="@+id/menu_item_constraint_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/grid_2"
                     android:paddingTop="@dimen/grid_3"
                     android:paddingBottom="@dimen/album_dp_100">
 
                     <TextView
+                        android:paddingStart="@dimen/grid_2"
                         android:id="@+id/subject_text_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -81,9 +81,10 @@
                         tools:text="High school reunion lahmidi saldkjasd laksjdlk" />
 
                     <ImageButton
+                        android:paddingEnd="@dimen/grid_2"
                         android:alpha="?attr/emphasisMediumAlpha"
                         android:id="@+id/navigation_icon"
-                        android:layout_width="48dp"
+                        android:layout_width="45dp"
                         android:layout_height="48dp"
                         android:background="?attr/actionBarItemBackground"
                         android:contentDescription="@string/desc"
@@ -99,6 +100,7 @@
                     <!--                    android:text=" • "/>-->
 
                     <TextView
+                        android:paddingStart="@dimen/grid_2"
                         android:id="@+id/sender_text_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -107,11 +109,12 @@
                         app:layout_constraintEnd_toStartOf="@+id/sender_profile_image_view"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/subject_text_view"
-                        android:text='@{email.userName+" • "+ email.scanned.toDate().toGMTString}'
+                        android:text='@{email.userName+" • "+ email.scanned.toDate().toLocaleString()}'
                         android:textAppearance="?attr/textAppearanceBody2"
                         tools:text="Ali Connors -- 12m" />
 
                     <TextView
+                        android:paddingStart="@dimen/grid_2"
                         android:id="@+id/recipient_text_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -125,6 +128,8 @@
                         android:textAppearance="?attr/textAppearanceCaption"/>
 
                     <ImageView
+                        android:layout_marginTop="@dimen/_8"
+                        android:layout_marginEnd="@dimen/_16"
                         android:id="@+id/sender_profile_image_view"
                         android:layout_width="42dp"
                         android:layout_height="42dp"
@@ -138,6 +143,8 @@
                         tools:src="@drawable/avatar_3" />
 
                     <TextView
+                        android:paddingStart="@dimen/_16"
+                        android:paddingEnd="@dimen/_8"
                         android:id="@+id/body_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -165,6 +172,7 @@
                         android:contentDescription="@string/desc" />
 
                     <TextView
+                        android:paddingHorizontal="@dimen/grid_2"
                         android:layout_marginTop="@dimen/_8"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/recipient_divider"
@@ -180,7 +188,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
                         android:layout_marginTop="@dimen/album_dp_4"
-                        android:paddingStart="12dp"
+                        android:paddingStart="@dimen/_8"
                         android:paddingEnd="12dp"
                         android:clipToPadding="false"
                         app:goneIf="@{email.path == null || email.path.size() == 0 }"
@@ -192,7 +200,9 @@
                         tools:listitem="@layout/show_fragment_preview_item_layout"
                         android:overScrollMode="never" />
 
+
                     <TextView
+                        android:paddingHorizontal="@dimen/grid_2"
                         android:layout_marginTop="@dimen/grid_3"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/attachment_recycler_view"
@@ -201,6 +211,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Commantaires"/>
+
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/comment_receylerView"
@@ -213,6 +224,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/textComontair"
                         tools:listitem="@layout/empty_activity" />
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

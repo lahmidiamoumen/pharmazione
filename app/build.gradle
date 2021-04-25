@@ -23,8 +23,8 @@ android {
         applicationId "com.moumen.pharmazione"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 4
-        versionName "0.1.02"
+        versionCode 6
+        versionName "0.1.06"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

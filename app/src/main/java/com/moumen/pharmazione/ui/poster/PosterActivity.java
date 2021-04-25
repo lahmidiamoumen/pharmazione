@@ -279,7 +279,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
       document.setUserName(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
       document.setUserUrl(Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString());
       document.setDocumentID(id);
-      if(mAlbumFiles != null || mAlbumFiles.size() > 0){
+      if(mAlbumFiles != null && mAlbumFiles.size() > 0){
           task.addOnSuccessListener(documentSnapshot -> {
               User user = documentSnapshot.toObject(User.class);
               document.setLocation(user.getWilaya());

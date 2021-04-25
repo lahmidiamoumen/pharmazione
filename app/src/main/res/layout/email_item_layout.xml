@@ -79,7 +79,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/sender_text_view"/>
 
                 <TextView
-                    android:textAppearance="?attr/textAppearanceCaption"
+                    android:textAppearance="?attr/textAppearanceBody2"
                     android:textSize="@dimen/album_sp_14"
                     android:id="@+id/body_preview_text_view"
                     android:layout_width="0dp"
@@ -89,7 +89,7 @@
                     android:layout_marginStart="@dimen/grid_2"
                     android:layout_marginEnd="@dimen/grid_2"
                     android:maxLines="4"
-                    android:fontFamily="@font/camphor_regular"
+                    android:fontFamily="@font/x_regular_thin"
                     android:text="@{item.body}"
                     tools:text="Cucumber mask facial has shipped. It'll be on your front door by the end of the week!"
                     app:layout_constraintEnd_toEndOf="parent"
