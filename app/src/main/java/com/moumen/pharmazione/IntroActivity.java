@@ -66,6 +66,14 @@ public class IntroActivity extends AppCompatActivity {
                                  getResources().getString(R.string.intro_desc2),
                                  R.drawable.ic_intro2));
 
+        mList.add(new IntroItem( getResources().getString(R.string.intro_title4),
+                getResources().getString(R.string.intro_desc3),
+                R.drawable.ic_intro3));
+
+        mList.add(new IntroItem("",
+                "Tous ces avantages avec un accès 100% gratuit.\n",
+                R.drawable.ic_intro2));
+
         // setup viewpager
         screenPager =findViewById(R.id.screen_viewpager);
         introViewPagerAdapter = new IntroViewPagerAdapter(this,mList);
@@ -78,12 +86,12 @@ public class IntroActivity extends AppCompatActivity {
         btnNext.setOnClickListener(v -> {
 
             position = screenPager.getCurrentItem();
-            if(position == 0){
-                btnNext.setText("J'accepte");
-            }
-            else
-                btnNext.setText(getResources().getString(R.string.suivant));
-            if(position == 1){
+//            if(position == 0){
+//                btnNext.setText("J'accepte");
+//            }
+//            else
+            btnNext.setText(getResources().getString(R.string.suivant));
+            if(position ==2){
                 tvSkip.setVisibility(View.VISIBLE);
             }
             if (position < mList.size()) {

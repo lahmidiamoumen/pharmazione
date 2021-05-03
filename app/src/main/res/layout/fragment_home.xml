@@ -133,7 +133,55 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Votre compte est n'est pas vérifié"
+        />
 
+        <TextView
+            android:layout_marginTop="@dimen/_8"
+            android:textSize="@dimen/album_sp_16"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="L'équipe de Pharmazione va vérifier \n votre compte"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/auth"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="VOUS ÊTES PHARMACIEN D'OFFICINE ?"
+            />
+
+        <TextView
+            android:layout_marginTop="@dimen/_8"
+            android:textSize="@dimen/album_sp_16"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="S'authentifier ou créer un compte\n pour accéder aux publications"
+            />
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"

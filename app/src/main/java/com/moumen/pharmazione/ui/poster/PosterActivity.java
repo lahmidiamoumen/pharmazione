@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -18,7 +17,6 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.moumen.pharmazione.R;
@@ -52,6 +50,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import id.zelory.compressor.Compressor;
 
@@ -104,7 +103,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 
         parentLayout = findViewById(android.R.id.content);
 
-        String[] cites = getResources().getStringArray(R.array.cities2);
+        //String[] cites = getResources().getStringArray(R.array.cities2);
 
         //ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, cites);
 
@@ -198,11 +197,11 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 
     private boolean checkDon(){
          if (getValue(binding.titre).isEmpty()){
-            binding.titre.setError("Le titre est vide");
+            binding.titre.setError("Le titre est vide!");
             return false;
         }
         if (getValue(binding.body).isEmpty()){
-            binding.body.setError("Le sujet est vide");
+            binding.body.setError("Le sujet est vide!");
             return false;
         }
 //        document.setLocation(sele[0]);
@@ -271,18 +270,24 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 
     void upload()
   {
+
       dialog("");
       String id = db.collection(PATH).document().getId();
       Task<DocumentSnapshot> task =  db.collection("med-dwa-users").document(mAuth.getUid()).get();
       document.setUserID(mAuth.getUid());
-      document.setSatisfied(true);
       document.setUserName(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
       document.setUserUrl(Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString());
       document.setDocumentID(id);
       if(mAlbumFiles != null && mAlbumFiles.size() > 0){
           task.addOnSuccessListener(documentSnapshot -> {
               User user = documentSnapshot.toObject(User.class);
+              assert user != null;
+              if(user.getSatisfied() == null || !user.getSatisfied()) {
+                  showEndDig("Votre compte est n'est pas vérifié");
+                  return;
+              }
               document.setLocation(user.getWilaya());
+              document.setSatisfied(user.getSatisfied());
               db.collection(PATH)
                       .document(id)
                       .set(document)
@@ -292,7 +297,13 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
       }else {
           task.addOnSuccessListener(documentSnapshot -> {
               User user = documentSnapshot.toObject(User.class);
+              assert user != null;
+              if(user.getSatisfied() == null || !user.getSatisfied()) {
+                  showEndDig("Votre compte est n'est pas vérifié");
+                  return;
+              }
               document.setLocation(user.getWilaya());
+              document.setSatisfied(user.getSatisfied());
               db.collection(PATH)
                       .document(id)
                       .set(document)

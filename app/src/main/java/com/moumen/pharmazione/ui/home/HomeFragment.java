@@ -21,6 +21,10 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.moumen.pharmazione.databinding.EmailItemLayoutBinding;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
@@ -37,12 +41,13 @@ import com.moumen.pharmazione.SharedViewModel;
 import com.moumen.pharmazione.databinding.FragmentHomeBinding;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.HorizantallContent;
+import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.utils.ItemClickListener;
 import com.moumen.pharmazione.utils.MedClickListener;
 
 import static com.moumen.pharmazione.utils.Util.PATH;
 
-public class HomeFragment extends Fragment implements ItemClickListener , FilterDialogFragment.FilterListener , MedClickListener<HorizantallContent> {
+public class HomeFragment extends Fragment implements ItemClickListener, FilterDialogFragment.FilterListener, MedClickListener<HorizantallContent> {
 
     private  long duration ;
     private SharedViewModel sharedViewModel;
@@ -51,6 +56,8 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
     private FragmentHomeBinding binding;
     private Query query;
     private FilterDialogFragment mFilterDialog;
+    private Query dbCollection;
+    private boolean isVerified;
 
 
     @Override
@@ -61,9 +68,9 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
 
 //        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 //        setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
-        Query dbCollection = FirebaseFirestore.getInstance().collection(PATH);
+        dbCollection = FirebaseFirestore.getInstance().collection(PATH);
         //query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
-        query = dbCollection.orderBy("scanned", Query.Direction.DESCENDING);
+        query = dbCollection.whereEqualTo("satisfied",true).orderBy("scanned", Query.Direction.DESCENDING);
         adapter = getPaging();
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
         mFilterDialog = FilterDialogFragment.getInstance();
@@ -84,25 +91,39 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        postponeEnterTransition();
-        startPostponedEnterTransition();
+//        postponeEnterTransition();
+//        startPostponedEnterTransition();
 
         //setHorizontalScroll();
 
-        binding.editText.setOnClickListener(o-> onFilterClicked());
-        binding.filter.setOnClickListener(o->goToSearch());
-
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser users = mAuth.getCurrentUser();
+        if(users == null) {
+            binding.scroll.setVisibility(View.GONE);
+            binding.auth.setVisibility(View.VISIBLE);
+            return;
+        }
         swipeRefreshLayout = binding.swipeContainer;
         swipeRefreshLayout.setRefreshing(true);
         RecyclerView recyclerView = binding.listView;
-
         recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
 
+        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection("med-dwa-users").document(mAuth.getUid()).get();
+        task.addOnSuccessListener(documentSnapshot -> {
+            User user = documentSnapshot.toObject(User.class);
+            assert user != null;
+            if(user.getSatisfied() == null ? false : user.getSatisfied()){
+                binding.editText.setOnClickListener(o-> onFilterClicked());
+                binding.filter.setOnClickListener(o->goToSearch());
+            }else {
+                binding.scroll.setVisibility(View.GONE);
+                binding.text.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public void setUp(Query baseQuery){
-
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPrefetchDistance(10)
@@ -194,8 +215,8 @@ public class HomeFragment extends Fragment implements ItemClickListener , Filter
 
         sharedViewModel.getDocData().setValue(item);
 
-        this.setReenterTransition(  new MaterialElevationScale( true)
-                .setDuration(duration));
+//        this.setReenterTransition(  new MaterialElevationScale( true)
+//                .setDuration(duration));
 
         this.setExitTransition(  new MaterialElevationScale( false)
                 .setDuration(duration));

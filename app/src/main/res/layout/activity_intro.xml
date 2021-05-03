@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".IntroActivity">
 
     <androidx.viewpager.widget.ViewPager
@@ -22,12 +22,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:paddingStart="@dimen/album_dp_30"
         android:layout_marginBottom="16dp"
         android:background="?android:colorBackground"
-        android:text="@string/suivant"
+        android:drawableTint="?android:colorBackground"
         android:drawableEnd="@drawable/ic_navigate_next"
+        android:paddingStart="@dimen/album_dp_30"
+        android:text="@string/suivant"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -42,37 +42,35 @@
         app:layout_constraintEnd_toStartOf="@+id/btn_next"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/white"
         app:tabBackground="@drawable/indicator_selector">
 
     </com.google.android.material.tabs.TabLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:visibility="invisible"
         android:id="@+id/btn_get_started"
         android:layout_width="175dp"
         android:layout_height="70dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="20dp"
         android:text="@string/commencer"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:visibility="invisible"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="?attr/colorPrimary"
         android:id="@+id/tv_skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
         android:text="@string/passer"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

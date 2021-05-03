@@ -19,6 +19,15 @@ public class User {
     private  String token;
     private  String wilaya;
     private  String type;
+    private Boolean satisfied;
+
+    public Boolean getSatisfied() {
+        return satisfied;
+    }
+
+    public void setSatisfied(Boolean satisfied) {
+        this.satisfied = satisfied;
+    }
 
     public User() {}
 

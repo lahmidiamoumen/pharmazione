@@ -237,7 +237,6 @@
             android:layout_gravity="bottom"
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:background="?android:colorBackground"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -245,8 +244,8 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_margin="@dimen/_8"
-                app:cardCornerRadius="@dimen/album_dp_4"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="@dimen/_16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -258,14 +257,14 @@
                     android:scrollHorizontally="false"
                     android:maxLength="254"
                     android:scrollbars="vertical"
-                    android:background="@color/fui_transparent"
+                    android:background="?android:colorBackground"
                     android:inputType="textMultiLine|textLongMessage"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:maxLines="2"
                     android:minLines="1"
                     android:drawablePadding="17dp"
                     android:ems="10"
-                    android:hint="Ajouter commontaire"
+                    android:hint="Ajouter commantaire"
                     android:importantForAutofill="no"
                     android:padding="10dp"
                     android:paddingStart="13dp"

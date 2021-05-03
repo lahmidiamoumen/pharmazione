@@ -27,11 +27,14 @@
     <string name="menu_rename">Déconnexion</string>
     <string name="menu_ocr">Pharmazione</string>
 
-    <string name="intro_title1">POURQUOI pharmazione ?</string>
-    <string name="intro_desc1">Pharmazione est une application conçue par des pharmaciens\n pour des pharmaciens afin de créer un réseau solidaire\n et des opportunités commerciales.</string>
+    <string name="intro_title1"></string>
+    <string name="intro_desc1">L’application PHARMAZIONE est un espace de communication réservé exclusivement aux pharmaciens d’officine.\n</string>
 
-    <string name="intro_title2">Nos conditions</string>
-    <string name="intro_desc2"> Pharmazione est un espace réservé exclusivement aux pharmaciens d\’officine\n</string>
+    <string name="intro_title2">Notre mission</string>
+    <string name="intro_desc2"> *Connecter les acteurs du secteur pharmaceutique.\n *Créer un réseau solidaire entre pharmaciens d\'officine.\n *Offrir de nouvelles opportunités commerciales.\n</string>
+
+    <string name="intro_title4">Pourquoi nous rejoindre ?</string>
+    <string name="intro_desc3">*Communication dans un cadre professionnel, sécurisé et réglementé.\n *Un réseau professionnel plus large.\n *Une plus grande visibilité sur le marché.\n</string>
 
     <string name="cond"> MED dwak n\'accepte pas les échanges de psychotropes ⛔ \n\n
  pour faire un don, il faut mentionner la date d\'expiration et le conditionnement de chaque médicament.\n\n
