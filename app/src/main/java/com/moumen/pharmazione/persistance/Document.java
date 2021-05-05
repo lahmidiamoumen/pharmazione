@@ -43,8 +43,16 @@ public class Document {
 
     public Boolean satisfied;
 
+    public String token;
 
-//------------Methods--------
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+    //------------Methods--------
 
 
     public String getBody() {

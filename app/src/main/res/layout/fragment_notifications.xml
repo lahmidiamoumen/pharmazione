@@ -16,13 +16,11 @@
     android:fontFamily="@font/x_regular_norma"
     android:layout_gravity="center_vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:theme="@style/Theme.MedDwak.DayNight">
+    android:layout_height="match_parent">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginBottom="56dp"
-        android:visibility="gone"
         android:id="@+id/constraintLayout"
         android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
@@ -72,8 +70,8 @@
 
         <ImageView
             android:id="@+id/intro_img"
-            android:layout_width="wrap_content"
-            android:layout_height="222dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
@@ -82,10 +80,10 @@
             app:layout_constraintBottom_toTopOf="@+id/intro_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:src="@drawable/ic_intro3"
+            android:src="@drawable/ic_online_doctor_rafiki"
             android:contentDescription="@string/desc" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <com.google.android.material.button.MaterialButton
             android:gravity="center"
             android:id="@+id/btn"
             android:text="@string/rejoignez_nous"
@@ -94,14 +92,13 @@
             android:layout_margin="@dimen/_16dp"
             android:layout_marginBottom="20dp"
             android:padding="@dimen/album_dp_15"
-            app:icon="@drawable/ic_donation"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/signed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -429,7 +426,7 @@
                         android:gravity="center_horizontal"/>
 
                 </LinearLayout>
-                
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listView"
@@ -447,7 +444,7 @@
 
 
     </LinearLayout>
-    
+
     </ScrollView>
 
 </FrameLayout>

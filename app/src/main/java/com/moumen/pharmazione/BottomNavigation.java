@@ -22,11 +22,13 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -34,6 +36,9 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.moumen.pharmazione.persistance.Document;
+import com.moumen.pharmazione.persistance.User;
+import com.moumen.pharmazione.ui.home.ShowFragment;
 import com.moumen.pharmazione.ui.poster.PosterActivity;
 import com.moumen.pharmazione.utils.OnActivityListener;
 
@@ -42,6 +47,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+import static com.moumen.pharmazione.utils.Util.PATH;
 
 public class BottomNavigation extends AppCompatActivity implements NavController.OnDestinationChangedListener, OnActivityListener {
 
@@ -59,35 +65,40 @@ public class BottomNavigation extends AppCompatActivity implements NavController
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
+        Bundle bundle = getIntent().getExtras();
         sharedViewModel =  new ViewModelProvider(this).get(SharedViewModel.class);
-        sharedViewModel.getBadge().setValue(0);
+
+
+
+//        sharedViewModel.getBadge().setValue(0);
 
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 //        getWindow().setStatusBarColor(Color.rgb(249,249,249)
 
-        navView = findViewById(R.id.nav_view);
+            navView = findViewById(R.id.nav_view);
 
-        // Add New Item Activity
-        navView.getMenu()
-           .getItem(0)
-           .setOnMenuItemClickListener(o ->{
-                Intent intent = new Intent(this, PosterActivity.class);
-                startActivity(intent);
-                return true;
-            });
-        int firstPage = navView.getMenu().getItem(1).getItemId();
-        navView.setSelectedItemId(firstPage);
+            // Add New Item Activity
+            navView.getMenu()
+               .getItem(0)
+               .setOnMenuItemClickListener(o ->{
+                    Intent intent = new Intent(this, PosterActivity.class);
+                    startActivity(intent);
+                    return true;
+                });
+            int firstPage = navView.getMenu().getItem(1).getItemId();
+            navView.setSelectedItemId(firstPage);
 
 
-//        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
-        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM);
+    //        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM);
 
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+            navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        navController.addOnDestinationChangedListener(this);
-        NavigationUI.setupWithNavController(navView, navController);
+            navController.addOnDestinationChangedListener(this);
+            NavigationUI.setupWithNavController(navView, navController);
 
-        sendRegistrationToServer();
+            sendRegistrationToServer();
+
     }
 
     private void sendRegistrationToServer() {

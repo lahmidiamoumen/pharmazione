@@ -287,6 +287,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                   return;
               }
               document.setLocation(user.getWilaya());
+              document.setToken(user.getToken());
               document.setSatisfied(user.getSatisfied());
               db.collection(PATH)
                       .document(id)

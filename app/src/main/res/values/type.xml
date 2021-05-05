@@ -14,6 +14,14 @@
   -->
 <resources>
 
+    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <!-- No backgrounds, titles or window float -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
     <!--Typography-->
     <style name="TextAppearance.Reply.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
         <item name="fontFamily">@font/camphor_bold</item>

@@ -59,7 +59,7 @@ public class IntroActivity extends AppCompatActivity {
         final List<IntroItem> mList = new ArrayList<>();
         mList.add(new IntroItem( getResources().getString(R.string.intro_title1),
                                  getResources().getString(R.string.intro_desc1),
-                                 R.drawable.ic_intro1));
+                                 R.drawable.ic_information_tab_rafiki));
 
 
         mList.add(new IntroItem( getResources().getString(R.string.intro_title2),

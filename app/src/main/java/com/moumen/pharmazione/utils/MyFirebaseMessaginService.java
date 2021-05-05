@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +19,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.moumen.pharmazione.BottomNavigation;
 import com.moumen.pharmazione.R;
+
+import java.util.Map;
+import java.util.Random;
 
 public class MyFirebaseMessaginService extends FirebaseMessagingService {
 
@@ -49,20 +54,34 @@ public class MyFirebaseMessaginService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
+        //This will give you the Text property in the curl request(Sample Message):
+        Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
+        //This is where you get your click_action
+        Log.d(TAG, "Notification Click Action: " + remoteMessage.getNotification().getClickAction());
+
+        Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+        Map<String, String> data = remoteMessage.getData();
+
+        //you can get your text message here.
+        String text= data.get("id_publication");
+        System.out.println("id_publication: "+text);
+
+
+        sendNotification( remoteMessage.getData(),remoteMessage.getNotification().getBody());
 
         // Check if message contains a data payload.
-        if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use WorkManager.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow();
-            }
-
-        }
+//        if (remoteMessage.getData().size() > 0) {
+//            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+//
+//            if (/* Check if data needs to be processed by long running job */ true) {
+//                // For long-running tasks (10 seconds or more) use WorkManager.
+//                scheduleJob();
+//            } else {
+//                // Handle message within 10 seconds
+//                handleNow();
+//            }
+//
+//        }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
@@ -128,19 +147,28 @@ public class MyFirebaseMessaginService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(Map<String, String> messageBody, String message) {
+
+
         Intent intent = new Intent(this, BottomNavigation.class);
+        intent.putExtra("id_publication", messageBody.get("id_publication"));
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
+
+        Bitmap icon2 = BitmapFactory.decodeResource(getResources(),
+                R.drawable.le_clair_512);
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                        .setContentTitle(getString(R.string.fcm_message))
-                        .setContentText(messageBody)
+                        .setColor(getResources().getColor(R.color.colorPrimary))
+                        .setLargeIcon(icon2)
+                        .setContentTitle("Vous avez un nouveau message")
+                        .setContentText(message)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
@@ -151,11 +179,37 @@ public class MyFirebaseMessaginService extends FirebaseMessagingService {
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,
-                    "Channel human readable title",
+                    "General announcements",
                     NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
+
+    private void sendNotification2(Map<String, String> messageBody, String message) {
+        Intent intent = new Intent(this, BottomNavigation.class);
+        intent.putExtra("id_publication", messageBody.get("id_publication"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+        Bitmap icon2 = BitmapFactory.decodeResource(getResources(),
+                R.mipmap.ic_launcher);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Vous avez un nouveau message")
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setLargeIcon(icon2)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(new Random().nextInt() /* ID of notification */, notificationBuilder.build());
+    }
+
 }

@@ -197,7 +197,7 @@ public class ValidatePhone extends AppCompatActivity implements
         Context c = ValidatePhone.this;
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
         View mView = layoutInflaterAndroid.inflate(R.layout.dialog_phon_input, null);
-        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c);
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c,R.style.DialogTheme);
         alertDialogBuilderUserInput.setView(mView);
 
         TextInputEditText phone = mView.findViewById(R.id.phone_edit_text);

@@ -31,8 +31,17 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.color.MaterialColors;
@@ -41,6 +50,7 @@ import com.google.android.material.transition.MaterialElevationScale;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -52,11 +62,14 @@ import com.moumen.pharmazione.databinding.FragmentShowBinding;
 import com.moumen.pharmazione.persistance.Comment;
 import com.moumen.pharmazione.persistance.Document;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.moumen.pharmazione.utils.Util.EMPTY_IMAGE;
+import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.load;
 
 public class ShowFragment extends Fragment {
@@ -69,15 +82,18 @@ public class ShowFragment extends Fragment {
     private Drawable icon;
     private FirebaseFirestore db;
     private Context c;
+    private String token;
+    private String documentID;
 
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(@Nullable Bundle bundle) {
+        super.onCreate(bundle);
         setHasOptionsMenu(true);
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         prepareTransitions();
+
     }
 
     @Nullable
@@ -101,7 +117,8 @@ public class ShowFragment extends Fragment {
                 adapter.submitList(doc.path);
                 binding.attachmentRecyclerView.setAdapter(adapter);
             }
-
+            token = doc.token;
+            documentID = doc.documentID;
 
             binding.setEmail(doc);
             binding.setUrlEmpty(EMPTY_IMAGE);
@@ -262,6 +279,8 @@ public class ShowFragment extends Fragment {
         Toast.makeText(getContext(), s,Toast.LENGTH_SHORT).show();
     }
 
+
+
     private void sendMessage() {
         System.out.println("In Message");
         FirebaseUser user = mAuth.getCurrentUser();
@@ -275,6 +294,60 @@ public class ShowFragment extends Fragment {
             showToast("vide!");
             return;
         }
+
+
+        HashMap<String, Object> message = new HashMap<>();
+        HashMap<String, Object> notification = new HashMap<>();
+        HashMap<String, Object> android = new HashMap<>();
+        HashMap<String, String> click_action = new HashMap<>();
+        HashMap<String, String> data = new HashMap<>();
+
+        data.put("id_publication", documentID );
+
+        notification.put("body", content );
+        notification.put("title", "Vous avez un nouveau message" );
+        notification.put("click_action",click_action);
+
+        click_action.put("click_action", "OPEN_ACTIVITY_1");
+        click_action.put("color", "#7e55c3");
+
+        android.put("notification",click_action);
+
+        message.put("to", token);
+        message.put("notification", notification);
+        //message.put("android", android);
+        message.put("data", data);
+
+
+        JsonObjectRequest logInAPIRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
+                new JSONObject(message),
+                response -> {
+                    Log.d("Response", response.toString());
+
+                    Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
+                }, error -> {
+                    VolleyLog.d("Error", "Error: " + error.getMessage());
+                    Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }){
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        HashMap<String, String> headers = new HashMap<>();
+                        headers.put("Accept","application/json");
+                        headers.put("Content-Type","application/json");
+                        headers.put("Authorization", "key=AAAAepkVf_I:APA91bFsjCWEw2WnWmr97wFvlCb75cjC5Ecu0RFUY03paTo89L781PrzPomVzTAtnAl-2MV6qpsKMJVFwoclj6vcc2lAOP9nDHBe2fVKFObhNtovIH9WDtBsdpvtW_DJkghBgcoIqNOn");
+                        return headers;
+                    }
+                };
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(logInAPIRequest);
+
+
 
         binding.editText.setText("");
         Map<String, Object> updates = new HashMap<>();

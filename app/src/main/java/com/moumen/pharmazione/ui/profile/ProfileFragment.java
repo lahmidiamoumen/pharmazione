@@ -190,9 +190,9 @@ public class ProfileFragment extends Fragment {
         scrollView = binding.signed;
         binding.menu.setOnClickListener(this::onClick);
         constraintLayout =binding.constraintLayout;
-        binding.imageButton.setOnClickListener( e -> goToNotifications());
-        onBindNotification();
-        mListener.onBindNotification(binding.imageButton,getContext());
+        //binding.imageButton.setOnClickListener( e -> goToNotifications());
+//        onBindNotification();
+//        mListener.onBindNotification(binding.imageButton,getContext());
 
 
         Button mSignIn = binding.btn;

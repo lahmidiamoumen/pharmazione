@@ -61,10 +61,21 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(@Nullable Bundle sss) {
+        super.onCreate(sss);
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         FirebaseApp.initializeApp(getContext());
+
+        Bundle bundle = getActivity().getIntent().getExtras();
+        if (bundle != null) {
+            String someData = bundle.getString("id_publication");
+            Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(PATH).document(someData).get();
+            task.addOnSuccessListener(documentSnapshot -> {
+                Document user = documentSnapshot.toObject(Document.class);
+                sharedViewModel.getDocData().setValue(user);
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_showFragment);
+            });
+        }
 
 //        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 //        setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
@@ -308,8 +319,8 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     @Override
     public void onClick(View view, HorizantallContent item) {
 
-        this.setReenterTransition(  new MaterialElevationScale( false)
-                .setDuration(duration));
+//        this.setReenterTransition(  new MaterialElevationScale( false)
+//                .setDuration(duration));
 
         this.setExitTransition(  new MaterialElevationScale( true)
                 .setDuration(duration));

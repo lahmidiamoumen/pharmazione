@@ -73,7 +73,7 @@
 
                     <ImageButton
                         android:tint="?attr/colorControlNormal"
-                        android:elevation="3dp"
+                        android:elevation="4dp"
                         android:layout_margin="5dp"
                         android:id="@+id/filter"
                         android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                         android:contentDescription="@string/desc" />
                     <ImageButton
                         android:id="@+id/editText"
-                        android:elevation="3dp"
+                        android:elevation="4dp"
                         android:layout_width="45dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -140,11 +140,17 @@
         android:gravity="center"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/empty_search_list_icon"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@drawable/ic_id_card_rafiki" />
         <TextView
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Votre compte est n'est pas vérifié"
+            android:text="Votre inscription a été effectué avec succès."
         />
 
         <TextView
@@ -154,7 +160,7 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="L'équipe de Pharmazione va vérifier \n votre compte"
+            android:text="Vous recevez une réponse après \n vérification de vos données"
         />
     </LinearLayout>
 
@@ -165,6 +171,11 @@
         android:gravity="center"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <ImageView
+            android:id="@+id/s"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@drawable/ic_confirmed_rafiki" />
         <TextView
             android:gravity="center"
             android:layout_width="match_parent"
@@ -179,7 +190,7 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="S'authentifier ou créer un compte\n pour accéder aux publications"
+            android:text="Vous devez vous inscrire afin de consulter \n la liste des publications"
             />
     </LinearLayout>
 
