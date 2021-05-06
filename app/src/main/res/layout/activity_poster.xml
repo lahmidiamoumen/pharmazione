@@ -49,7 +49,7 @@
                     app:layout_constraintStart_toEndOf="@id/close_icon"
                     app:layout_constraintTop_toTopOf="parent"
                     android:background="@android:color/transparent"
-                    android:hint="Titre"
+                    android:hint="Ajouter un titre..."
                     android:textAppearance="?attr/textAppearanceHeadline5" />
 
                 <ImageButton

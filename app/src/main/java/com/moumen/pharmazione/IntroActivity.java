@@ -64,15 +64,15 @@ public class IntroActivity extends AppCompatActivity {
 
         mList.add(new IntroItem( getResources().getString(R.string.intro_title2),
                                  getResources().getString(R.string.intro_desc2),
-                                 R.drawable.ic_intro2));
+                                 R.drawable.ic_goal));
 
         mList.add(new IntroItem( getResources().getString(R.string.intro_title4),
                 getResources().getString(R.string.intro_desc3),
-                R.drawable.ic_intro3));
+                R.drawable.ic_intro2));
 
         mList.add(new IntroItem("",
                 "Tous ces avantages avec un accès 100% gratuit.\n",
-                R.drawable.ic_intro2));
+                R.drawable.ic_free));
 
         // setup viewpager
         screenPager =findViewById(R.id.screen_viewpager);

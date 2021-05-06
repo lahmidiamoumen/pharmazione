@@ -210,7 +210,7 @@
                         android:id="@+id/textComontair"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Commantaires"/>
+                        android:text="Commentaires"/>
 
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -264,7 +264,7 @@
                     android:minLines="1"
                     android:drawablePadding="17dp"
                     android:ems="10"
-                    android:hint="Ajouter commantaire"
+                    android:hint="Ajouter commentaire"
                     android:importantForAutofill="no"
                     android:padding="10dp"
                     android:paddingStart="13dp"

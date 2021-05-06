@@ -18,6 +18,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.moumen.pharmazione.BottomNavigation;
+import com.moumen.pharmazione.NotifComment;
 import com.moumen.pharmazione.R;
 
 import java.util.Map;
@@ -150,7 +151,7 @@ public class MyFirebaseMessaginService extends FirebaseMessagingService {
     private void sendNotification(Map<String, String> messageBody, String message) {
 
 
-        Intent intent = new Intent(this, BottomNavigation.class);
+        Intent intent = new Intent(this, NotifComment.class);
         intent.putExtra("id_publication", messageBody.get("id_publication"));
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

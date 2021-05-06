@@ -14,51 +14,49 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MedDwak.DayNight">
-
+        <activity android:name=".NotifComment">
+            <intent-filter>
+                <action android:name="OPEN_ACTIVITY_1" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <!-- android:name=".utils.MyFirebaseMessagingService" -->
-
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/le_clair_512" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
         <service
-            android:name="com.moumen.pharmazione.utils.MyFirebaseMessaginService"
+            android:name=".utils.MyFirebaseMessaginService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-
         <activity
-            android:name="com.moumen.pharmazione.BottomNavigation"
-            android:label="@string/title_activity_bottom_navigation" >
-            <intent-filter>
-                <action android:name="OPEN_ACTIVITY_1" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:name=".BottomNavigation"
+            android:label="@string/title_activity_bottom_navigation">
         </activity>
-
         <activity
-            android:name="com.moumen.pharmazione.BottomNav2Show"
+            android:name=".BottomNav2Show"
             android:label="Show" />
         <activity
-            android:name="com.moumen.pharmazione.ui.poster.ValidatePhone"
-            android:parentActivityName="com.moumen.pharmazione.ui.poster.PosterActivity"
+            android:name=".ui.poster.ValidatePhone"
+            android:parentActivityName=".ui.poster.PosterActivity"
             android:theme="@style/Theme.MedDwak.DayNight" />
         <activity
-            android:name="com.moumen.pharmazione.SearchableActivity"
-            android:parentActivityName="com.moumen.pharmazione.BottomNavigation"
+            android:name=".SearchableActivity"
+            android:parentActivityName=".BottomNavigation"
             android:theme="@style/Theme.MedDwak.DayNight">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -69,8 +67,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="com.moumen.pharmazione.SearchableMedecinActivity"
-            android:parentActivityName="com.moumen.pharmazione.ui.poster.PosterActivity"
+            android:name=".SearchableMedecinActivity"
+            android:parentActivityName=".ui.poster.PosterActivity"
             android:theme="@style/Theme.MedDwak.DayNight">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -81,20 +79,20 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="com.moumen.pharmazione.ProfileNotifActivity"
-            android:parentActivityName="com.moumen.pharmazione.BottomNavigation"
-            android:theme="@style/Theme.MedDwak.DayNight" >
+            android:name=".ProfileNotifActivity"
+            android:parentActivityName=".BottomNavigation"
+            android:theme="@style/Theme.MedDwak.DayNight">
             <intent-filter>
                 <action android:name="ProfileNotifActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.moumen.pharmazione.IntroActivity"
+            android:name=".IntroActivity"
             android:theme="@style/Theme.MedDwak.DayNight" />
         <activity
-            android:name="com.moumen.pharmazione.SplashScreen"
+            android:name=".SplashScreen"
             android:theme="@style/AppThemeSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -107,18 +105,15 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name="com.moumen.pharmazione.ui.poster.PosterActivity"
+            android:name=".ui.poster.PosterActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:parentActivityName="com.moumen.pharmazione.BottomNavigation"/> <!-- <meta-data -->
+            android:parentActivityName=".BottomNavigation" /> <!-- <meta-data -->
         <!-- android:name="com.google.android.geo.API_KEY" -->
         <!-- android:value="AIzaSyDyHgN3_5qTd0w4Gp7ldiLuiSC7DoNAaxY" /> -->
-
         <!--
  Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more.
         -->
-
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.moumen.pdfscanner.provider"

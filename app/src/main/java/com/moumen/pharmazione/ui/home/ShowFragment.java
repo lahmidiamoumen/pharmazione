@@ -61,6 +61,7 @@ import com.moumen.pharmazione.SharedViewModel;
 import com.moumen.pharmazione.databinding.FragmentShowBinding;
 import com.moumen.pharmazione.persistance.Comment;
 import com.moumen.pharmazione.persistance.Document;
+import com.moumen.pharmazione.persistance.User;
 
 import org.json.JSONObject;
 
@@ -84,6 +85,7 @@ public class ShowFragment extends Fragment {
     private Context c;
     private String token;
     private String documentID;
+    private String userID;
 
 
     @Override
@@ -117,7 +119,12 @@ public class ShowFragment extends Fragment {
                 adapter.submitList(doc.path);
                 binding.attachmentRecyclerView.setAdapter(adapter);
             }
-            token = doc.token;
+            userID = doc.userID;
+            Task<DocumentSnapshot> task =  db.collection("med-dwa-users").document(doc.userID).get();
+            task.addOnSuccessListener(documentSnapshot -> {
+                User user = documentSnapshot.toObject(User.class);
+                token = user.getToken();
+            });
             documentID = doc.documentID;
 
             binding.setEmail(doc);
@@ -296,56 +303,57 @@ public class ShowFragment extends Fragment {
         }
 
 
-        HashMap<String, Object> message = new HashMap<>();
-        HashMap<String, Object> notification = new HashMap<>();
-        HashMap<String, Object> android = new HashMap<>();
-        HashMap<String, String> click_action = new HashMap<>();
-        HashMap<String, String> data = new HashMap<>();
+        if(userID != null && !mAuth.getUid().equals(userID)) {
+            HashMap<String, Object> message = new HashMap<>();
+            HashMap<String, Object> notification = new HashMap<>();
+            HashMap<String, Object> android = new HashMap<>();
+            HashMap<String, String> click_action = new HashMap<>();
+            HashMap<String, String> data = new HashMap<>();
 
-        data.put("id_publication", documentID );
+            data.put("id_publication", documentID );
 
-        notification.put("body", content );
-        notification.put("title", "Vous avez un nouveau message" );
-        notification.put("click_action",click_action);
+            notification.put("body", content );
+            notification.put("title", mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication" );
+            notification.put("click_action",click_action);
 
-        click_action.put("click_action", "OPEN_ACTIVITY_1");
-        click_action.put("color", "#7e55c3");
+            click_action.put("click_action", "OPEN_ACTIVITY_1");
+            click_action.put("color", "#7e55c3");
 
-        android.put("notification",click_action);
+            android.put("notification",click_action);
 
-        message.put("to", token);
-        message.put("notification", notification);
-        //message.put("android", android);
-        message.put("data", data);
+            message.put("to", token);
+            message.put("notification", notification);
+            message.put("android", android);
+            message.put("data", data);
 
 
-        JsonObjectRequest logInAPIRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
-                new JSONObject(message),
-                response -> {
-                    Log.d("Response", response.toString());
+            JsonObjectRequest logInAPIRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
+                    new JSONObject(message),
+                    response -> {
+                        Log.d("Response", response.toString());
 
-                    Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
-                }, error -> {
+                        Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
+                    }, error -> {
                     VolleyLog.d("Error", "Error: " + error.getMessage());
-                    Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }){
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
 
-                }){
-                    @Override
-                    public String getBodyContentType() {
-                        return "application/json; charset=utf-8";
-                    }
-
-                    @Override
-                    public Map<String, String> getHeaders() {
-                        HashMap<String, String> headers = new HashMap<>();
-                        headers.put("Accept","application/json");
-                        headers.put("Content-Type","application/json");
-                        headers.put("Authorization", "key=AAAAepkVf_I:APA91bFsjCWEw2WnWmr97wFvlCb75cjC5Ecu0RFUY03paTo89L781PrzPomVzTAtnAl-2MV6qpsKMJVFwoclj6vcc2lAOP9nDHBe2fVKFObhNtovIH9WDtBsdpvtW_DJkghBgcoIqNOn");
-                        return headers;
-                    }
-                };
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        requestQueue.add(logInAPIRequest);
+                @Override
+                public Map<String, String> getHeaders() {
+                    HashMap<String, String> headers = new HashMap<>();
+                    headers.put("Accept","application/json");
+                    headers.put("Content-Type","application/json");
+                    headers.put("Authorization", "key=AAAAepkVf_I:APA91bFsjCWEw2WnWmr97wFvlCb75cjC5Ecu0RFUY03paTo89L781PrzPomVzTAtnAl-2MV6qpsKMJVFwoclj6vcc2lAOP9nDHBe2fVKFObhNtovIH9WDtBsdpvtW_DJkghBgcoIqNOn");
+                    return headers;
+                }
+            };
+            RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+            requestQueue.add(logInAPIRequest);
+        }
 
 
 

@@ -51,12 +51,11 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 
     private  long duration ;
     private SharedViewModel sharedViewModel;
-    private FirestorePagingAdapter adapter = null;
+    private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FragmentHomeBinding binding;
     private Query query;
     private FilterDialogFragment mFilterDialog;
-    private Query dbCollection;
     private boolean isVerified;
 
 
@@ -66,20 +65,9 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         FirebaseApp.initializeApp(getContext());
 
-        Bundle bundle = getActivity().getIntent().getExtras();
-        if (bundle != null) {
-            String someData = bundle.getString("id_publication");
-            Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(PATH).document(someData).get();
-            task.addOnSuccessListener(documentSnapshot -> {
-                Document user = documentSnapshot.toObject(Document.class);
-                sharedViewModel.getDocData().setValue(user);
-                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_showFragment);
-            });
-        }
-
 //        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 //        setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
-        dbCollection = FirebaseFirestore.getInstance().collection(PATH);
+        Query dbCollection = FirebaseFirestore.getInstance().collection(PATH);
         //query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
         query = dbCollection.whereEqualTo("satisfied",true).orderBy("scanned", Query.Direction.DESCENDING);
         adapter = getPaging();
