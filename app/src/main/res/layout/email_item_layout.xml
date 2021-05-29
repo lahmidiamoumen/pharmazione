@@ -16,6 +16,10 @@
             type="String" />
 
         <variable
+            name="timeAgo"
+            type="String" />
+
+        <variable
             name="handler"
             type="com.moumen.pharmazione.utils.ItemClickListener" />
     </data>
@@ -44,22 +48,61 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/grid_1">
 
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    app:layout_constraintEnd_toStartOf="@+id/sender_profile_image_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textSize="12sp"
+                        android:id="@+id/sender_text_view"
+                        android:textColor="?attr/colorOnSurface"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_marginStart="@dimen/grid_2"
+                        android:maxLines="1"
+                        android:text='@{item.userName}'
+                        tools:text="Google Express - 12m"/>
+
+                    <TextView
+                        android:textAppearance="?attr/helperText"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_marginStart="@dimen/album_dp_4"
+                        android:layout_marginEnd="@dimen/grid_2"
+                        android:maxLines="1"
+                        android:text='@{" • "+ timeAgo}'
+                        tools:text="Google Express - 12m"/>
+
+
+                </LinearLayout>
+
                 <TextView
-                    android:textAppearance="?attr/helperText"
+                    android:textAppearance="?attr/textAppearanceCaption"
                     android:textSize="11sp"
-                    android:id="@+id/sender_text_view"
+                    android:id="@+id/sender_text_view2"
                     android:textColor="?attr/colorOnSurface"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginTop="@dimen/album_dp_4"
                     android:layout_marginStart="@dimen/grid_2"
                     android:layout_marginEnd="@dimen/grid_2"
                     android:maxLines="1"
-                    android:text='@{item.userName+" • "+ item.scanned.toDate().toString()}'
+                    android:text="besoin déchange de médicament"
                     tools:text="Google Express - 12m"
                     app:layout_constraintEnd_toStartOf="@+id/sender_profile_image_view"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toBottomOf="@id/linearLayout"/>
 
                 <TextView
                     android:id="@+id/subject_text_view"
@@ -74,9 +117,9 @@
                     android:maxLines="1"
                     android:text="@{item.title}"
                     tools:text="Package Shipped!"
-                    app:layout_constraintEnd_toStartOf="@+id/sender_profile_image_view"
+                    app:layout_constraintEnd_toStartOf="@+id/sender_text_view2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sender_text_view"/>
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
 
                 <TextView
                     android:textAppearance="?attr/textAppearanceBody2"

@@ -46,10 +46,10 @@ import com.moumen.pharmazione.utils.ItemClickListener;
 import com.moumen.pharmazione.utils.MedClickListener;
 
 import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
 
 public class HomeFragment extends Fragment implements ItemClickListener, FilterDialogFragment.FilterListener, MedClickListener<HorizantallContent> {
 
-    private  long duration ;
     private SharedViewModel sharedViewModel;
     private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter = null;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -58,20 +58,18 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     private FilterDialogFragment mFilterDialog;
     private boolean isVerified;
 
-
     @Override
     public void onCreate(@Nullable Bundle sss) {
         super.onCreate(sss);
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         FirebaseApp.initializeApp(getContext());
 
-//        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
-//        setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
+//      sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+//      setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
         Query dbCollection = FirebaseFirestore.getInstance().collection(PATH);
         //query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
         query = dbCollection.whereEqualTo("satisfied",true).orderBy("scanned", Query.Direction.DESCENDING);
         adapter = getPaging();
-        duration = getResources().getInteger(R.integer.reply_motion_duration_large);
         mFilterDialog = FilterDialogFragment.getInstance();
         mFilterDialog.setCallback(this);
     }
@@ -79,6 +77,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater,container,false);
+        binding.swipeContainer.setRefreshing(savedInstanceState == null);
         return binding.getRoot();
     }
 
@@ -90,8 +89,8 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        postponeEnterTransition();
-//        startPostponedEnterTransition();
+        postponeEnterTransition();
+        startPostponedEnterTransition();
 
         //setHorizontalScroll();
 
@@ -103,12 +102,10 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             return;
         }
         swipeRefreshLayout = binding.swipeContainer;
-        swipeRefreshLayout.setRefreshing(true);
-        RecyclerView recyclerView = binding.listView;
-        recyclerView.setAdapter(adapter);
+        binding.listView.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
-
-        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection("med-dwa-users").document(mAuth.getUid()).get();
+        swipeRefreshLayout.setRefreshing(savedInstanceState == null);
+        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(users.getUid()).get();
         task.addOnSuccessListener(documentSnapshot -> {
             User user = documentSnapshot.toObject(User.class);
             assert user != null;
@@ -122,7 +119,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         });
     }
 
-    public void setUp(Query baseQuery){
+    public void setUp(Query baseQuery) {
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPrefetchDistance(10)
@@ -217,17 +214,11 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 //        this.setReenterTransition(  new MaterialElevationScale( true)
 //                .setDuration(duration));
 
-        this.setExitTransition(  new MaterialElevationScale( false)
-                .setDuration(duration));
+//        this.setExitTransition(  new MaterialElevationScale( false)
+//                .setDuration(duration));
 
-        FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
-                .addSharedElement(sliderLayout, sliderLayout.getTransitionName())
-                .build();
 
-        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_showFragment,
-                null,
-                null,
-                extras);
+        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_showFragment);
     }
 
 
@@ -252,7 +243,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 .build();
 
         FirestorePagingOptions<Document> options = new FirestorePagingOptions.Builder<Document>()
-                .setLifecycleOwner(this)
+                //.setLifecycleOwner(this)
                 .setQuery(query, config, Document.class)
                 .build();
 
@@ -310,34 +301,30 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 //        this.setReenterTransition(  new MaterialElevationScale( false)
 //                .setDuration(duration));
 
-        this.setExitTransition(  new MaterialElevationScale( true)
-                .setDuration(duration));
 
-        FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
-                .build();
+//        this.setExitTransition(  new MaterialElevationScale( true)
+//                .setDuration(duration));
 
-        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_specialityFrag,
-                null,
-                null,
-                extras);
+
+        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_specialityFrag);
     }
 
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        if (adapter != null) {
-//            adapter.startListening();
-//        }
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        if (adapter != null) {
-//            adapter.stopListening();
-//        }
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (adapter != null) {
+            adapter.startListening();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (adapter != null) {
+            adapter.stopListening();
+        }
+    }
 
 
 //    private void setHorizontalScroll() {

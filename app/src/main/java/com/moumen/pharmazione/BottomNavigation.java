@@ -40,7 +40,10 @@ import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.ui.home.ShowFragment;
 import com.moumen.pharmazione.ui.poster.PosterActivity;
+import com.moumen.pharmazione.utils.MediaLoader;
 import com.moumen.pharmazione.utils.OnActivityListener;
+import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +51,7 @@ import java.util.Objects;
 
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
 import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
 
 public class BottomNavigation extends AppCompatActivity implements NavController.OnDestinationChangedListener, OnActivityListener {
 
@@ -55,7 +59,6 @@ public class BottomNavigation extends AppCompatActivity implements NavController
     NavController navController;
     BottomNavigationView navView;
     BadgeDrawable badge = null;
-    BadgeDrawable badgeDrawable = null;
     SharedViewModel sharedViewModel;
     private ListenerRegistration registration;
 
@@ -65,13 +68,17 @@ public class BottomNavigation extends AppCompatActivity implements NavController
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
-        Bundle bundle = getIntent().getExtras();
         sharedViewModel =  new ViewModelProvider(this).get(SharedViewModel.class);
 
-
-
+//        Album.initialize(AlbumConfig.newBuilder(this)
+//                .setAlbumLoader(new MediaLoader())
+//                .build());
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getUid() != null) {
+            Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
+            task.addOnSuccessListener(documentSnapshot -> sharedViewModel.getUserData().setValue(documentSnapshot.toObject(User.class)));
+        }
 //        sharedViewModel.getBadge().setValue(0);
-
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 //        getWindow().setStatusBarColor(Color.rgb(249,249,249)
 
@@ -89,7 +96,7 @@ public class BottomNavigation extends AppCompatActivity implements NavController
             navView.setSelectedItemId(firstPage);
 
 
-    //        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
+            // AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
             AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM);
 
             navController = Navigation.findNavController(this, R.id.nav_host_fragment);

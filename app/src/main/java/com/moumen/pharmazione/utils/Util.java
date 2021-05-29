@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
@@ -33,7 +34,10 @@ public class Util {
     public final static int START_ACTIVIY_VALIDATION = 515;
     public final static int START_ACTIVIY_BESOIN = 512;
     public final static int START_ACTIVIY_DON = 511;
+    @SuppressLint("SimpleDateFormat")
+    public static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     public final static String PATH = "med-dwa-pharmazion";
+    public final static String PATH_USER = "med-dwa-users";
     public final static String EMPTY_IMAGE = "https://firebasestorage.googleapis.com/v0/b/data-278806.appspot.com/o/images%2Fempty.png?alt=media&token=7015119e-0356-4387-9f0f-3c807db65861";
 
     public  static  void load(ImageView imageView, String path){

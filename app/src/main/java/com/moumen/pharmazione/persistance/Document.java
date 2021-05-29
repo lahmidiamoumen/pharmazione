@@ -9,7 +9,9 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //@IgnoreExtraProperties
 @Keep
@@ -39,11 +41,31 @@ public class Document {
 
     public String userUrl;
 
+    public ArrayList<Map<String, String>> medicines;
+
+    public List<Map<String, String>> getMedicines() {
+        return medicines;
+    }
+
+    public void setMedicines(ArrayList<Map<String, String>> medicines) {
+        this.medicines = medicines;
+    }
+
     public String userName;
 
     public Boolean satisfied;
 
     public String token;
+
+    public Boolean isToChange;
+
+    public Boolean getToChange() {
+        return isToChange;
+    }
+
+    public void setToChange(Boolean toChange) {
+        isToChange = toChange;
+    }
 
     public String getToken() {
         return token;

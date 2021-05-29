@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,6 +13,7 @@ import android.text.Spanned;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -28,10 +32,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
@@ -45,25 +56,33 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.transition.MaterialElevationScale;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
+import com.moumen.pharmazione.BottomNavigation;
 import com.moumen.pharmazione.ProfileNotifActivity;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SharedViewModel;
 import com.moumen.pharmazione.databinding.CardviewProfileBinding;
 import com.moumen.pharmazione.databinding.FragmentNotificationsBinding;
 import com.moumen.pharmazione.persistance.Document;
+import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.ui.home.DocumentViewHolderProfile;
+import com.moumen.pharmazione.ui.home.ShowFragment;
 import com.moumen.pharmazione.ui.poster.ValidatePhone;
 import com.moumen.pharmazione.utils.OnActivityListener;
 
@@ -77,19 +96,23 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
+import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
 import static com.moumen.pharmazione.utils.Util.RC_SIGN_IN;
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = "SignedInActivity";
 
-    private ScrollView scrollView;
+    private CoordinatorLayout scrollView;
     private Query baseQuery;
-    private FirebaseUser user;
+    private User user;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Context context;
+    private Drawable icon;
     private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter;
     private FirebaseAuth mAuth;
     private List<AuthUI.IdpConfig> providers;
+    private String name = null;
 
     private SharedViewModel sharedViewModel;
     private long duration;
@@ -99,24 +122,78 @@ public class ProfileFragment extends Fragment {
 
     private ConstraintLayout constraintLayout;
 
-    private OnActivityListener mListener;
-
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-        try {
-            mListener = (OnActivityListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onViewSelected");
-        }
-    }
 
     public ProfileFragment() {}
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_scrolling, menu);
+        final View v = binding.toolbar.getChildAt(0);
+        icon = menu.findItem(R.id.action_settings).getIcon();
+
+        int clr = MaterialColors.getColor(context, R.attr.colorOnSurface, Color.BLACK);
+        icon.setColorFilter(clr, PorterDuff.Mode.SRC_ATOP);
+        if(v instanceof ImageButton) {
+            ((ImageButton)v).getDrawable().setColorFilter(clr, PorterDuff.Mode.SRC_IN);
+        }
+    }
+
+    private void toolBarIcon() {
+        Toolbar toolbar = binding.toolbar;
+        toolbar.setTitle(name == null ? "" : name);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+//        Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_ios_notifications));
+
+        AppBarLayout appBarLayout = binding.appBar;
+
+        final View v = toolbar.getChildAt(0);
+        final CollapsingToolbarLayout collapsingToolbar = binding.toolbarLayout;
+        collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.fui_transparent)); // transperent color = #00000000
+        collapsingToolbar.setContentScrimColor(MaterialColors.getColor(getContext(), R.attr.backgroundColor, Color.WHITE));
+
+        // int color1 = MaterialColors.getColor(getContext(), R.attr.colorOnSurface, Color.BLACK);
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = true;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if ((collapsingToolbar.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(collapsingToolbar)) && icon != null) {
+                    icon.setColorFilter(getResources().getColor(R.color.quantum_black_100), PorterDuff.Mode.SRC_ATOP);
+                    if (v instanceof ImageButton) {
+                        ((ImageButton) v).getDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.quantum_black_100), PorterDuff.Mode.SRC_IN);
+                    }
+                } else if (icon != null) {
+                    icon.setColorFilter(getResources().getColor(R.color.quantum_grey600), PorterDuff.Mode.SRC_ATOP);
+                    if (v instanceof ImageButton) {
+                        ((ImageButton) v).getDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.quantum_grey600), PorterDuff.Mode.SRC_IN);
+                    }
+                }
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbar.setTitle(mAuth.getCurrentUser().getDisplayName());
+                    isShow = true;
+                } else if (isShow) {
+                    collapsingToolbar.setTitle("");
+                    isShow = false;
+                }
+            }
+        });
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setHasOptionsMenu(true);
+
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
+        mAuth = FirebaseAuth.getInstance();
 
         providers = Arrays.asList(
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -124,16 +201,20 @@ public class ProfileFragment extends Fragment {
 
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
+        sharedViewModel.getUserData().observe(getActivity(), doc ->  {
+            user = doc;
+            name = doc.getmName();
+            dbCollection = FirebaseFirestore.getInstance().collection(PATH);
+            baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUserId());
+            setUpAdapter();
+        });
+
         //FireBase init
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        if(user == null) return;
+//        user = mAuth.getCurrentUser();
+//        if(user == null) return;
 
         // Queries
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        dbCollection = db.collection("med-dwa-pharmazion");
-        baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUid());
-        setUpAdapter();
+
     }
 
     @Override
@@ -158,13 +239,6 @@ public class ProfileFragment extends Fragment {
         popup.setOnMenuItemClickListener(this::onOptionsItemSelected);
     }
 
-    private void addListener(){
-        mListener.onAtachListener();
-    }
-
-    private void detachListener(){
-        mListener.onDetachListener();
-    }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -185,11 +259,11 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
-
+        //ViewCompat.setNestedScrollingEnabled(binding.listView, false);
 
         scrollView = binding.signed;
         binding.menu.setOnClickListener(this::onClick);
-        constraintLayout =binding.constraintLayout;
+        constraintLayout = binding.constraintLayout;
         //binding.imageButton.setOnClickListener( e -> goToNotifications());
 //        onBindNotification();
 //        mListener.onBindNotification(binding.imageButton,getContext());
@@ -200,7 +274,21 @@ public class ProfileFragment extends Fragment {
             setAdapt();
         }
         mSignIn.setOnClickListener(s -> signIn());
-        updateUI(mAuth.getCurrentUser());
+        updateUI(user);
+        //toolBarIcon();
+    }
+
+    public void toUserClass(){
+        final User[] user = new User[1];
+        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
+        task.addOnSuccessListener(documentSnapshot -> {
+            System.out.println("Succes user id"+mAuth.getUid());
+            user[0] = documentSnapshot.toObject(User.class);
+            assert user[0] != null;
+            this.user = user[0];
+            sharedViewModel.getUserData().setValue(user[0]);
+            updateUI(user[0]);
+        });
     }
 
     private void goToNotifications(){
@@ -252,7 +340,7 @@ public class ProfileFragment extends Fragment {
                 .build();
 
         FirestorePagingOptions<Document> options = new FirestorePagingOptions.Builder<Document>()
-                .setLifecycleOwner(this)
+                //.setLifecycleOwner(this)
                 .setQuery(baseQuery, config, Document.class)
                 .build();
 
@@ -276,13 +364,14 @@ public class ProfileFragment extends Fragment {
 
             @Override
             protected void onLoadingStateChanged(@NonNull LoadingState state) {
+                if(swipeRefreshLayout == null) return;
                 switch (state) {
                     case LOADING_INITIAL:
                         swipeRefreshLayout.setRefreshing(true);
                         break;
-                    case LOADING_MORE:
-                        swipeRefreshLayout.setRefreshing(true);
-                        break;
+//                    case LOADING_MORE:
+//                        swipeRefreshLayout.setRefreshing(true);
+//                        break;
                     case LOADED:
                         swipeRefreshLayout.setRefreshing(false);
                         break;
@@ -304,9 +393,14 @@ public class ProfileFragment extends Fragment {
     }
 
     @SuppressLint("RestrictedApi")
-    private void updateUI(FirebaseUser currentUser) {
+    private void updateUI(User currentUser) {
         //Show Sign In Button Only
         if(currentUser == null) {
+            if (mAuth.getCurrentUser() != null){
+                toUserClass();
+                return;
+            }
+            System.out.println("User is null");
             scrollView.setVisibility(View.GONE);
             constraintLayout.setVisibility(View.VISIBLE);
         }else{
@@ -317,11 +411,16 @@ public class ProfileFragment extends Fragment {
             populateProfile();
             if(adapter == null){
                 if( dbCollection == null) {
-                    dbCollection = FirebaseFirestore.getInstance().collection("med-dwa-pharmazion");
+                    dbCollection = FirebaseFirestore.getInstance().collection(PATH);
                 }
-                baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUid());
-                setUpAdapter();
-                setAdapt();
+                if(user.getUserId() == null || user.getUserId().isEmpty()) {
+                    showSandbar("Il y a un problem!");
+                } else {
+                    baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUserId());
+                    setUpAdapter();
+                    setAdapt();
+                    adapter.startListening();
+                }
             }
         }
     }
@@ -335,7 +434,7 @@ public class ProfileFragment extends Fragment {
                 .setMessage("Compléter votre profil")
                 .setPositiveButton("Configurer", (dialogInterface, i) ->
                     startActivityForResult(ValidatePhone.createIntent(context, null),521))
-                .setNegativeButton("Annuler", (dialogInterface, i) -> updateUI(mAuth.getCurrentUser()))
+                .setNegativeButton("Annuler", (dialogInterface, i) -> toUserClass())
                 .show();
     }
 
@@ -347,7 +446,7 @@ public class ProfileFragment extends Fragment {
            case 521: {
                 if (resultCode == RESULT_OK) {
                     adapter = null;
-                    updateUI(mAuth.getCurrentUser());
+                    toUserClass();
                 } else {
                     showDigAskPhone();
                 }
@@ -356,10 +455,10 @@ public class ProfileFragment extends Fragment {
             case RC_SIGN_IN: {
                 IdpResponse response = IdpResponse.fromResultIntent(data);
                 if (resultCode == RESULT_OK && response != null) {
-                    addListener();
+                    //addListener();
                     if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null &&
                             !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
-                        updateUI(mAuth.getCurrentUser());
+                        toUserClass();
                     else
                         startActivityForResult(ValidatePhone.createIntent(context, response), 521);
                 } else {
@@ -397,13 +496,14 @@ public class ProfileFragment extends Fragment {
     }
 
     private void signOut() {
-        detachListener();
+        //detachListener();
         adapter.stopListening();
         AuthUI.getInstance()
                 .signOut(context)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         updateUI(null);
+                        getActivity().getViewModelStore().clear();
                     } else {
                         Log.w(TAG, "signOut:failure", task.getException());
                         showSandbar(getResources().getString(R.string.sign_out_failed));
@@ -456,9 +556,9 @@ public class ProfileFragment extends Fragment {
             Map<String, Object> updates = new HashMap<>();
             updates.put("created", FieldValue.serverTimestamp());
             updates.put("content", body.getText().toString());
-            updates.put("userID", user.getUid());
-            updates.put("userURL", user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString());
-            updates.put("userName", Objects.requireNonNull(user.getDisplayName()));
+            updates.put("userID", user.getUserId());
+            updates.put("userURL", user.getmPhotoUri() == null ? "" : user.getmPhotoUri());
+            updates.put("userName", Objects.requireNonNull(user.getmName()));
             FirebaseFirestore.getInstance().collection("pharmazion-feedback").document().set(updates, SetOptions.merge())
                     .addOnSuccessListener(o-> Toast.makeText(getContext(),"Message envoyé", Toast.LENGTH_LONG).show())
                     .addOnFailureListener(o-> Toast.makeText(getContext(),"Une erreur s'est produite!", Toast.LENGTH_LONG).show());
@@ -491,11 +591,11 @@ public class ProfileFragment extends Fragment {
     public void onClick(Document item, View sliderLayout) {
         sharedViewModel.getDocData().setValue(item);
 
-        this.setReenterTransition(  new MaterialElevationScale( true)
-                .setDuration(duration));
-
-        this.setExitTransition(  new MaterialElevationScale( false)
-                .setDuration(duration));
+//        this.setReenterTransition(  new MaterialElevationScale( true)
+//                .setDuration(duration));
+//
+//        this.setExitTransition(  new MaterialElevationScale( false)
+//                .setDuration(duration));
 
 
 
@@ -503,10 +603,38 @@ public class ProfileFragment extends Fragment {
                 .addSharedElement(sliderLayout, sliderLayout.getTransitionName())
                 .build();
 
-        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_notifications_to_showFragment,
-                null,
-                null,
-                extras);
+        if(isAdded()) {
+            if(getActivity().getClass().getSimpleName().equals("BottomNavigation")){
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_notifications_to_showFragment,
+                        null,
+                        null,
+                        extras);
+            }else {
+                Fragment fragment = new ShowFragment();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(android.R.id.content, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (adapter != null) {
+            adapter.startListening();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (adapter != null) {
+            adapter.stopListening();
+        }
     }
 
 

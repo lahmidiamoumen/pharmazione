@@ -125,6 +125,7 @@ public class SearchableActivity extends AppCompatActivity {
         hash =  hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
 
         com.google.firebase.firestore.Query baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("title").startAt(hash).endAt(hash + '~');
+
         // This configuration comes from the Paging Support Library
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)

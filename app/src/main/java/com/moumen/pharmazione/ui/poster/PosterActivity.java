@@ -15,16 +15,20 @@ import android.widget.TextView;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SearchableMedecinActivity;
 import com.moumen.pharmazione.databinding.ActivityPosterBinding;
+import com.moumen.pharmazione.databinding.ComposeRecipientChipBinding;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.utils.ClickListener;
+import com.moumen.pharmazione.utils.MediaLoader;
 import com.moumen.pharmazione.utils.PermissionUtil;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
@@ -37,6 +41,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumConfig;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.api.widget.Widget;
 import com.yanzhenjie.album.widget.divider.Api21ItemDivider;
@@ -48,7 +53,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -75,6 +82,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     private AlbumAdapter mAdapter;
 
     private final Context c = this;
+    ArrayList<Map<String, String>> history = new ArrayList<>();
     View parentLayout;
     TextView dialogText = null;
     private ArrayList<AlbumFile> mAlbumFiles;
@@ -85,6 +93,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         binding = ActivityPosterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -97,9 +107,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         storage = FirebaseStorage.getInstance();
 
         providers = Arrays.asList(
-                new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build());
-
+                new AuthUI.IdpConfig.GoogleBuilder().build()/*,
+                new AuthUI.IdpConfig.FacebookBuilder().build()*/);
 
         parentLayout = findViewById(android.R.id.content);
 
@@ -127,7 +136,20 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         binding.recyclerView.setAdapter(mAdapter);
 
         binding.takeImagesOreden.setOnClickListener(o-> selectImage());
+        binding.switcher.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                binding.recipientScrollView.setVisibility(View.VISIBLE);
+                binding.recipientAddIcon.setVisibility(View.VISIBLE);
+                binding.recipientDivider5.setVisibility(View.VISIBLE);
+            }else {
+                binding.recipientScrollView.setVisibility(View.GONE);
+                binding.recipientAddIcon.setVisibility(View.GONE);
+                binding.recipientDivider5.setVisibility(View.GONE);
+            }
+        });
+
         binding.sendIcon.setOnClickListener(this);
+        binding.recipientAddIcon.setOnClickListener(o->openSearch());
         binding.closeIcon.setOnClickListener(v-> finish());
     }
 
@@ -171,7 +193,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                 .currentPosition(position)
                 .widget(
                         Widget.newDarkBuilder(this)
-                            .title("Select Images")
+                            .title("Choisissez entre images")
                             .build()
                 )
                 .onResult(result -> {
@@ -185,13 +207,9 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
-    public void openSearch(Boolean besoin){
+    public void openSearch(){
         Intent i = new Intent(this, SearchableMedecinActivity.class);
-        if(besoin)
-            startActivityForResult(i, START_ACTIVIY_BESOIN);
-        else{
-            startActivityForResult(i, START_ACTIVIY_DON);
-        }
+        startActivityForResult(i, START_ACTIVIY_BESOIN);
     }
 
 
@@ -219,7 +237,28 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
+        if( requestCode == START_ACTIVIY_BESOIN){
+                if(resultCode == RESULT_OK) {
+                    System.out.println("In chiups");
+                    Map<String, String> map = new HashMap<>();
+                    String medId = data.getStringExtra("id");
+                    String nom = data.getStringExtra("name");
+                    map.put("medId", medId);
+                    map.put("medName", nom);
+                    history.add(map);
+
+                    Chip chip =(Chip)getLayoutInflater().inflate(R.layout.compose_recipient_chip,binding.recipientChipGroup,false);
+                    chip.setText(nom);
+                    chip.setCloseIconVisible(true);
+                    chip.setOnCloseIconClickListener(o-> {
+                        history.remove(map);
+                        binding.recipientChipGroup.removeView(chip);
+
+                    });
+                    binding.recipientChipGroup.addView(chip);
+                }
+        }
+        else if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && response != null) {
                 if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
@@ -277,6 +316,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
       document.setUserID(mAuth.getUid());
       document.setUserName(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
       document.setUserUrl(Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString());
+      document.setToChange(binding.switcher.isChecked());
+      document.setMedicines(history);
       document.setDocumentID(id);
       if(mAlbumFiles != null && mAlbumFiles.size() > 0){
           task.addOnSuccessListener(documentSnapshot -> {

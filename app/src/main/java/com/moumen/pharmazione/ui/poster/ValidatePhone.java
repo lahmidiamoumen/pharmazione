@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -38,7 +39,9 @@ import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.databinding.ActivityPhoneValidateBinding;
 import com.moumen.pharmazione.persistance.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -206,7 +209,16 @@ public class ValidatePhone extends AppCompatActivity implements
         TextInputEditText address = mView.findViewById(R.id.address_edit_text);
         AutoCompleteTextView wilaya = mView.findViewById(R.id.wilaya_edit_text);
         TextInputEditText agrement = mView.findViewById(R.id.agrement_edit_text);
+        TextInputEditText founisseure = mView.findViewById(R.id.founisseure);
+        CheckBox checkBox1 = mView.findViewById(R.id.checkbox1);
+        CheckBox checkBox2 = mView.findViewById(R.id.checkbox2);
+        CheckBox checkBox3 = mView.findViewById(R.id.checkbox3);
         RadioGroup radioGroup = mView.findViewById(R.id.radioGroup);
+
+        List<Boolean> liste = new ArrayList<>();
+        liste.add(checkBox1.isClickable());
+        liste.add(checkBox2.isClickable());
+        liste.add(checkBox3.isClickable());
 
         String[] sele = new String[1];
         String[] cites = getResources().getStringArray(R.array.cities2);
@@ -226,6 +238,8 @@ public class ValidatePhone extends AppCompatActivity implements
                 initialData.put("addresseOfficine", address.getText().toString());
                 initialData.put("wilaya", wilaya.getText().toString());
                 initialData.put("agrement", agrement.getText().toString());
+                initialData.put("fournisseure", founisseure.getText().toString());
+                initialData.put("convention", liste);
                 initialData.put("type", radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
 
                 String st = phone.getText().toString().replaceFirst("0","+213");

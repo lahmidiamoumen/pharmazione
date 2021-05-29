@@ -13,7 +13,7 @@ import com.moumen.pharmazione.persistance.DonBesoin;
 import com.moumen.pharmazione.utils.MedClickListener;
 
 public class ProfileNotifAdapter extends ListAdapter<DonBesoin,ProfileNotifAdapter.MyViewHolder> {
-    private MedClickListener click;
+    private MedClickListener<DonBesoin> click;
 
 
     public ProfileNotifAdapter(MedClickListener<DonBesoin> cl, @NonNull DiffUtil.ItemCallback<DonBesoin> diffCallback) {
@@ -25,9 +25,9 @@ public class ProfileNotifAdapter extends ListAdapter<DonBesoin,ProfileNotifAdapt
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    class MyViewHolder extends RecyclerView.ViewHolder{
+    static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        private CardviewNotificationBinding binding ;
+        private final CardviewNotificationBinding binding ;
 
         MyViewHolder(CardviewNotificationBinding itemView, MedClickListener<DonBesoin> click) {
             super(itemView.getRoot());
@@ -48,7 +48,7 @@ public class ProfileNotifAdapter extends ListAdapter<DonBesoin,ProfileNotifAdapt
     public MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                      int viewType) {
         CardviewNotificationBinding binding =  CardviewNotificationBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
-        return new MyViewHolder(binding,click);
+        return new MyViewHolder(binding, click);
     }
 
     @Override

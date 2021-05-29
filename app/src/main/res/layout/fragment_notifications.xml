@@ -8,7 +8,7 @@
         <import type="android.text.TextUtils"/>
         <variable
             name="item"
-            type="com.google.firebase.auth.FirebaseUser" />
+            type="com.moumen.pharmazione.persistance.User" />
     </data>
 
 <FrameLayout
@@ -17,7 +17,6 @@
     android:layout_gravity="center_vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginBottom="56dp"
@@ -97,305 +96,361 @@
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:visibility="gone"
         android:id="@+id/signed"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:clipToPadding="false">
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/signed_"
-        android:clipToPadding="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16dp"
-        android:layout_marginEnd="@dimen/_16dp"
-        android:orientation="vertical">
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.AppBarLayout
+            app:contentScrim="?attr/backgroundColor"
+            android:background="@color/fui_transparent"
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="330dp">
+            android:layout_height="445dp"
+            android:fitsSystemWindows="true"
+            android:theme="@style/Theme.MedDwak.DayNight">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.052083332" />
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorOnPrimarySurface"
+                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+                app:toolbarId="@+id/toolbar">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.9557292" />
-
-
-
-            <ImageButton
-                android:layout_marginTop="@dimen/album_dp_20"
-                android:layout_width="@dimen/album_dp_45"
-                android:layout_height="@dimen/album_dp_45"
-                app:layout_constraintEnd_toEndOf="@+id/parameters"
-                app:layout_constraintStart_toStartOf="@+id/parameters"
-                app:layout_constraintTop_toTopOf="parent"
-                android:elevation="5dp"
-                android:id="@+id/menu"
-                android:padding="@dimen/album_dp_10"
-                android:layout_marginBottom="3dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:scaleType="fitCenter"
-                android:background="?attr/layout_drawable_picture"
-                android:tint="?attr/colorOnSurface"
-                android:src="@drawable/ic_nav_settings"
-                android:contentDescription="@string/desc" />
-            <TextView
-                android:id="@+id/parameters"
-                android:layout_marginTop="@dimen/album_dp_4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/parameters"
-                android:textAppearance="?attr/textAppearanceCaption"
-                app:layout_constraintEnd_toEndOf="@id/guideline2"
-                app:layout_constraintTop_toBottomOf="@id/menu"
-                tools:ignore="SmallSp" />
-
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:padding="@dimen/album_dp_10"
-                android:elevation="5dp"
-                android:tint="?attr/colorOnSurface"
-                android:clickable="true"
-                android:focusable="true"
-                android:scaleType="fitCenter"
-                android:layout_width="@dimen/album_dp_45"
-                android:layout_height="@dimen/album_dp_45"
-                android:layout_marginTop="@dimen/album_dp_20"
-                android:background="?attr/layout_drawable_picture"
-                android:src="@drawable/ic_ios_notifications"
-                app:layout_constraintEnd_toEndOf="@+id/notifications"
-                app:layout_constraintStart_toStartOf="@+id/notifications"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/album_dp_4"
-                android:text="Notifications"
-                android:id="@+id/notifications"
-                android:textAlignment="center"
-                android:textAppearance="?attr/textAppearanceCaption"
-                app:layout_constraintStart_toStartOf="@+id/guideline0"
-                app:layout_constraintTop_toBottomOf="@id/imageButton"
-                tools:ignore="SmallSp" />
-
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/view"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/album_dp_200"
-                android:layout_marginTop="116dp"
-                app:cardElevation="@dimen/album_dp_10"
-                app:cardCornerRadius="@dimen/_16"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/guideline0"
-                app:layout_constraintTop_toTopOf="parent" >
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/guideline00"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.5" />
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.052083332" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.9557292" />
 
 
-                    <LinearLayout
-                        android:gravity="center_vertical"
-                        android:id="@+id/textEmail"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toTopOf="@id/textView10"
-                        android:layout_marginTop="@dimen/_8"
-                        android:layout_marginStart="@dimen/_8"
+                <ImageButton
+                    android:id="@+id/menu"
+                    android:layout_width="@dimen/album_dp_45"
+                    android:layout_height="@dimen/album_dp_45"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="@dimen/album_dp_20"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="3dp"
+                    android:background="?attr/layout_drawable_picture"
+                    android:clickable="true"
+                    android:contentDescription="@string/desc"
+                    android:elevation="5dp"
+                    android:focusable="true"
+                    android:padding="@dimen/album_dp_10"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_nav_settings"
+                    android:tint="?attr/colorOnSurface"
+                    app:layout_constraintEnd_toEndOf="@+id/parameters"
+                    app:layout_constraintStart_toStartOf="@+id/parameters"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/parameters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/album_dp_4"
+                    android:text="@string/parameters"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    app:layout_constraintEnd_toEndOf="@id/guideline2"
+                    app:layout_constraintTop_toBottomOf="@id/menu"
+                    tools:ignore="SmallSp" />
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="@dimen/album_dp_45"
+                    android:layout_height="@dimen/album_dp_45"
+                    android:layout_marginTop="@dimen/album_dp_20"
+                    android:background="?attr/layout_drawable_picture"
+                    android:clickable="true"
+                    android:elevation="5dp"
+                    android:focusable="true"
+                    android:padding="@dimen/album_dp_10"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_ios_notifications"
+                    android:tint="?attr/colorOnSurface"
+                    app:layout_constraintEnd_toEndOf="@+id/notifications"
+                    app:layout_constraintStart_toStartOf="@+id/notifications"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/notifications"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/album_dp_4"
+                    android:text="Notifications"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    app:layout_constraintStart_toStartOf="@+id/guideline0"
+                    app:layout_constraintTop_toBottomOf="@id/imageButton"
+                    tools:ignore="SmallSp" />
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_marginHorizontal="@dimen/album_dp_10"
+                    android:id="@+id/view"
+                    android:layout_width="0dp"
+                    android:layout_height="260dp"
+                    android:layout_marginTop="116dp"
+                    app:cardCornerRadius="@dimen/_16"
+                    app:cardElevation="@dimen/album_dp_10"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/guideline0"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginHorizontal="@dimen/album_dp_20"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/album_dp_45"
-                        android:layout_marginBottom="@dimen/_8"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_marginStart="@dimen/_8"
-                            android:src="@drawable/ic_ios_mail"
-                            android:layout_marginEnd="@dimen/album_dp_20"
-                            android:layout_width="@dimen/album_dp_30"
-                            android:layout_height="@dimen/album_dp_30"
-                            android:contentDescription="@string/desc"
-                            app:tint="?attr/colorOnSurface"/>
-                        <LinearLayout
+                        android:layout_height="match_parent">
 
+                        <LinearLayout
+                            android:layout_marginHorizontal="@dimen/album_dp_10"
+                            android:id="@+id/textEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_8"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_gravity="center"
-                                android:textAppearance="?attr/textAppearanceHeadline4"
-                                tools:text="email@univ.dz"
-                                android:text='@{TextUtils.isEmpty(item.email) ? " vide" : item.email}'
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                />
-                            <TextView
-                                android:textAppearance="?attr/textAppearanceCaption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="#6D6D6D"
-                                android:text="@string/fui_email_hint"/>
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent">
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Informations de contact"
+                                android:textAppearance="?attr/textAppearanceHeadline5"
+                                android:textSize="16sp" />
+
+
+                            <LinearLayout
+                                android:id="@+id/textWialay"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/album_dp_45"
+                                android:layout_marginTop="@dimen/_8"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                app:layout_constraintBottom_toTopOf="@id/textView10"
+                                app:layout_constraintStart_toStartOf="parent">
+
+                                <ImageView
+                                    android:layout_width="@dimen/album_dp_20"
+                                    android:layout_height="@dimen/album_dp_20"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:layout_marginEnd="@dimen/album_dp_20"
+                                    android:contentDescription="@string/desc"
+                                    android:src="@drawable/ic_location_home"  />
+
+                                <LinearLayout
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text='@{TextUtils.isEmpty(item.wilaya) ? " vide" : item.wilaya}'
+                                        android:textAppearance="?attr/textAppearanceHeadline4"
+                                        tools:text="Alger" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/wilaya"
+                                        android:textAppearance="?attr/textAppearanceCaption"
+                                        android:textColor="#6D6D6D" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/textEmaila"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/album_dp_45"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                app:layout_constraintBottom_toTopOf="@id/textView10"
+                                app:layout_constraintStart_toStartOf="parent">
+
+                                <ImageView
+                                    android:layout_width="@dimen/album_dp_20"
+                                    android:layout_height="@dimen/album_dp_20"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:layout_marginEnd="@dimen/album_dp_20"
+                                    android:contentDescription="@string/desc"
+                                    android:src="@drawable/ic_ios_mail" />
+
+                                <LinearLayout
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text='@{TextUtils.isEmpty(item.mEmail) ? " vide" : item.mEmail}'
+                                        android:textAppearance="?attr/textAppearanceHeadline4"
+                                        tools:text="email@univ.dz" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/fui_email_hint"
+                                        android:textAppearance="?attr/textAppearanceCaption"
+                                        android:textColor="#6D6D6D" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:id="@+id/textView10"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/album_dp_45"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent">
+
+                                <ImageView
+                                    android:layout_width="@dimen/album_dp_20"
+                                    android:layout_height="@dimen/album_dp_20"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:layout_marginEnd="@dimen/album_dp_20"
+                                    android:contentDescription="@string/desc"
+                                    android:src="@drawable/ic_call_blue" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text='@{TextUtils.isEmpty(item.mPhoneNumber) ? " vide" : item.mPhoneNumber}'
+                                        android:textAppearance="?attr/textAppearanceHeadline4"
+                                        tools:text="066788787" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/fui_idp_name_phone"
+                                        android:textAppearance="?attr/textAppearanceCaption"
+                                        android:textColor="#6D6D6D" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="200dp"
+                                android:layout_gravity="center"
+                                android:layout_height="0.8dp"
+                                android:layout_marginTop="12dp"
+                                android:background="#717171" />
                         </LinearLayout>
 
-                    </LinearLayout>
 
-                    <View
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toTopOf="@id/textView10"
-                        android:layout_gravity="center"
-                        android:id="@+id/view4"
-                        android:layout_width="216dp"
-                        android:background="#535353"
-                        android:layout_height="0.5dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginTop="4dp"
-                        app:layout_constraintEnd_toEndOf="parent" />
-
-
-
-                    <LinearLayout
-                        android:gravity="center_vertical"
-                        android:id="@+id/textView10"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:layout_marginTop="@dimen/_16"
-                        android:layout_marginStart="@dimen/_8"
-                        android:layout_marginBottom="@dimen/_8"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/album_dp_45"
-                        android:orientation="horizontal">
-                        <ImageView
-                            app:tint="?attr/colorOnSurface"
-                            android:layout_marginStart="@dimen/_8"
-                            android:src="@drawable/ic_ios_call"
-                            android:layout_marginEnd="@dimen/album_dp_20"
-                            android:layout_width="@dimen/album_dp_30"
-                            android:layout_height="@dimen/album_dp_30"
-                            android:contentDescription="@string/desc" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/user_display_name"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_gravity="center"
-                                android:textAppearance="?attr/textAppearanceHeadline4"
-                                tools:text="066788787"
-                                android:text='@{TextUtils.isEmpty(item.phoneNumber) ? " vide" : item.phoneNumber}'
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                />
-                            <TextView
-                                android:textAppearance="?attr/textAppearanceCaption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="#6D6D6D"
-                                android:text="@string/fui_idp_name_phone"/>
+                            android:layout_marginTop="@dimen/album_dp_45"
+                            android:fontFamily="@font/x_regular_thin"
+                            android:text='@{TextUtils.isEmpty(item.mName) ? " vide" : item.mName}'
+                            android:textAppearance="?attr/textAppearanceHeadline4"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.497"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Lahmidi Moumen" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                    </LinearLayout>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    app:cardCornerRadius="35dp"
+                    app:cardElevation="@dimen/_16"
+                    app:layout_constraintBottom_toTopOf="@+id/view"
+                    app:layout_constraintDimensionRatio="w,1:1"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                    app:layout_constraintStart_toStartOf="@+id/guideline0"
+                    app:layout_constraintTop_toTopOf="@+id/view">
 
-                    <TextView
-                        android:layout_marginBottom="@dimen/_16dp"
-                        android:textAppearance="?attr/textAppearanceHeadline4"
-                        tools:text="066788787"
-                        android:text='@{TextUtils.isEmpty(item.phoneNumber) ? " vide" : item.phoneNumber}'
-                        app:layout_constraintStart_toEndOf="@+id/textView10"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:id="@+id/user_phone_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp" />
+                    <ImageView
+                        android:id="@+id/user_profile_picture"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:contentDescription="@string/profile_picture_content_desc"
+                        android:src="@drawable/ic_user_home"
+                        app:glideCenterCrop="@{true}"
+                        app:glideCircularCrop="@{true}"
+                        app:url="@{item.mPhotoUri}" />
+                </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:id="@+id/user_display_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/album_dp_45"
-                        android:fontFamily="@font/x_regular_thin"
-                        android:text='@{TextUtils.isEmpty(item.displayName) ? " vide" : item.displayName}'
-                        android:textAppearance="?attr/textAppearanceHeadline4"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.497"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Lahmidi Moumen" />
+                <ImageView
+                    android:id="@+id/recipient_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/album_dp_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recycler_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:background="@drawable/divider"
+                    app:backgroundTint="@color/color_on_surface_divider"
+                    android:contentDescription="@string/desc" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/Theme.MedDwak.DayNight"/>
 
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardElevation="@dimen/_16"
-                app:cardCornerRadius="35dp"
-                android:padding="@dimen/_8"
-                android:layout_alignParentTop="true"
-                app:layout_constraintDimensionRatio="w,1:1"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintStart_toStartOf="@+id/guideline0"
-                app:layout_constraintBottom_toTopOf="@+id/view"
-                app:layout_constraintTop_toTopOf="@+id/view"
-                android:layout_alignParentEnd="true">
-            <ImageView
-                app:url="@{item.photoUrl.toString()}"
-                app:glideCircularCrop="@{true}"
-                app:glideCenterCrop="@{true}"
-                android:id="@+id/user_profile_picture"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:src="@drawable/ic_user_home"
-                android:contentDescription="@string/profile_picture_content_desc" />
-            </com.google.android.material.card.MaterialCardView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-        <ImageView
-            android:id="@+id/recipient_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="@dimen/album_dp_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recycler_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="@dimen/grid_1"
-            android:layout_marginHorizontal="@dimen/grid_2"
-            android:background="@drawable/divider"
-            app:backgroundTint="@color/color_on_surface_divider"
-            android:contentDescription="@string/desc" />
-
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_marginBottom="@dimen/album_dp_50"
-            android:id="@+id/swipeContainer">
+            android:id="@+id/swipeContainer"
+            android:layout_height="match_parent">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -435,17 +490,12 @@
                     android:clipToPadding="false"
                     android:paddingBottom="8dp"
                     app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                     tools:listitem="@layout/cardview_profile" />
             </FrameLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
-
-    </LinearLayout>
-
-    </ScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </FrameLayout>
 

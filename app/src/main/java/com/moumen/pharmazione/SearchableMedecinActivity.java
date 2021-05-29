@@ -179,7 +179,6 @@ public class SearchableMedecinActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra("id", item.documentId);
         intent.putExtra("name", item.nom);
-        intent.putExtra("path", item.image);
         setResult(RESULT_OK, intent);
         finish();
     }

@@ -21,6 +21,11 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        Album.initialize(AlbumConfig.newBuilder(this)
+                .setAlbumLoader(new MediaLoader())
+                .build());
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.
             String channelId = getString(R.string.default_notification_channel_id);
@@ -30,9 +35,7 @@ public class SplashScreen extends AppCompatActivity {
                     channelName, NotificationManager.IMPORTANCE_LOW));
         }
 
-        Album.initialize(AlbumConfig.newBuilder(this)
-                .setAlbumLoader(new MediaLoader())
-                .build());
+
 
         if (restorePrefData()) {
 

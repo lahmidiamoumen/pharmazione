@@ -11,15 +11,15 @@ import com.google.firebase.firestore.DocumentId;
 public class User {
 
     @DocumentId
-    private  String userId;
-    private  String mEmail;
-    private  String mPhoneNumber;
-    private  String mName;
-    private  String mPhotoUri;
+    public  String userId;
+    public  String mEmail;
+    public  String mPhoneNumber;
+    public  String mName;
+    public  String mPhotoUri;
     private  String token;
-    private  String wilaya;
+    public  String wilaya;
     private  String type;
-    private Boolean satisfied;
+    public Boolean satisfied;
 
     public Boolean getSatisfied() {
         return satisfied;

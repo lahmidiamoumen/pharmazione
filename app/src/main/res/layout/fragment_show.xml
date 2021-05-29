@@ -7,6 +7,10 @@
         <variable
             name="urlEmpty"
             type="String" />
+
+        <variable
+            name="timeAgo"
+            type="String" />
         <variable
             name="email"
             type="com.moumen.pharmazione.persistance.Document" />
@@ -109,7 +113,7 @@
                         app:layout_constraintEnd_toStartOf="@+id/sender_profile_image_view"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/subject_text_view"
-                        android:text='@{email.userName+" • "+ email.scanned.toDate().toLocaleString()}'
+                        android:text='@{email.userName+" • "+ timeAgo}'
                         android:textAppearance="?attr/textAppearanceBody2"
                         tools:text="Ali Connors -- 12m" />
 
@@ -127,10 +131,11 @@
                         tools:text="adrar"
                         android:textAppearance="?attr/textAppearanceCaption"/>
 
-                    <ImageView
+                    <ImageButton
                         android:layout_marginTop="@dimen/_8"
                         android:layout_marginEnd="@dimen/_16"
                         android:id="@+id/sender_profile_image_view"
+                        android:background="@color/fui_transparent"
                         android:layout_width="42dp"
                         android:layout_height="42dp"
                         android:contentDescription="@string/desc"
@@ -163,13 +168,57 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/body_text_view"
+                        app:layout_constraintTop_toBottomOf="@+id/recipient_scroll_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="@dimen/album_dp_10"
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:background="@drawable/divider"
                         app:backgroundTint="@color/color_on_surface_divider"
                         android:contentDescription="@string/desc" />
+
+                    <ImageView
+                        android:layout_marginTop="@dimen/album_dp_20"
+                        android:id="@+id/recipient_divider2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recycler_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:background="@drawable/divider"
+                        app:backgroundTint="@color/color_on_surface_divider"
+                        android:contentDescription="@string/desc" />
+
+
+                    <HorizontalScrollView
+                        android:visibility="gone"
+                        android:id="@+id/recipient_scroll_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/body_text_view"
+                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_marginEnd="@dimen/grid_2"
+                        android:minHeight="48dp"
+                        android:paddingVertical="@dimen/grid_0_25"
+                        android:clipToPadding="false"
+                        android:scrollbars="none"
+                        android:requiresFadingEdge="horizontal"
+                        android:fadingEdgeLength="@dimen/grid_3"
+                        android:overScrollMode="never"
+                        android:contentDescription="@string/desc">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/recipient_chip_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/grid_2"
+                            android:scrollbars="none"/>
+
+                    </HorizontalScrollView>
+
+
 
                     <TextView
                         android:paddingHorizontal="@dimen/grid_2"

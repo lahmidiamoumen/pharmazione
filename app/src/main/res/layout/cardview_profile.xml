@@ -11,6 +11,9 @@
             name="item"
             type="com.moumen.pharmazione.persistance.Document"/>
 
+        <variable
+            name="timeAgo"
+            type="String" />
 
         <variable
             name="handler"
@@ -41,8 +44,6 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/grid_1">
 
-
-
                 <TextView
                     android:id="@+id/subject_text_view"
                     android:layout_width="0dp"
@@ -56,6 +57,7 @@
                     android:text="@{item.title}"
                     android:textSize="@dimen/album_sp_18"
                     tools:text="Package Shipped!"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
 
                 <TextView
@@ -100,7 +102,7 @@
                     android:contentDescription="@string/description"
                     android:maxLines="1"
                     android:gravity="end"
-                    android:text='@{item.scanned.toDate().toString()}'
+                    android:text='@{timeAgo}'
                     android:textAppearance="?attr/helperText"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/subject_text_view"

@@ -45,11 +45,45 @@
                 android:text="pharmacien assistant"/>
         </RadioGroup>
 
+        <TextView
+            android:layout_marginTop="@dimen/_8"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:layout_marginHorizontal="26dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Convention"/>
+
+        <LinearLayout
+            android:layout_marginHorizontal="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/checkbox1"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CNAS"/>
+            <CheckBox
+                android:layout_weight="1"
+                android:id="@+id/checkbox2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CASNOS"/>
+            <CheckBox
+                android:id="@+id/checkbox3"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MILITAIRE"/>
+        </LinearLayout>
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
+            app:startIconDrawable="@drawable/ic_person"
             android:layout_height="wrap_content"
             style="@style/TextInput"
             android:hint="Nom de l’officine"
@@ -69,6 +103,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
+            app:startIconDrawable="@drawable/ic_selection"
             android:layout_height="wrap_content"
             style="@style/TextInput"
             android:hint="Numéro d’agrément"
@@ -127,6 +162,25 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
+            app:startIconDrawable="@drawable/ic_lots"
+            android:layout_height="wrap_content"
+            style="@style/TextInput"
+            android:hint="Vos fournisseurs"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/founisseure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="textPersonName"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
             app:counterEnabled="true"
             app:counterMaxLength="10"
             android:layout_height="wrap_content"
@@ -152,7 +206,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextInput"
-            app:startIconDrawable="@drawable/ic_location_home"
+            app:startIconDrawable="@drawable/ic_place_white_24px"
             android:hint="Adresse de votre officine"
             app:endIconMode="clear_text">
 
@@ -171,7 +225,7 @@
             android:id="@+id/poster"
             app:icon="@drawable/ic_check"
             android:drawableTint="@color/white"
-            android:layout_width="140dp"
+            android:layout_width="165dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"

@@ -10,6 +10,7 @@ import com.moumen.pharmazione.persistance.DonBesoin;
 import com.moumen.pharmazione.persistance.HorizantallContent;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.moumen.pharmazione.persistance.User;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class SharedViewModel extends ViewModel {
     private MutableLiveData<Integer> badge;
     private MutableLiveData<EventListener<QuerySnapshot>> eventListenerMutableLiveData;
     private MutableLiveData<Document> doc;
+    private MutableLiveData<User> user;
     private MutableLiveData<HorizantallContent> hc;
     private MutableLiveData<Doctors> doctors;
     private LiveData<List<DonBesoin>> donBesoin;
@@ -40,6 +42,13 @@ public class SharedViewModel extends ViewModel {
             doc = new MutableLiveData<>();
         }
         return doc;
+    }
+
+    public MutableLiveData<User> getUserData() {
+        if (user == null) {
+            user = new MutableLiveData<>();
+        }
+        return user;
     }
 
     public MutableLiveData<HorizantallContent> getHcData() {

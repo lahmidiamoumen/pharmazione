@@ -2,11 +2,13 @@ package com.moumen.pharmazione.ui.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +46,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.transition.MaterialContainerTransform;
 import com.google.android.material.transition.MaterialElevationScale;
@@ -58,6 +61,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SharedViewModel;
+import com.moumen.pharmazione.ShowProfileActiv;
 import com.moumen.pharmazione.databinding.FragmentShowBinding;
 import com.moumen.pharmazione.persistance.Comment;
 import com.moumen.pharmazione.persistance.Document;
@@ -65,6 +69,7 @@ import com.moumen.pharmazione.persistance.User;
 
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -91,12 +96,13 @@ public class ShowFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
+
         setHasOptionsMenu(true);
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        prepareTransitions();
-
+        //prepareTransitions();
     }
+
 
     @Nullable
     @Override
@@ -125,19 +131,38 @@ public class ShowFragment extends Fragment {
                 User user = documentSnapshot.toObject(User.class);
                 token = user.getToken();
             });
+
             documentID = doc.documentID;
 
+            binding.senderProfileImageView.setOnClickListener(o->{
+                Intent mIntent = new Intent(c, ShowProfileActiv.class);
+                mIntent.putExtra("id_user", doc.userID);
+                startActivity(mIntent);
+            });
+            String niceDateStr = DateUtils.getRelativeTimeSpanString(doc.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
+            binding.setTimeAgo(niceDateStr);
             binding.setEmail(doc);
             binding.setUrlEmpty(EMPTY_IMAGE);
+            if(doc.medicines != null && doc.medicines.size() > 0){
+                binding.recipientScrollView.setVisibility(View.VISIBLE);
+                for (Map<String,String> map : doc.medicines) {
+                    String nom = map.get("medName");
+                    Chip chip =(Chip)getLayoutInflater().inflate(R.layout.compose_recipient_chip,binding.recipientChipGroup,false);
+                    chip.setText(nom);
+                    binding.recipientChipGroup.addView(chip);
+                }
+            }
+
             binding.itemSendButtonId.setOnClickListener(o->sendMessage());
-            dbCollection = db.collection("med-dwa-pharmazion")
+            dbCollection = db.collection(PATH)
                     .document(doc.documentID)
                     .collection("message");
             setUpComments(dbCollection.orderBy("created", Query.Direction.DESCENDING).limit(30));
         });
+
         binding.navigationIcon.setOnClickListener(o-> getActivity().onBackPressed());
         toolBarIcon();
-        startTransitions();
+        //startTransitions();
     }
 
 
@@ -187,30 +212,15 @@ public class ShowFragment extends Fragment {
 
     private void prepareTransitions() {
         postponeEnterTransition();
-        Context cn = getContext();
-        assert cn != null;
-        @SuppressLint("Recycle")
-        int array = cn.obtainStyledAttributes(new int[]{R.attr.motionInterpolatorPersistent}).getResourceId(0, android.R.interpolator.fast_out_slow_in);
-        Interpolator interpolator =  AnimationUtils.loadInterpolator(cn,array);
 
-        @SuppressLint("Recycle")
-        int array2 = cn.obtainStyledAttributes(new int[]{R.attr.colorSurface}).getColor(0, Color.MAGENTA);
 
-        MaterialContainerTransform mat = new MaterialContainerTransform();
-        mat.setDuration(duration);
-        mat.setDrawingViewId(R.id.navigation_home);
-        mat.setScrimColor(Color.TRANSPARENT);
-        mat.setAllContainerColors(array2);
-        mat.setInterpolator(interpolator);
-        setSharedElementEnterTransition(mat);
+        this.setEnterTransition( new MaterialElevationScale(false)
+                .setDuration(duration));
 
-        this.setEnterTransition(  new MaterialElevationScale(false)
-                .setDuration(duration).setInterpolator(interpolator));
+        this.setReturnTransition( new MaterialContainerTransform()
+                .setDuration(duration));
 
-        this.setReturnTransition(  new MaterialContainerTransform()
-                .setDuration(duration).setInterpolator(interpolator));
-
-//        this.setExitTransition(  new MaterialElevationScale( false)
+//        this.setExitTransition( new MaterialElevationScale( false)
 //                .setDuration(duration));
 //
 //        this.setExitTransition(  new MaterialSharedAxis(MaterialSharedAxis.Z, false)
@@ -296,14 +306,14 @@ public class ShowFragment extends Fragment {
             return;
         }
 
-        String content = binding.editText.getText().toString();
+        String content = Objects.requireNonNull(binding.editText.getText()).toString();
         if(content.isEmpty()) {
             showToast("vide!");
             return;
         }
 
 
-        if(userID != null && !mAuth.getUid().equals(userID)) {
+        if(userID != null && mAuth.getUid() != null && !mAuth.getUid().equals(userID)) {
             HashMap<String, Object> message = new HashMap<>();
             HashMap<String, Object> notification = new HashMap<>();
             HashMap<String, Object> android = new HashMap<>();
@@ -314,7 +324,7 @@ public class ShowFragment extends Fragment {
 
             notification.put("body", content );
             notification.put("title", mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication" );
-            notification.put("click_action",click_action);
+            notification.put("click_action","OPEN_ACTIVITY_1");
 
             click_action.put("click_action", "OPEN_ACTIVITY_1");
             click_action.put("color", "#7e55c3");
@@ -326,13 +336,11 @@ public class ShowFragment extends Fragment {
             message.put("android", android);
             message.put("data", data);
 
-
             JsonObjectRequest logInAPIRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
                     new JSONObject(message),
                     response -> {
                         Log.d("Response", response.toString());
-
-                        Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
                     }, error -> {
                     VolleyLog.d("Error", "Error: " + error.getMessage());
                     //Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -354,8 +362,6 @@ public class ShowFragment extends Fragment {
             RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
             requestQueue.add(logInAPIRequest);
         }
-
-
 
         binding.editText.setText("");
         Map<String, Object> updates = new HashMap<>();
