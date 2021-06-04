@@ -22,15 +22,12 @@
         android:id="@+id/specialityFrag"
         android:name="com.moumen.pharmazione.ui.speciality.SpecialityFragment"
         android:label="SpecialityFragment">
-        <action
-            android:id="@+id/action_specialityFrag_to_doctorsFragment"
-            app:destination="@id/doctorsFrag" />
     </fragment>
 
     <fragment
-        android:id="@+id/doctorsFrag"
+        android:id="@+id/navigation_members"
         android:name="com.moumen.pharmazione.ui.doctors.DoctorsFragment"
-        android:label="DoctorsFragment">
+        android:label="Members">
         <action
             android:id="@+id/action_doctorsFrag_to_doctorsShowFrag"
             app:destination="@id/doctorsShowFrag" />

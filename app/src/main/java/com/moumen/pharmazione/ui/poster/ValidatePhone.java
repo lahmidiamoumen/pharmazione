@@ -3,6 +3,8 @@ package com.moumen.pharmazione.ui.poster;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
@@ -13,13 +15,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.util.ExtraConstants;
@@ -34,11 +40,21 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.jkb.vcedittext.VerificationCodeEditText;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.databinding.ActivityPhoneValidateBinding;
 import com.moumen.pharmazione.persistance.User;
+import com.moumen.pharmazione.utils.ClickListener;
+import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumFile;
+import com.yanzhenjie.album.api.widget.Widget;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +62,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class ValidatePhone extends AppCompatActivity implements
+import id.zelory.compressor.Compressor;
+
+import static com.moumen.pharmazione.utils.Util.PATH;
+
+public class ValidatePhone extends AppCompatActivity implements ClickListener,
         View.OnClickListener {
 
     private static final String TAG = "PhoneAuthActivity";
@@ -56,7 +76,12 @@ public class ValidatePhone extends AppCompatActivity implements
     private static final int STATE_VERIFY_FAILED = 3;
     private static final int STATE_VERIFY_SUCCESS = 4;
     private static final int STATE_SIGNIN_FAILED = 5;
+    LinearLayout linearLayout;
+    RecyclerView relativeLayout;
     private FirebaseAuth mAuth;
+    FirebaseStorage storage;
+    private ArrayList<AlbumFile> mAlbumFiles;
+    AlbumAdapter mAdapter;
 
 
     AlertDialog alertDialogPhone;
@@ -103,6 +128,8 @@ public class ValidatePhone extends AppCompatActivity implements
         mPhoneNumberField.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         mVerificationField = binding.fieldVerificationCode;
+
+        storage = FirebaseStorage.getInstance();
 
         mVerifyButton = binding.buttonVerifyPhone;
         mResendButton = binding.buttonResend;
@@ -188,13 +215,76 @@ public class ValidatePhone extends AppCompatActivity implements
         finish();
     }
 
+    private String lowerToUpper( String hash) {
+        return hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
+    }
+
     void createUser(FirebaseUser mUser){
-        User user = new User(mUser.getEmail(),mUser.getPhoneNumber(),mUser.getDisplayName(),mUser.getPhotoUrl().toString());
+        User user = new User(mUser.getEmail(),mUser.getPhoneNumber(),lowerToUpper(mUser.getDisplayName()) ,mUser.getPhotoUrl().toString());
         db.collection("med-dwa-users").document(mUser.getUid()).set(user)
                 .addOnSuccessListener(aVoid2 -> initDialogPhone())
                 .addOnFailureListener(e -> showSandbar(R.string.authentication_error));
     }
 
+    private void previewImage(int position) {
+        if (mAlbumFiles != null || mAlbumFiles.size() != 0) {
+            Album.galleryAlbum(this)
+                    .checkable(true)
+                    .checkedList(mAlbumFiles)
+                    .currentPosition(position)
+                    .widget(
+                            Widget.newDarkBuilder(this)
+                                    .title("Choisissez entre images")
+                                    .build()
+                    )
+                    .onResult(result -> {
+                        mAlbumFiles = result;
+                        mAdapter.notifyDataSetChanged(mAlbumFiles);
+                        relativeLayout.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
+                        linearLayout.setVisibility( result.size() > 0 ? View.GONE : View.VISIBLE);
+                    })
+                    .start();
+        }
+    }
+
+    private void selectImage() {
+
+        mAdapter = new AlbumAdapter(this,this, (view, position) -> previewImage(position), 1);
+
+
+        Album.image(this)
+                .multipleChoice()
+                .camera(true)
+                .columnCount(3)
+                .selectCount(1)
+                .checkedList(mAlbumFiles)
+                .widget(
+                        Widget.newLightBuilder(this)
+                                .statusBarColor(Color.WHITE)
+                                .toolBarColor(Color.WHITE)
+//                                .mediaItemCheckSelector(Color.BLUE, Color.GREEN)
+//                                .bucketItemCheckSelector(Color.RED, Color.YELLOW)
+                                .buttonStyle(
+                                    Widget.ButtonStyle.newLightBuilder(this)
+                                    .setButtonSelector(Color.WHITE, Color.WHITE)
+                                    .build()
+                                )
+                                .build()
+                )
+                .onResult( result -> {
+                    mAlbumFiles = result;
+                    mAdapter.notifyDataSetChanged(mAlbumFiles);
+                    relativeLayout.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
+                    linearLayout.setVisibility(result.size() > 0 ? View.GONE : View.VISIBLE);
+                })
+                //.onCancel( result -> showSandbar("selection annuler"))
+                .start();
+    }
+
+    @Override
+    public void onClick() {
+        selectImage();
+    }
 
     void initDialogPhone(){
         Context c = ValidatePhone.this;
@@ -203,22 +293,21 @@ public class ValidatePhone extends AppCompatActivity implements
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c,R.style.DialogTheme);
         alertDialogBuilderUserInput.setView(mView);
 
+        ImageButton takeImage = mView.findViewById(R.id.takeImagesOreden);
         TextInputEditText phone = mView.findViewById(R.id.phone_edit_text);
-        TextInputEditText registre = mView.findViewById(R.id.registre_edit_text);
         TextInputEditText officine = mView.findViewById(R.id.nom_officine_edit_text);
         TextInputEditText address = mView.findViewById(R.id.address_edit_text);
         AutoCompleteTextView wilaya = mView.findViewById(R.id.wilaya_edit_text);
-        TextInputEditText agrement = mView.findViewById(R.id.agrement_edit_text);
         TextInputEditText founisseure = mView.findViewById(R.id.founisseure);
         CheckBox checkBox1 = mView.findViewById(R.id.checkbox1);
         CheckBox checkBox2 = mView.findViewById(R.id.checkbox2);
         CheckBox checkBox3 = mView.findViewById(R.id.checkbox3);
         RadioGroup radioGroup = mView.findViewById(R.id.radioGroup);
+        linearLayout = mView.findViewById(R.id.linearLayout);
+        relativeLayout = mView.findViewById(R.id.recycler_view55);
 
-        List<Boolean> liste = new ArrayList<>();
-        liste.add(checkBox1.isClickable());
-        liste.add(checkBox2.isClickable());
-        liste.add(checkBox3.isClickable());
+        takeImage.setOnClickListener(o-> selectImage());
+
 
         String[] sele = new String[1];
         String[] cites = getResources().getStringArray(R.array.cities2);
@@ -227,19 +316,24 @@ public class ValidatePhone extends AppCompatActivity implements
         wilaya.setOnItemClickListener((parent, view, position, rowId) -> sele[0] = (String)parent.getItemAtPosition(position));
 
         Button save = mView.findViewById(R.id.poster);
+
         save.setOnClickListener(o->{
-            if(phone.getText() == null || !phone.getText().toString().matches("0[567][0-9]{8,}")){
+            if(phone.getText() == null || !phone.getText().toString().matches("0[567][0-9]{8,}")) {
                 phone.setError("Numéro de téléphone erroné");
+            } else if(mAlbumFiles == null || mAlbumFiles.size() <= 0) {
+                Toast.makeText(getApplicationContext(), " ",Toast.LENGTH_LONG).show();
+            } else if(wilaya.getText().toString().isEmpty() || officine.getText().toString().isEmpty()){
+                Toast.makeText(getApplicationContext(), "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
             } else {
                 initialData = new HashMap<>();
                 initialData.put("mPhoneNumber", phone.getText().toString());
-                initialData.put("registreCommerce", registre.getText().toString());
-                initialData.put("nomOffificine", officine.getText().toString());
-                initialData.put("addresseOfficine", address.getText().toString());
+                initialData.put("nomOffificine", lowerToUpper(officine.getText().toString()));
+                initialData.put("addresseOfficine", lowerToUpper(address.getText().toString()));
                 initialData.put("wilaya", wilaya.getText().toString());
-                initialData.put("agrement", agrement.getText().toString());
-                initialData.put("fournisseure", founisseure.getText().toString());
-                initialData.put("convention", liste);
+                initialData.put("fournisseure", lowerToUpper(founisseure.getText().toString()));
+                initialData.put("convention_cnas", checkBox1.isChecked());
+                initialData.put("convention_casnos", checkBox2.isChecked());
+                initialData.put("convention_militair", checkBox3.isChecked());
                 initialData.put("type", radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
 
                 String st = phone.getText().toString().replaceFirst("0","+213");
@@ -253,7 +347,56 @@ public class ValidatePhone extends AppCompatActivity implements
         alertDialogPhone.show();
     }
 
+    private File getCompressTaken (String uriPath) {
+        File file = null;
+        try {
+            file = new Compressor(this).compressToFile(new File(uriPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
 
+
+    private void uploadImage(){
+
+        StorageReference storageRef = storage.getReference();
+        // Create the file metadata
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+        if(mAlbumFiles.size() == 0 ) return;
+
+        AlbumFile image = mAlbumFiles.get(0);
+        Uri file = Uri.fromFile(getCompressTaken(image.getPath()));
+        StorageReference riversRef = storageRef.child("images/" + file.getLastPathSegment());
+        UploadTask uploadTask = riversRef.putFile(file, metadata);
+
+        uploadTask.continueWithTask(task -> {
+            if (!task.isSuccessful()) {
+                throw Objects.requireNonNull(task.getException());
+            }
+            return riversRef.getDownloadUrl();
+        }).addOnSuccessListener(uri -> {
+
+
+            initialData.put("carte",  uri.toString());
+
+            db.collection("med-dwa-users")
+                .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge())
+                .addOnSuccessListener(s -> {
+                    visibilityGoneViews(mVerifyButton,mResendButton,binding.progressBar);
+                    visibilityVisibleViews(binding.back,binding.textVerified,binding.iconVerified);
+                });
+        });
+
+//        int finalI = urlsDownloded.size() + 1;
+//        uploadTask
+//                .addOnProgressListener(taskSnapshot -> {
+//                    double progress = (( 100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+//                    //dialog("Chargement photo  "+ finalI +" " +((int) progress )+"%");
+//                });
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -347,11 +490,8 @@ public class ValidatePhone extends AppCompatActivity implements
                 }
 
                 mAuth.getCurrentUser().updatePhoneNumber(cred);
-
-                visibilityGoneViews(mVerifyButton,mResendButton);
-                visibilityVisibleViews(binding.back,binding.textVerified,binding.iconVerified);
-                db.collection("med-dwa-users")
-                        .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge());
+                visibilityVisibleViews(binding.progressBar);
+                uploadImage();
                 binding.back.setOnClickListener(view -> back(RESULT_OK));
             }
                 break;

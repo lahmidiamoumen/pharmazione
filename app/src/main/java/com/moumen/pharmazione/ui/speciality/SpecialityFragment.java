@@ -133,10 +133,10 @@ public class SpecialityFragment extends Fragment implements MedClickListener<Spe
         FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
                 .build();
 
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_specialityFrag_to_doctorsFragment,
-                null,
-                null,
-                extras);
+//        NavHostFragment.findNavController(this)
+//                .navigate(R.id.action_specialityFrag_to_doctorsFragment,
+//                null,
+//                null,
+//                extras);
     }
 }

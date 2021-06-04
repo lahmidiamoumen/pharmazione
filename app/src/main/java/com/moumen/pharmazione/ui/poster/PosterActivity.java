@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.google.android.gms.tasks.Task;
@@ -24,11 +23,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SearchableMedecinActivity;
 import com.moumen.pharmazione.databinding.ActivityPosterBinding;
-import com.moumen.pharmazione.databinding.ComposeRecipientChipBinding;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.utils.ClickListener;
-import com.moumen.pharmazione.utils.MediaLoader;
 import com.moumen.pharmazione.utils.PermissionUtil;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
@@ -41,7 +38,6 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.yanzhenjie.album.Album;
-import com.yanzhenjie.album.AlbumConfig;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.api.widget.Widget;
 import com.yanzhenjie.album.widget.divider.Api21ItemDivider;
@@ -57,13 +53,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import id.zelory.compressor.Compressor;
 
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
 import static com.moumen.pharmazione.utils.Util.RC_SIGN_IN;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_BESOIN;
-import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_DON;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 import static com.moumen.pharmazione.utils.Util.load;
 
@@ -93,8 +88,6 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
         binding = ActivityPosterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -223,8 +216,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
             return false;
         }
 //        document.setLocation(sele[0]);
-        document.setTitle(getValue(binding.titre));
-        document.setBody(getValue(binding.body));
+        document.setTitle(caseSenstive(getValue(binding.titre)));
+        document.setBody(caseSenstive(getValue(binding.body)));
 
         return true;
     }
@@ -307,15 +300,16 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                 RC_SIGN_IN);
     }
 
+    String caseSenstive(String hash){
+        return hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
+    }
+
     void upload()
   {
-
       dialog("");
       String id = db.collection(PATH).document().getId();
-      Task<DocumentSnapshot> task =  db.collection("med-dwa-users").document(mAuth.getUid()).get();
+      Task<DocumentSnapshot> task =  db.collection(PATH_USER).document(mAuth.getUid()).get();
       document.setUserID(mAuth.getUid());
-      document.setUserName(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
-      document.setUserUrl(Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString());
       document.setToChange(binding.switcher.isChecked());
       document.setMedicines(history);
       document.setDocumentID(id);
@@ -327,6 +321,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                   showEndDig("Votre compte est n'est pas vérifié");
                   return;
               }
+              document.setUserName(caseSenstive(user.mName));
+              document.setUserUrl(caseSenstive(user.mPhotoUri));
               document.setLocation(user.getWilaya());
               document.setToken(user.getToken());
               document.setSatisfied(user.getSatisfied());
@@ -344,6 +340,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                   showEndDig("Votre compte est n'est pas vérifié");
                   return;
               }
+              document.setUserName(caseSenstive(user.mName));
+              document.setUserUrl(caseSenstive(user.mPhotoUri));
               document.setLocation(user.getWilaya());
               document.setSatisfied(user.getSatisfied());
               db.collection(PATH)
@@ -395,7 +393,6 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
            dialog("Chargement photo  "+ finalI +" " +((int) progress )+"%");
             })
         .addOnPausedListener(taskSnapshot -> dialog("Upload suspendu"));
-
    }
    
 

@@ -2,48 +2,73 @@ package com.moumen.pharmazione.ui.doctors;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.firebase.ui.firestore.paging.LoadingState;
 import com.google.android.material.transition.MaterialContainerTransform;
 import com.google.android.material.transition.MaterialElevationScale;
 import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SharedViewModel;
+import com.moumen.pharmazione.ShowProfileActiv;
+import com.moumen.pharmazione.databinding.DoctItemBinding;
+import com.moumen.pharmazione.databinding.EmailItemLayoutBinding;
 import com.moumen.pharmazione.databinding.FragmentDoctorsBinding;
+import com.moumen.pharmazione.databinding.PharmaItemBinding;
 import com.moumen.pharmazione.persistance.Doctors;
+import com.moumen.pharmazione.persistance.Document;
+import com.moumen.pharmazione.persistance.User;
+import com.moumen.pharmazione.ui.home.DocumentViewHolder;
 import com.moumen.pharmazione.utils.MedClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DoctorsFragment extends Fragment implements MedClickListener<Doctors> {
-    private FragmentDoctorsBinding binding;
-    private long duration;
+import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
+
+public class DoctorsFragment extends Fragment implements MedClickListener<User> {
+    private LinearLayout emptyLayout;
+    private RecyclerView recyclerView;
     private SharedViewModel sharedViewModel;
-    private static final String GOOGLE_BROWSER_API_KEY = "AIzaSyDyHgN3_5qTd0w4Gp7ldiLuiSC7DoNAaxY";
-
-
-
+    private FirestorePagingAdapter<User, RecyclerView.ViewHolder> adapter = null;
+    private FragmentDoctorsBinding binding;
+    Query baseQuery;
+    FirestorePagingOptions<User> options;
+    PagedList.Config config;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        duration = getResources().getInteger(R.integer.reply_motion_duration_large);
-        prepareTransitions();
     }
 
     @Nullable
@@ -58,97 +83,133 @@ public class DoctorsFragment extends Fragment implements MedClickListener<Doctor
         super.onViewCreated(view, savedInstanceState);
         sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 
-        binding.navigationIcon.setOnClickListener(o->{
-            NavHostFragment.findNavController(this).navigateUp();
-        });
+        recyclerView = binding.recyclerView;
+        emptyLayout = binding.emptySearchList;
 
-        String url = "2.8895,36.7594";
-        List<Doctors> list = new ArrayList<>();
-        Drawable dr = getResources().getDrawable(R.drawable.avatar_3);
-        Doctors h1 = new Doctors("1","Alger","Dr Nawel KARA",dr,"33 rue des abattoirs staouali alger\n 16000 Alger Algérie\n +213.05.60.91.90.85","Médecin dentiste","3 ans d'experience",url);
-        Doctors h2 = new Doctors("2","Oran","Dr Alladin SAOUDI",dr,"Rue Ben Aknoun N°5\n 16000 Alger Algérie\n +213.032.72.72.00   \n +213.07.71.57.50.88   ","Généraliste","10 ans d'experience","3.0884,36.7352");
-        Doctors h3 = new Doctors("3","Sétif","Dr. Abd Elhakim Guezzou",dr,"Rien","Physiotherapy","5 ans d'experience",url);
-        Doctors h4 = new Doctors("4","Blida","Dr. Djalal Rahmani",dr,"Rien","Mental Wllness","27 ans d'experience",url);
-        Doctors h5 = new Doctors("5","Adrar","Dr. Rahim Guezzouri",dr,"Rien","Bone & Joints","2 ans d'experience",url);
-        Doctors h6 = new Doctors("6","Boumerdes","Dr. Lina Belbouabe",dr,"Rien","Brain & Nerves","6 ans d'experience",url);
-        Doctors h7 = new Doctors("6","Boumerdes","Dr. Lina Belbouabe",dr,"Rien","Brain & Nerves","6 ans d'experience",url);
-        Doctors h8 = new Doctors("6","Boumerdes","Dr. Lina Belbouabe",dr,"Rien","Brain & Nerves","6 ans d'experience",url);
-        list.add(h1);
-        list.add(h2);
-        list.add(h3);
-        list.add(h4);
-        list.add(h5);
-        list.add(h6);
-        list.add(h7);
-        list.add(h8);
-
-        DoctorsAdapter horizantallAdapter = new DoctorsAdapter(this,new DiffUtil.ItemCallback<Doctors>() {
+        binding.filter.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean areItemsTheSame(@NotNull Doctors oldItem, @NotNull Doctors newItem) {
-                return oldItem.ID.equals(newItem.ID) ;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
-            public boolean areContentsTheSame(@NotNull Doctors oldItem, @NotNull Doctors newItem) {
-                return oldItem.mDescription.equals(newItem.mDescription);
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() <1){
+                    emptyLayout.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                }
+                else if(s.length() > 1)
+                    setUp( s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
-        horizantallAdapter.submitList(list);
-        binding.recyclerView.setAdapter(horizantallAdapter);
+        config = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(10)
+                .setPageSize(10)
+                .build();
 
-        startTransitions();
+        CollectionReference dbCollection = FirebaseFirestore.getInstance().collection(PATH_USER);
+        baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("mName");
+
+        options = new FirestorePagingOptions.Builder<User>()
+                .setLifecycleOwner(this)
+                .setQuery(baseQuery, config, User.class)
+                .build();
+
+//        binding.navigationIcon.setOnClickListener(o-> NavHostFragment.findNavController(this).navigateUp());
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        doMySearch(options);
     }
 
-    private void startTransitions() {
-        binding.executePendingBindings();
-        startPostponedEnterTransition();
+    public void setUp(String hash) {
+        hash =  hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
+
+        Query as =  baseQuery.startAt(hash).endAt(hash + '~');
+        FirestorePagingOptions<User> options = new FirestorePagingOptions.Builder<User>()
+                .setLifecycleOwner(this)
+                .setQuery(as, config, User.class)
+                .build();
+
+        if( adapter == null) {
+            doMySearch(options);
+        } else {
+            adapter.updateOptions(options);
+        }
     }
 
-    private void prepareTransitions() {
-        postponeEnterTransition();
-        Context cn = getContext();
-        assert cn != null;
-        @SuppressLint("Recycle")
-        int array = cn.obtainStyledAttributes(new int[]{R.attr.motionInterpolatorPersistent}).getResourceId(0, android.R.interpolator.fast_out_slow_in);
-        Interpolator interpolator =  AnimationUtils.loadInterpolator(cn,array);
+    public void doMySearch(FirestorePagingOptions<User> options){
+        adapter = new FirestorePagingAdapter<User, RecyclerView.ViewHolder>(options) {
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+                LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
+                PharmaItemBinding binding = PharmaItemBinding.inflate(layoutInflater, viewGroup, false);
+                return new DoctorsViewHolder(binding, DoctorsFragment.this, getContext());
+            }
 
-        @SuppressLint("Recycle")
-        int array2 = cn.obtainStyledAttributes(new int[]{R.attr.colorSurface}).getColor(0, Color.MAGENTA);
+            @Override
+            protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder,
+                                            int position,
+                                            @NonNull User model) {
 
-        MaterialContainerTransform mat = new MaterialContainerTransform();
-        mat.setDuration(duration);
-        mat.setDrawingViewId(R.id.navigation_home);
-        mat.setScrimColor(Color.TRANSPARENT);
-        mat.setAllContainerColors(array2);
-        mat.setInterpolator(interpolator);
-        setSharedElementEnterTransition(mat);
+                DoctorsViewHolder doc = (DoctorsViewHolder) holder;
+                doc.bind(model);
+            }
 
-        this.setEnterTransition(  new MaterialElevationScale(false)
-                .setDuration(duration).setInterpolator(interpolator));
+            @Override
+            protected void onLoadingStateChanged(@NonNull LoadingState state) {
+                if (state == LoadingState.ERROR) {
+                    emptyLayout.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    showToast("An error occurred.");
+                    retry();
+                }else if(state == LoadingState.LOADED){
+                    emptyLayout.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            protected void onError(@NonNull Exception e) {
+                Log.e("Home Layout", e.getMessage(), e);
+            }
+        };
+        recyclerView.setAdapter(adapter);
 
-        this.setReturnTransition(  new MaterialContainerTransform()
-                .setDuration(duration).setInterpolator(interpolator));
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                int totalNumberOfItems = adapter.getItemCount();
+                if(totalNumberOfItems == 0) {
+                    recyclerView.setVisibility(View.GONE);
+                    emptyLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+    }
+
+
+    private void showToast(@NonNull String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
-    public void onClick(View view, Doctors item) {
-        sharedViewModel.getDoctorsData().setValue(item);
-        this.setReenterTransition(  new MaterialElevationScale( true)
-                .setDuration(duration));
-
-        this.setExitTransition(  new MaterialElevationScale( false)
-                .setDuration(duration));
-
-        FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
-                .addSharedElement(view, view.getTransitionName())
-                .build();
-
-        NavHostFragment.findNavController(this).navigate(R.id.action_doctorsFrag_to_doctorsShowFrag,
-                null,
-                null,
-                extras);
+    public void onClick(View view, User item) {
+        Intent mIntent = new Intent(getContext(), ShowProfileActiv.class);
+        mIntent.putExtra("id_user", item.userId);
+        startActivity(mIntent);
     }
 }

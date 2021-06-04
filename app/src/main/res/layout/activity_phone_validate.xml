@@ -145,6 +145,12 @@
                     android:drawableLeft="@drawable/ic_back_white"
                     android:text="Retour"/>
 
+                <ProgressBar
+                    android:visibility="gone"
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/album_dp_30"
+                    android:layout_height="@dimen/album_dp_30"/>
+
                 <Button
                     android:drawableLeft="@drawable/ic_check"
                     android:drawableTint="@color/white"

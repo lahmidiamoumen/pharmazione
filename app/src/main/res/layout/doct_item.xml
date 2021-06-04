@@ -132,7 +132,7 @@
         app:layout_constraintTop_toTopOf="@id/course_slocation"
         android:paddingStart="@dimen/grid_2"
         app:srcCompat="@drawable/ic_map"
-        android:tint="?attr/colorControlNormal"
+        tools:tint="?attr/colorControlNormal"
         android:importantForAccessibility="no"/>
 
 

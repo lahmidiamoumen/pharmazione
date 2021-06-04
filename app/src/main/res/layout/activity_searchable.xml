@@ -17,6 +17,36 @@
         android:minHeight="?attr/actionBarSize"
         />
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/recipient_chip_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/grid_2"
+        android:scrollbars="none"
+        app:singleLine="true">
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_posts"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Posts"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_medicaments"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medicaments"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_pharmacien"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pharmaciens"/>
+    </com.google.android.material.chip.ChipGroup>
+
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="gone"
         android:id="@+id/rwSearch"
@@ -30,7 +60,6 @@
         tools:listitem="@layout/email_item_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </androidx.recyclerview.widget.RecyclerView>
 
     <FrameLayout

@@ -161,7 +161,6 @@ public class BottomNavigation extends AppCompatActivity implements NavController
     @Override
     public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
         switch (destination.getId()){
-            case R.id.doctorsFrag:
             case R.id.doctorsShowFrag:
             case R.id.specialityFrag:
             case R.id.showFragment:

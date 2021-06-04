@@ -1,5 +1,6 @@
 package com.moumen.pharmazione;
 
+import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,7 +32,9 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
 import com.google.android.material.transition.MaterialElevationScale;
+import com.google.firebase.firestore.Query;
 import com.moumen.pharmazione.databinding.EmailItemLayoutBinding;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.ui.home.DocumentViewHolder;
@@ -41,6 +45,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.moumen.pharmazione.ui.home.ShowFragment;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import static androidx.navigation.Navigation.findNavController;
@@ -53,7 +58,13 @@ public class SearchableActivity extends AppCompatActivity {
     private LinearLayout emptyLayout;
     private RecyclerView recyclerView;
     private SharedViewModel sharedViewModel;
-    private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter;
+    private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter = null;
+    PagedList.Config config;
+    Chip post;
+    Chip medicament;
+    Chip pharmaciens;
+    CollectionReference dbCollection;
+    Query baseQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +72,51 @@ public class SearchableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_searchable);
         sharedViewModel =  new ViewModelProvider(this).get(SharedViewModel.class);
 
+        dbCollection = FirebaseFirestore.getInstance().collection(PATH);
+
+
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 //        getWindow().setStatusBarColor(Color.rgb(30,30,30));
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
+
+        config = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(10)
+                .setPageSize(10)
+                .build();
+
+        baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("body");
+
+        FirestorePagingOptions<Document> options = new FirestorePagingOptions.Builder<Document>()
+            .setLifecycleOwner(this)
+            .setQuery(baseQuery, config, Document.class)
+            .build();
+
+        post = findViewById(R.id.chip_posts);
+        medicament = findViewById(R.id.chip_medicaments);
+        pharmaciens = findViewById(R.id.chip_pharmacien);
+
+        post.setOnClickListener( o -> {
+            medicament.setChecked(false);
+            pharmaciens.setChecked(false);
+            post.setChecked(true);
+            baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("body");
+        });
+        medicament.setOnClickListener(o -> {
+            post.setChecked(false);
+            pharmaciens.setChecked(false);
+            medicament.setChecked(true);
+            baseQuery = dbCollection.whereEqualTo("satisfied", true);
+        });
+        pharmaciens.setOnClickListener(o -> {
+            medicament.setChecked(true);
+            post.setChecked(false);
+            medicament.setChecked(false);
+            baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("userName");
+        });
 
 
         this.recyclerView = findViewById(R.id.rwSearch);
@@ -75,6 +126,36 @@ public class SearchableActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        doMySearch(options);
+
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    void activateChip(int ch){
+        switch (ch){
+            case R.id.chip_posts: {
+                medicament.setCheckable(false);
+                pharmaciens.setCheckable(false);
+                post.setCheckable(true);
+                baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("body");
+                break;
+            }
+            case R.id.chip_medicaments: {
+                post.setCheckable(false);
+                pharmaciens.setCheckable(false);
+                medicament.setCheckable(true);
+                baseQuery = dbCollection.whereEqualTo("satisfied", true);
+                break;
+            }
+            case R.id.chip_pharmacien: {
+                medicament.setCheckable(true);
+                post.setCheckable(false);
+                medicament.setCheckable(false);
+                baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("userName");
+                break;
+            }
+        }
     }
 
     @Override
@@ -110,7 +191,7 @@ public class SearchableActivity extends AppCompatActivity {
                             recyclerView.setVisibility(View.GONE);
                         }
                         else if(newText.length() > 1)
-                            doMySearch( newText );
+                            setUp( newText );
                         return false;
                     }
                 });
@@ -118,28 +199,22 @@ public class SearchableActivity extends AppCompatActivity {
         return true;
     }
 
-    public void doMySearch( String hash ){
-
-
-        CollectionReference dbCollection = FirebaseFirestore.getInstance().collection(PATH);
-        hash =  hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
-
-        com.google.firebase.firestore.Query baseQuery = dbCollection.whereEqualTo("satisfied", true).orderBy("title").startAt(hash).endAt(hash + '~');
-
-        // This configuration comes from the Paging Support Library
-        PagedList.Config config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPrefetchDistance(10)
-                .setPageSize(10)
-                .build();
-
+    public void setUp(String hash) {
+        hash =   medicament.isChecked() ? hash.toUpperCase() : hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
+        Query as = medicament.isChecked() ?  baseQuery.whereArrayContains("medicines", hash) :  baseQuery.startAt(hash).endAt(hash + '~');
         FirestorePagingOptions<Document> options = new FirestorePagingOptions.Builder<Document>()
                 .setLifecycleOwner(this)
-                .setQuery(baseQuery, config, Document.class)
+                .setQuery(as, config, Document.class)
                 .build();
 
+        if( adapter == null) {
+            doMySearch(options);
+        } else {
+            adapter.updateOptions(options);
+        }
+    }
 
-
+    public void doMySearch(FirestorePagingOptions<Document> options){
         adapter = new FirestorePagingAdapter<Document, RecyclerView.ViewHolder>(options) {
             @NonNull
             @Override

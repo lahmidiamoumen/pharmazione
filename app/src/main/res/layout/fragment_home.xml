@@ -134,6 +134,37 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
+        android:id="@+id/uncomplete"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/empty_search_list_icons"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@drawable/ic_id_card_rafiki" />
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vous devez compléter votre inscription"
+            />
+
+        <Button
+            android:layout_gravity="center"
+            android:background="#00000000"
+            android:textColor="@color/colorPrimary"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:id="@+id/button_resend"
+            android:layout_height="wrap_content"
+            android:text="Continuer"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:visibility="gone"
         android:id="@+id/text"
         android:layout_width="match_parent"

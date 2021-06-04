@@ -92,7 +92,7 @@
     </string-array>
 
     <string name="email">Email:</string>
-    <string name="rendez_vous">Rendez-vous</string>
+    <string name="rendez_vous">Appeler</string>
     <string name="type_speciality">type_speciality</string>
     <string name="sp_cialit">Spécialité</string>
     <string name="ajouter_une_ordennance_r_cente">Ajouter une ordonnance récente</string>
@@ -247,7 +247,7 @@
     <string name="wilaya">Wilaya</string>
     <string name="dites_nous_ce_que_vous_pensez">dites-nous ce que vous pensez…</string>
     <string name="parameters">Parameters</string>
-    <string name="vide">Vide!</string>
+    <string name="vide">Pas de publications</string>
 
 
 </resources>

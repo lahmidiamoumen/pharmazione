@@ -42,11 +42,14 @@ import com.moumen.pharmazione.databinding.FragmentHomeBinding;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.HorizantallContent;
 import com.moumen.pharmazione.persistance.User;
+import com.moumen.pharmazione.ui.poster.ValidatePhone;
 import com.moumen.pharmazione.utils.ItemClickListener;
 import com.moumen.pharmazione.utils.MedClickListener;
 
 import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
+import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_BESOIN;
+import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 
 public class HomeFragment extends Fragment implements ItemClickListener, FilterDialogFragment.FilterListener, MedClickListener<HorizantallContent> {
 
@@ -57,21 +60,46 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     private Query query;
     private FilterDialogFragment mFilterDialog;
     private boolean isVerified;
+    FirebaseAuth mAuth;
+    PagedList.Config config;
 
     @Override
     public void onCreate(@Nullable Bundle sss) {
         super.onCreate(sss);
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         FirebaseApp.initializeApp(getContext());
+        config = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(10)
+                .setPageSize(10)
+                .build();
 
 //      sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 //      setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
         Query dbCollection = FirebaseFirestore.getInstance().collection(PATH);
         //query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
         query = dbCollection.whereEqualTo("satisfied",true).orderBy("scanned", Query.Direction.DESCENDING);
+
         adapter = getPaging();
         mFilterDialog = FilterDialogFragment.getInstance();
         mFilterDialog.setCallback(this);
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if( requestCode == START_ACTIVIY_VALIDATION){
+           if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
+                binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
+                binding.scroll.setVisibility(View.GONE);
+                binding.text.setVisibility(View.GONE);
+                binding.uncomplete.setVisibility(View.VISIBLE);
+            }else {
+                binding.scroll.setVisibility(View.GONE);
+                binding.uncomplete.setVisibility(View.GONE);
+                binding.text.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -94,7 +122,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 
         //setHorizontalScroll();
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         FirebaseUser users = mAuth.getCurrentUser();
         if(users == null) {
             binding.scroll.setVisibility(View.GONE);
@@ -112,20 +140,21 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             if(user.getSatisfied() == null ? false : user.getSatisfied()){
                 binding.editText.setOnClickListener(o-> onFilterClicked());
                 binding.filter.setOnClickListener(o->goToSearch());
+            }
+            else if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
+                binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
+                binding.scroll.setVisibility(View.GONE);
+                binding.text.setVisibility(View.GONE);
+                binding.uncomplete.setVisibility(View.VISIBLE);
             }else {
                 binding.scroll.setVisibility(View.GONE);
+                binding.uncomplete.setVisibility(View.GONE);
                 binding.text.setVisibility(View.VISIBLE);
             }
         });
     }
 
     public void setUp(Query baseQuery) {
-        PagedList.Config config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPrefetchDistance(10)
-                .setPageSize(10)
-                .build();
-
         FirestorePagingOptions<Document> options = new FirestorePagingOptions.Builder<Document>()
                 .setLifecycleOwner(getViewLifecycleOwner())
                 .setQuery(baseQuery, config, Document.class)

@@ -4,7 +4,9 @@ import android.net.Uri;
 
 import androidx.annotation.Keep;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.ServerTimestamp;
 
 @Keep
 
@@ -20,6 +22,16 @@ public class User {
     public  String wilaya;
     private  String type;
     public Boolean satisfied;
+    @ServerTimestamp
+    public Timestamp created;
+
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    public void setCreated(Timestamp created) {
+        this.created = created;
+    }
 
     public Boolean getSatisfied() {
         return satisfied;
@@ -101,5 +113,20 @@ public class User {
 
     public void setmPhotoUri(String mPhotoUri) {
         this.mPhotoUri = mPhotoUri;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", mEmail='" + mEmail + '\'' +
+                ", mPhoneNumber='" + mPhoneNumber + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mPhotoUri='" + mPhotoUri + '\'' +
+                ", token='" + token + '\'' +
+                ", wilaya='" + wilaya + '\'' +
+                ", type='" + type + '\'' +
+                ", satisfied=" + satisfied +
+                '}';
     }
 }

@@ -139,10 +139,12 @@ public class ShowFragment extends Fragment {
                 mIntent.putExtra("id_user", doc.userID);
                 startActivity(mIntent);
             });
+
             String niceDateStr = DateUtils.getRelativeTimeSpanString(doc.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
             binding.setTimeAgo(niceDateStr);
             binding.setEmail(doc);
             binding.setUrlEmpty(EMPTY_IMAGE);
+
             if(doc.medicines != null && doc.medicines.size() > 0){
                 binding.recipientScrollView.setVisibility(View.VISIBLE);
                 for (Map<String,String> map : doc.medicines) {
@@ -203,32 +205,6 @@ public class ShowFragment extends Fragment {
 
         final CollapsingToolbarLayout collapsingToolbar = binding.toolbarLayout;
         collapsingToolbar.setContentScrimColor(MaterialColors.getColor(getContext(), R.attr.colorOnSecondary, Color.TRANSPARENT));
-    }
-
-    private void startTransitions() {
-        binding.executePendingBindings();
-        startPostponedEnterTransition();
-    }
-
-    private void prepareTransitions() {
-        postponeEnterTransition();
-
-
-        this.setEnterTransition( new MaterialElevationScale(false)
-                .setDuration(duration));
-
-        this.setReturnTransition( new MaterialContainerTransform()
-                .setDuration(duration));
-
-//        this.setExitTransition( new MaterialElevationScale( false)
-//                .setDuration(duration));
-//
-//        this.setExitTransition(  new MaterialSharedAxis(MaterialSharedAxis.Z, false)
-//                .setDuration(duration));
-//
-//
-//        this.setEnterTransition(  new MaterialSharedAxis(MaterialSharedAxis.Z, false)
-//                .setDuration(duration));
     }
 
     private void setUpComments(Query baseQuery){

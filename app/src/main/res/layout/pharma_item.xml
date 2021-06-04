@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="RtlSymmetry">
+
+  <data>
+    <variable
+        name="course"
+        type="com.moumen.pharmazione.persistance.User"/>
+
+    <variable
+        name="clickHandler"
+        type="com.moumen.pharmazione.utils.MedClickListener"/>
+
+  </data>
+  <com.google.android.material.card.MaterialCardView
+      android:onClick="@{ view -> clickHandler.onClick(view,course)}"
+      android:theme="@style/Theme.MedDwak.DayNight"
+      android:layout_margin="@dimen/album_dp_4"
+      android:id="@+id/Material_card"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/course_item"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/course_name"
+        app:layout_constraintBottom_toBottomOf="@id/course_slocation"
+        app:layout_constraintStart_toStartOf="@id/course_name"/>
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardView"/>
+
+
+        <ImageView
+            android:id="@+id/cardView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="@dimen/album_dp_10"
+            app:layout_constraintStart_toEndOf="@id/space"
+            app:layout_constraintEnd_toStartOf="@id/course_name"
+            app:layout_constraintTop_toTopOf="@id/course_name"
+            app:layout_constraintBottom_toBottomOf="@id/course_slocation"
+            app:glideCircularCrop="@{true}"
+            app:url="@{course.mPhotoUri}"
+            app:layout_constraintDimensionRatio="1:1"
+            app:srcCompat="@drawable/avatar_3"
+            android:scaleType="centerCrop"/>
+
+
+    <TextView
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:id="@+id/course_name"
+        android:layout_width="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/cardView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        android:paddingStart="@dimen/grid_2"
+        android:text="@{course.mName}"
+        android:maxLines="1"
+        android:ellipsize="end"
+        tools:text="name"/>
+
+    <TextView
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:id="@+id/categ"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="@dimen/grid_2"
+        android:layout_marginEnd="@dimen/grid_2"
+        android:maxLines="1"
+        android:text="@{course.mPhoneNumber}"
+        tools:text="Google Express - 12m"
+        app:layout_constraintStart_toEndOf="@id/cardView"
+        app:layout_constraintTop_toBottomOf="@id/course_name"/>
+
+
+
+    <TextView
+        android:id="@+id/course_slocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/course_icon"
+        app:layout_constraintEnd_toStartOf="@id/course_instructor"
+        app:layout_constraintTop_toBottomOf="@id/categ"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingStart="@dimen/grid_1"
+        tools:text="location"
+        android:textColor="?attr/colorControlNormal"
+        android:textAppearance="?attr/textAppearanceSubtitle2"
+        android:text="@{course.wilaya}"/>
+
+    <ImageView
+        android:id="@+id/course_icon"
+        android:layout_width="@dimen/album_dp_30"
+        android:layout_height="@dimen/album_dp_30"
+        app:layout_constraintStart_toStartOf="@id/course_name"
+        app:layout_constraintBottom_toBottomOf="@id/course_slocation"
+        app:layout_constraintTop_toTopOf="@id/course_slocation"
+        android:paddingStart="@dimen/grid_2"
+        app:srcCompat="@drawable/ic_map"
+        tools:tint="?attr/colorControlNormal"
+        android:importantForAccessibility="no"/>
+
+
+    <Button
+        android:id="@+id/course_instructor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/grid_2"
+        android:text="@string/rendez_vous"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/course_slocation"
+        app:layout_constraintTop_toTopOf="@id/categ" />
+
+
+
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+  </com.google.android.material.card.MaterialCardView>
+</layout>

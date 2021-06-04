@@ -249,12 +249,25 @@
                         tools:listitem="@layout/show_fragment_preview_item_layout"
                         android:overScrollMode="never" />
 
+                    <ImageView
+                        android:layout_marginTop="@dimen/album_dp_20"
+                        android:id="@+id/recipient_divider4"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/attachment_recycler_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:background="@drawable/divider"
+                        app:backgroundTint="@color/color_on_surface_divider"
+                        android:contentDescription="@string/desc" />
+
 
                     <TextView
                         android:paddingHorizontal="@dimen/grid_2"
-                        android:layout_marginTop="@dimen/grid_3"
+                        android:layout_marginTop="@dimen/_8"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/attachment_recycler_view"
+                        app:layout_constraintTop_toBottomOf="@id/recipient_divider4"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:id="@+id/textComontair"
                         android:layout_width="match_parent"

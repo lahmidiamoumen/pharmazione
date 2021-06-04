@@ -196,8 +196,8 @@ public class ProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         providers = Arrays.asList(
-                new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build());
+                new AuthUI.IdpConfig.GoogleBuilder().build()
+                /*new AuthUI.IdpConfig.FacebookBuilder().build()*/);
 
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
