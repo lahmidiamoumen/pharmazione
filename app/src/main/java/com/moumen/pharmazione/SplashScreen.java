@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.moumen.pharmazione.utils.MediaLoader;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumConfig;
@@ -25,6 +26,7 @@ public class SplashScreen extends AppCompatActivity {
                 .setAlbumLoader(new MediaLoader())
                 .build());
 
+        FirebaseMessaging.getInstance().subscribeToTopic("all");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.

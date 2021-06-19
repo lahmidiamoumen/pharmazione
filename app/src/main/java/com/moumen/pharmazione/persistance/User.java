@@ -1,29 +1,109 @@
 package com.moumen.pharmazione.persistance;
 
-import android.net.Uri;
-
 import androidx.annotation.Keep;
-
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
 @Keep
-
 public class User {
 
     @DocumentId
-    public  String userId;
-    public  String mEmail;
-    public  String mPhoneNumber;
-    public  String mName;
-    public  String mPhotoUri;
-    private  String token;
-    public  String wilaya;
-    private  String type;
+    public String userId;
+    public String mEmail;
+    public String mPhoneNumber;
+    public String mName;
+    public String nomOffificine;
+    private String addresseOfficine;
+    public String mPhotoUri;
+    private String token;
+    public String wilaya;
+    private String type;
+    private String fournisseure;
     public Boolean satisfied;
     @ServerTimestamp
     public Timestamp created;
+    private Boolean convention_cnas;
+    private Boolean convention_casnos;
+    private Boolean convention_militair;
+    private String carte;
+
+
+    public User(String mEmail, String mPhoneNumber, String mName, String mPhotoUri) {
+        this.mEmail = mEmail;
+        this.mPhoneNumber = mPhoneNumber;
+        this.mName = mName;
+        this.mPhotoUri = mPhotoUri;
+    }
+
+//    public String getConvention_cnasStr() {
+//        return convention_cnas ? "CNAS" : "";
+//    }
+//
+//    public String getConvention_casnosStr() {
+//        return convention_casnos ? "CNASNOS" : "";
+//    }
+//
+//    public String getConvention_militairStr() {
+//        return convention_militair  ? "MILITAIR" : "";
+//    }
+
+    public Boolean getConvention_cnas() {
+        return convention_cnas;
+    }
+
+    public void setConvention_cnas(Boolean convention_cnas) {
+        this.convention_cnas = convention_cnas;
+    }
+
+    public Boolean getConvention_casnos() {
+        return convention_casnos;
+    }
+
+    public void setConvention_casnos(Boolean convention_casnos) {
+        this.convention_casnos = convention_casnos;
+    }
+
+    public Boolean getConvention_militair() {
+        return convention_militair;
+    }
+
+    public void setConvention_militair(Boolean convention_militair) {
+        this.convention_militair = convention_militair;
+    }
+
+    public String getCarte() {
+        return carte;
+    }
+
+
+    public void setCarte(String carte) {
+        this.carte = carte;
+    }
+
+    public String getAddresseOfficine() {
+        return addresseOfficine;
+    }
+
+    public void setAddresseOfficine(String addresseOfficine) {
+        this.addresseOfficine = addresseOfficine;
+    }
+
+    public String getFournisseure() {
+        return fournisseure;
+    }
+
+    public void setFournisseure(String fournisseure) {
+        this.fournisseure = fournisseure;
+    }
+
+    public String getNomOffificine() {
+        return nomOffificine;
+    }
+
+    public void setNomOffificine(String nomOffificine) {
+        this.nomOffificine = nomOffificine;
+    }
 
     public Timestamp getCreated() {
         return created;
@@ -67,13 +147,6 @@ public class User {
         this.type = type;
     }
 
-    public User(String mEmail, String mPhoneNumber, String mName, String mPhotoUri) {
-        this.mEmail = mEmail;
-        this.mPhoneNumber = mPhoneNumber;
-        this.mName = mName;
-        this.mPhotoUri = mPhotoUri;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -81,7 +154,6 @@ public class User {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
 
     public String getmEmail() {
         return mEmail;

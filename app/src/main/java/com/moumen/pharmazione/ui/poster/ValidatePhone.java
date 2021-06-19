@@ -7,9 +7,15 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -250,8 +256,6 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
     private void selectImage() {
 
         mAdapter = new AlbumAdapter(this,this, (view, position) -> previewImage(position), 1);
-
-
         Album.image(this)
                 .multipleChoice()
                 .camera(true)
@@ -286,6 +290,26 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         selectImage();
     }
 
+    private void toggle(boolean show, View v) {
+        View secondPage = v.findViewById(R.id.secondPage);
+        View first = v.findViewById(R.id.firstPage);
+        ViewGroup parent = v.findViewById(R.id.layout);
+
+        Transition transition = new Slide(Gravity.LEFT);
+        transition.setDuration(600L);
+        transition.addTarget(R.id.secondPage);
+
+        Transition transitionFirst = new Fade();
+        transition.setDuration(300L);
+        transition.addTarget(R.id.firstPage);
+
+        TransitionManager.beginDelayedTransition(parent, transition);
+        TransitionManager.beginDelayedTransition(parent, transitionFirst);
+        secondPage.setVisibility(show ? View.VISIBLE : View.GONE);
+        first.setVisibility(!show ? View.VISIBLE : View.GONE);
+
+    }
+
     void initDialogPhone(){
         Context c = ValidatePhone.this;
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
@@ -296,6 +320,7 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         ImageButton takeImage = mView.findViewById(R.id.takeImagesOreden);
         TextInputEditText phone = mView.findViewById(R.id.phone_edit_text);
         TextInputEditText officine = mView.findViewById(R.id.nom_officine_edit_text);
+        TextInputEditText nom = mView.findViewById(R.id.nom_edit_text);
         TextInputEditText address = mView.findViewById(R.id.address_edit_text);
         AutoCompleteTextView wilaya = mView.findViewById(R.id.wilaya_edit_text);
         TextInputEditText founisseure = mView.findViewById(R.id.founisseure);
@@ -306,6 +331,7 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         linearLayout = mView.findViewById(R.id.linearLayout);
         relativeLayout = mView.findViewById(R.id.recycler_view55);
 
+        nom.setText(mAuth.getCurrentUser() == null ? "" : mAuth.getCurrentUser().getDisplayName());
         takeImage.setOnClickListener(o-> selectImage());
 
 
@@ -316,16 +342,29 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         wilaya.setOnItemClickListener((parent, view, position, rowId) -> sele[0] = (String)parent.getItemAtPosition(position));
 
         Button save = mView.findViewById(R.id.poster);
+        Button next = mView.findViewById(R.id.next);
+        Button retour = mView.findViewById(R.id.retour);
 
-        save.setOnClickListener(o->{
+        retour.setOnClickListener(o-> toggle(false, mView));
+
+        next.setOnClickListener(o-> {
             if(phone.getText() == null || !phone.getText().toString().matches("0[567][0-9]{8,}")) {
                 phone.setError("Numéro de téléphone erroné");
-            } else if(mAlbumFiles == null || mAlbumFiles.size() <= 0) {
-                Toast.makeText(getApplicationContext(), " ",Toast.LENGTH_LONG).show();
-            } else if(wilaya.getText().toString().isEmpty() || officine.getText().toString().isEmpty()){
+            }  else if(wilaya.getText().toString().isEmpty()){
+                Toast.makeText(getApplicationContext(), "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
+            }
+            else
+                toggle(true,mView);
+        });
+
+        save.setOnClickListener(o->{
+           if(mAlbumFiles == null || mAlbumFiles.size() <= 0) {
+                Toast.makeText(getApplicationContext(), "Veuillez ajouter votre carte professionnelle.",Toast.LENGTH_LONG).show();
+            } else if(officine.getText().toString().isEmpty()){
                 Toast.makeText(getApplicationContext(), "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
             } else {
                 initialData = new HashMap<>();
+                initialData.put("mName", phone.getText().toString());
                 initialData.put("mPhoneNumber", phone.getText().toString());
                 initialData.put("nomOffificine", lowerToUpper(officine.getText().toString()));
                 initialData.put("addresseOfficine", lowerToUpper(address.getText().toString()));

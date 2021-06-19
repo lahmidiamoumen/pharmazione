@@ -242,12 +242,13 @@
     <string name="pharmazione_services">pharmazione services</string>
     <string name="publi">Publié</string>
     <string name="retour">Retour</string>
-    <string name="dites_vos_confr_res_ce_que_vous_pensez">Dites à vos confrères ce que vous pensez…</string>
+    <string name="dites_vos_confr_res_ce_que_vous_pensez">Donner une description…</string>
     <string name="desc">compose_add_recipient_icon_content_desc</string>
     <string name="wilaya">Wilaya</string>
     <string name="dites_nous_ce_que_vous_pensez">dites-nous ce que vous pensez…</string>
     <string name="parameters">Parameters</string>
     <string name="vide">Pas de publications</string>
+    <string name="donner_un_titre">Donner un titre…</string>
 
 
 </resources>

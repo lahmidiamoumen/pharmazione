@@ -71,13 +71,13 @@
         <item name="android:textSize">10sp</item>
     </style>
 
-    <style name="TextInput" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+    <style name="TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="hintTextAppearance">@style/HintTextStyle</item>
-        <item name="android:padding">@dimen/album_dp_10</item>
+        <item name="android:padding">@dimen/album_dp_4</item>
         <item name="boxStrokeColor">@color/colorAccent</item>
-        <item name="android:textColorHint">#606770</item>
+        <item name="android:textColorHint">#888D95</item>
     </style>
 
     <style name="BottomSheetShapeAppearance" parent="ShapeAppearance.MaterialComponents.LargeComponent">

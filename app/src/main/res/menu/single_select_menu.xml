@@ -12,10 +12,15 @@
         app:showAsAction="always"
         android:title="@string/menu_ocr" />
 
-
     <item android:id="@+id/menu_contact"
         android:icon="@drawable/ic_chat"
         app:showAsAction="always"
         android:title="@string/menu_delete" />
+
+    <item android:id="@+id/menu_shar"
+        android:icon="@drawable/ic_chat"
+        app:showAsAction="always"
+        android:title="Partager l'application" />
+
 
 </menu>

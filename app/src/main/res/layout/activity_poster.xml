@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
+    <data>
+        <variable
+            name="switchers"
+            type="java.lang.Boolean" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -49,7 +55,7 @@
                     app:layout_constraintStart_toEndOf="@id/close_icon"
                     app:layout_constraintTop_toTopOf="parent"
                     android:background="@android:color/transparent"
-                    android:hint="Ajouter un titre..."
+                    android:hint="@string/donner_un_titre"
                     android:textAppearance="?attr/textAppearanceHeadline5" />
 
                 <ImageButton
@@ -94,15 +100,28 @@
                     android:contentDescription="@string/desc" />
 
 
+                <TextView
+                    goneIf="@{switchers == false}"
+                    android:layout_marginTop="@dimen/grid_1"
+                    android:id="@+id/med_text"
+                    app:layout_constraintStart_toStartOf="@id/switcher"
+                    app:layout_constraintTop_toBottomOf="@id/recipient_divider"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    android:textSize="10sp"
+                    android:text="Les médicaments que vous voulez échanger"
+                    tools:ignore="SmallSp" />
+
                 <HorizontalScrollView
-                    android:visibility="gone"
+                    android:background="@drawable/input_for_photos"
+                    goneIf="@{switchers == false}"
                     android:id="@+id/recipient_scroll_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toStartOf="@id/recipient_add_icon"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/switcher"
-                    android:layout_marginTop="@dimen/grid_1"
+                    app:layout_constraintStart_toStartOf="@id/switcher"
+                    app:layout_constraintTop_toBottomOf="@id/med_text"
                     android:layout_marginEnd="@dimen/grid_2"
                     android:minHeight="48dp"
                     android:paddingVertical="@dimen/grid_0_25"
@@ -124,7 +143,7 @@
                 </HorizontalScrollView>
 
                 <ImageButton
-                    android:visibility="gone"
+                    goneIf="@{switchers == false}"
                     android:id="@+id/recipient_add_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -140,13 +159,98 @@
                     app:tint="@color/color_on_surface_emphasis_disabled"
                     app:srcCompat="@drawable/ic_twotone_add_circle_outline"/>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    goneIf="@{switchers == false}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recipient_scroll_view"
+                    android:id="@+id/date_layout"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextInput"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:startIconDrawable="@drawable/ic_calender"
+                    android:hint="@string/date_de_p_remption"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/date_edit_text"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        android:inputType="date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    goneIf="@{switchers == false}"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/date_layout"
+                    android:id="@+id/qte"
+                    style="@style/TextInput"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:hint="Préciser la quantité"
+                    android:background="?attr/actionBarItemBackground"
+                    app:startIconDrawable="@drawable/ic_med"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/qte_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    goneIf="@{switchers == false}"
+                    android:id="@+id/lot"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/qte"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextInput"
+                    app:startIconDrawable="@drawable/ic_lots"
+                    android:hint="@string/description"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/lot_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:inputType="textAutoCorrect"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <ImageView
-                    android:visibility="gone"
+                    goneIf="@{switchers == false}"
                     android:id="@+id/recipient_divider5"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipient_scroll_view"
+                    app:layout_constraintTop_toBottomOf="@+id/lot"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="@dimen/grid_1"
                     android:layout_marginHorizontal="@dimen/grid_2"
@@ -161,7 +265,7 @@
                     android:layout_marginHorizontal="@dimen/album_dp_20"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:checked="false"
+                    android:checked="@{switchers}"
                     android:text="Publier un échange de médicament"/>
 
 

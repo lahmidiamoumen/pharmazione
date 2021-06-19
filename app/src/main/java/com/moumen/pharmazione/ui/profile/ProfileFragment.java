@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -37,6 +38,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
@@ -251,6 +253,20 @@ public class ProfileFragment extends Fragment {
             case R.id.menu_meddwak:
                 deleteAccountClicked();
                 break;
+            case R.id.menu_shar: {
+//                final String appPackageName = getActivity().getPackageName(); // getPackageName() from Context or Activity object
+//                try {
+//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+//                } catch (android.content.ActivityNotFoundException anfe) {
+//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+//                }
+                ShareCompat.IntentBuilder.from(getActivity())
+                        .setType("text/plain")
+                        .setChooserTitle("Pharmazione")
+                        .setText("http://play.google.com/store/apps/details?id=" + getActivity().getPackageName())
+                        .startChooser();
+            }
+                break;
         }
         return true;
     }
@@ -282,9 +298,11 @@ public class ProfileFragment extends Fragment {
         final User[] user = new User[1];
         Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
         task.addOnSuccessListener(documentSnapshot -> {
-            System.out.println("Succes user id"+mAuth.getUid());
             user[0] = documentSnapshot.toObject(User.class);
-            assert user[0] != null;
+            if(user[0] == null) {
+                showSandbar("Something went wrong!");
+                return;
+            }
             this.user = user[0];
             sharedViewModel.getUserData().setValue(user[0]);
             updateUI(user[0]);

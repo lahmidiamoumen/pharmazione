@@ -1,13 +1,18 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:theme="@style/Theme.MedDwak.DayNight"
         android:layout_marginStart="@dimen/album_dp_10"
         android:layout_marginEnd="@dimen/album_dp_10"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_marginBottom="@dimen/album_dp_4"
             android:id="@+id/linearLayoutToll"
@@ -34,6 +39,8 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
+            android:visibility="gone"
+            android:layout_marginBottom="60dp"
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,13 +52,106 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+        <LinearLayout
+            android:id="@+id/uncomplete"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/empty_search_list_icons"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:background="@drawable/ic_id_card_rafiki" />
+            <TextView
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vous devez compléter votre inscription"
+                />
+
+            <Button
+                android:layout_gravity="center"
+                android:background="#00000000"
+                android:textColor="@color/colorPrimary"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:id="@+id/button_resend"
+                android:layout_height="wrap_content"
+                android:text="Continuer"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/easeIn"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:background="@drawable/ic_id_card_rafiki" />
+            <TextView
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Votre inscription a été effectué avec succès."
+                />
+
+            <TextView
+                android:layout_marginTop="@dimen/_8"
+                android:textSize="@dimen/album_sp_16"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vous recevez une réponse après \n vérification de vos données"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/auth"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/s"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:background="@drawable/ic_confirmed_rafiki" />
+            <TextView
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="VOUS ÊTES PHARMACIEN D'OFFICINE ?"
+                />
+
+            <TextView
+                android:layout_marginTop="@dimen/_8"
+                android:textSize="@dimen/album_sp_16"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vous devez vous inscrire afin de consulter \n la liste des publications"
+                />
+        </LinearLayout>
+
+
         <FrameLayout
             android:id="@+id/baseLayout"
+            android:visibility="gone"
             android:fontFamily="@font/x_regular_norma"
             android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:theme="@style/Theme.MedDwak.DayNight">
+            android:layout_height="500dp">
 
             <LinearLayout
                 android:id="@+id/empty_search_list"
@@ -82,6 +182,14 @@
 
         </FrameLayout>
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_marginTop="@dimen/album_dp_200"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/album_dp_30"
+            android:layout_height="@dimen/album_dp_30"/>
+
     </LinearLayout>
 
+    </ScrollView>
 </layout>

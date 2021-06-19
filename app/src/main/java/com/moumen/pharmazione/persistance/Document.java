@@ -30,6 +30,10 @@ public class Document {
     public String category;
 
     public String etat;
+    public String dateExpiration;
+    public String numLot;
+    public Integer qte;
+
 
     public List<String> path;
 
@@ -75,6 +79,30 @@ public class Document {
         this.token = token;
     }
     //------------Methods--------
+
+    public String getDateExpiration() {
+        return dateExpiration;
+    }
+
+    public void setDateExpiration(String dateExpiration) {
+        this.dateExpiration = dateExpiration;
+    }
+
+    public String getNumLot() {
+        return numLot;
+    }
+
+    public void setNumLot(String numLot) {
+        this.numLot = numLot;
+    }
+
+    public Integer getQte() {
+        return qte;
+    }
+
+    public void setQte(Integer qte) {
+        this.qte = qte;
+    }
 
 
     public String getBody() {

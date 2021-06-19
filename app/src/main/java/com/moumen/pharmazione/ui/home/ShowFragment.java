@@ -65,6 +65,7 @@ import com.moumen.pharmazione.ShowProfileActiv;
 import com.moumen.pharmazione.databinding.FragmentShowBinding;
 import com.moumen.pharmazione.persistance.Comment;
 import com.moumen.pharmazione.persistance.Document;
+import com.moumen.pharmazione.persistance.Notification;
 import com.moumen.pharmazione.persistance.User;
 
 import org.json.JSONObject;
@@ -76,6 +77,7 @@ import java.util.Objects;
 
 import static com.moumen.pharmazione.utils.Util.EMPTY_IMAGE;
 import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_NOTIF;
 import static com.moumen.pharmazione.utils.Util.load;
 
 public class ShowFragment extends Fragment {
@@ -179,7 +181,6 @@ public class ShowFragment extends Fragment {
         if(v instanceof ImageButton) {
             ((ImageButton)v).getDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.quantum_black_100), PorterDuff.Mode.SRC_IN);
         }
-
     }
 
     @Override
@@ -248,6 +249,32 @@ public class ShowFragment extends Fragment {
             }
 
          };
+
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                int totalNumberOfItems = adapter.getItemCount();
+                if(totalNumberOfItems == 0) {
+//                    binding.progressBar.setVisibility(View.VISIBLE);
+                    binding.commentReceylerView.setVisibility(View.GONE);
+                    binding.emptyLayout.setVisibility(View.VISIBLE);
+                }else {
+                    binding.emptyLayout.setVisibility(View.GONE);
+//                    binding.progressBar.setVisibility(View.GONE);
+                    binding.commentReceylerView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        if(adapter.getItemCount() == 0) {
+            binding.emptyLayout.setVisibility(View.VISIBLE);
+            binding.commentReceylerView.setVisibility(View.GONE);
+//            binding.progressBar.setVisibility(View.GONE);
+        }else {
+//            binding.progressBar.setVisibility(View.GONE);
+            binding.emptyLayout.setVisibility(View.GONE);
+            binding.commentReceylerView.setVisibility(View.VISIBLE);
+        }
+
         binding.commentReceylerView.setAdapter(adapter);
         binding.commentReceylerView.setLayoutManager(new LinearLayoutManager(getContext()));
         commentsDelay();
@@ -290,6 +317,7 @@ public class ShowFragment extends Fragment {
 
 
         if(userID != null && mAuth.getUid() != null && !mAuth.getUid().equals(userID)) {
+            Notification notif = new Notification();
             HashMap<String, Object> message = new HashMap<>();
             HashMap<String, Object> notification = new HashMap<>();
             HashMap<String, Object> android = new HashMap<>();
@@ -297,6 +325,10 @@ public class ShowFragment extends Fragment {
             HashMap<String, String> data = new HashMap<>();
 
             data.put("id_publication", documentID );
+
+            notif.setContent(content);
+            notif.setTitle(mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication");
+            notif.setToUser(userID);
 
             notification.put("body", content );
             notification.put("title", mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication" );
@@ -337,8 +369,8 @@ public class ShowFragment extends Fragment {
             };
             RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
             requestQueue.add(logInAPIRequest);
+            db.collection(PATH_NOTIF).document().set(notif);
         }
-
         binding.editText.setText("");
         Map<String, Object> updates = new HashMap<>();
         updates.put("created", FieldValue.serverTimestamp());

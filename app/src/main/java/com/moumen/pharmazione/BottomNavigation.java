@@ -73,7 +73,9 @@ public class BottomNavigation extends AppCompatActivity implements NavController
 //        Album.initialize(AlbumConfig.newBuilder(this)
 //                .setAlbumLoader(new MediaLoader())
 //                .build());
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
         if(mAuth.getUid() != null) {
             Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
             task.addOnSuccessListener(documentSnapshot -> sharedViewModel.getUserData().setValue(documentSnapshot.toObject(User.class)));

@@ -108,7 +108,7 @@
             android:background="@color/fui_transparent"
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="445dp"
+            android:layout_height="470dp"
             android:fitsSystemWindows="true"
             android:theme="@style/Theme.MedDwak.DayNight">
 
@@ -207,8 +207,8 @@
                     android:layout_marginHorizontal="@dimen/album_dp_10"
                     android:id="@+id/view"
                     android:layout_width="0dp"
-                    android:layout_height="260dp"
-                    android:layout_marginTop="116dp"
+                    android:layout_height="320dp"
+                    android:layout_marginTop="110dp"
                     app:cardCornerRadius="@dimen/_16"
                     app:cardElevation="@dimen/album_dp_10"
                     app:layout_constraintEnd_toStartOf="@+id/guideline2"
@@ -231,13 +231,56 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Informations de contact"
-                                android:textAppearance="?attr/textAppearanceHeadline5"
-                                android:textSize="16sp" />
+<!--                            <TextView-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:text="Informations de contact"-->
+<!--                                android:textAppearance="?attr/textAppearanceHeadline5"-->
+<!--                                android:textSize="16sp" />-->
 
+                            <LinearLayout
+                                android:id="@+id/textView12"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/album_dp_45"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent">
+
+                                <ImageView
+                                    android:layout_width="@dimen/album_dp_20"
+                                    android:layout_height="@dimen/album_dp_20"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:layout_marginEnd="@dimen/album_dp_20"
+                                    android:contentDescription="@string/desc"
+                                    android:src="@drawable/le_clair_512" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text='@{TextUtils.isEmpty(item.nomOffificine) ? " vide" : item.nomOffificine}'
+                                        android:textAppearance="?attr/textAppearanceHeadline4"
+                                        tools:text="Cit 400" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="Pharmacien "
+                                        android:textAppearance="?attr/textAppearanceCaption"
+                                        android:textColor="#6D6D6D" />
+
+                                </LinearLayout>
+
+
+
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:id="@+id/textWialay"
@@ -255,7 +298,7 @@
                                     android:layout_marginStart="@dimen/_8"
                                     android:layout_marginEnd="@dimen/album_dp_20"
                                     android:contentDescription="@string/desc"
-                                    android:src="@drawable/ic_location_home"  />
+                                    android:src="@drawable/ic_home_black_24dp"  />
 
                                 <LinearLayout
 
@@ -326,7 +369,6 @@
 
                             </LinearLayout>
 
-
                             <LinearLayout
                                 android:id="@+id/textView10"
                                 android:layout_width="match_parent"
@@ -366,6 +408,50 @@
                                         android:textColor="#6D6D6D" />
 
                                 </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/textView11"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/album_dp_45"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent">
+
+                                <ImageView
+                                    android:layout_width="@dimen/album_dp_20"
+                                    android:layout_height="@dimen/album_dp_20"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:layout_marginEnd="@dimen/album_dp_20"
+                                    android:contentDescription="@string/desc"
+                                    android:src="@drawable/ic_location_home" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text='@{TextUtils.isEmpty(item.addresseOfficine) ? " vide" : item.addresseOfficine}'
+                                        android:textAppearance="?attr/textAppearanceHeadline4"
+                                        tools:text="Cit 400" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="Adresse"
+                                        android:textAppearance="?attr/textAppearanceCaption"
+                                        android:textColor="#6D6D6D" />
+
+                                </LinearLayout>
+
+
 
                             </LinearLayout>
 

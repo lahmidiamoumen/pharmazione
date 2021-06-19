@@ -1,6 +1,7 @@
 package com.moumen.pharmazione.ui.poster;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -48,9 +49,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -81,7 +84,6 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     View parentLayout;
     TextView dialogText = null;
     private ArrayList<AlbumFile> mAlbumFiles;
-
 
     ActivityPosterBinding binding;
 
@@ -129,21 +131,46 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         binding.recyclerView.setAdapter(mAdapter);
 
         binding.takeImagesOreden.setOnClickListener(o-> selectImage());
-        binding.switcher.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
-                binding.recipientScrollView.setVisibility(View.VISIBLE);
-                binding.recipientAddIcon.setVisibility(View.VISIBLE);
-                binding.recipientDivider5.setVisibility(View.VISIBLE);
-            }else {
-                binding.recipientScrollView.setVisibility(View.GONE);
-                binding.recipientAddIcon.setVisibility(View.GONE);
-                binding.recipientDivider5.setVisibility(View.GONE);
-            }
-        });
+        binding.setSwitchers(false);
+
+        setCalender();
+        binding.switcher.setOnCheckedChangeListener((buttonView, isChecked) -> {binding.setSwitchers(isChecked);});
+//        binding.switcher.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//            if(isChecked){
+//                binding.recipientScrollView.setVisibility(View.VISIBLE);
+//                binding.recipientAddIcon.setVisibility(View.VISIBLE);
+//                binding.recipientDivider5.setVisibility(View.VISIBLE);
+//            }else {
+//                binding.recipientScrollView.setVisibility(View.GONE);
+//                binding.recipientAddIcon.setVisibility(View.GONE);
+//                binding.recipientDivider5.setVisibility(View.GONE);
+//            }
+//        });
 
         binding.sendIcon.setOnClickListener(this);
         binding.recipientAddIcon.setOnClickListener(o->openSearch());
         binding.closeIcon.setOnClickListener(v-> finish());
+    }
+
+    void setCalender(){
+        final Calendar myCalendar = Calendar.getInstance();
+
+        DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabel(myCalendar);
+        };
+        binding.dateEditText.setOnClickListener(v -> new DatePickerDialog(this, date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show());
+    }
+
+    private void updateLabel(Calendar myCalendar) {
+        String myFormat = "MM/dd/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        binding.dateEditText.setText(sdf.format(myCalendar.getTime()));
     }
 
     private void selectImage() {
@@ -215,10 +242,22 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
             binding.body.setError("Le sujet est vide!");
             return false;
         }
-//        document.setLocation(sele[0]);
-        document.setTitle(caseSenstive(getValue(binding.titre)));
-        document.setBody(caseSenstive(getValue(binding.body)));
+        if (binding.getSwitchers() && getValue(binding.dateLayout.getEditText()).isEmpty()){
+            binding.dateLayout.setError("La date est vide!");
+            return false;
+        }
+        if (binding.getSwitchers() && getValue(binding.qte.getEditText()).isEmpty()){
+            binding.qte.setError("Ce champ est vide!");
+            return false;
+        }
+        if (binding.getSwitchers() && getValue(binding.lot.getEditText()).isEmpty()){
+            binding.lot.setError("Ce cahmpe est vide!");
+            return false;
+        }
 
+//        document.setLocation(sele[0]);
+        document.setTitle(caseSensitive(getValue(binding.titre)));
+        document.setBody(caseSensitive(getValue(binding.body)));
         return true;
     }
 
@@ -300,7 +339,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                 RC_SIGN_IN);
     }
 
-    String caseSenstive(String hash){
+    String caseSensitive(String hash){
         return hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
     }
 
@@ -310,8 +349,13 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
       String id = db.collection(PATH).document().getId();
       Task<DocumentSnapshot> task =  db.collection(PATH_USER).document(mAuth.getUid()).get();
       document.setUserID(mAuth.getUid());
-      document.setToChange(binding.switcher.isChecked());
-      document.setMedicines(history);
+      document.setToChange(binding.getSwitchers());
+      if(binding.getSwitchers()) {
+          document.setMedicines(history);
+          document.setDateExpiration(getValue(binding.dateEditText));
+          document.setNumLot(getValue(binding.lotEditText));
+          document.setQte(Integer.valueOf(getValue(binding.qteEditText)));
+      }
       document.setDocumentID(id);
       if(mAlbumFiles != null && mAlbumFiles.size() > 0){
           task.addOnSuccessListener(documentSnapshot -> {
@@ -321,8 +365,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                   showEndDig("Votre compte est n'est pas vérifié");
                   return;
               }
-              document.setUserName(caseSenstive(user.mName));
-              document.setUserUrl(caseSenstive(user.mPhotoUri));
+              document.setUserName(caseSensitive(user.mName));
+              document.setUserUrl(user.mPhotoUri);
               document.setLocation(user.getWilaya());
               document.setToken(user.getToken());
               document.setSatisfied(user.getSatisfied());
@@ -340,8 +384,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                   showEndDig("Votre compte est n'est pas vérifié");
                   return;
               }
-              document.setUserName(caseSenstive(user.mName));
-              document.setUserUrl(caseSenstive(user.mPhotoUri));
+              document.setUserName(caseSensitive(user.mName));
+              document.setUserUrl(user.mPhotoUri);
               document.setLocation(user.getWilaya());
               document.setSatisfied(user.getSatisfied());
               db.collection(PATH)

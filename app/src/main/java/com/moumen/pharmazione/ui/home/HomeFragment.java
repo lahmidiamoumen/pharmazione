@@ -21,6 +21,7 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -79,12 +80,16 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         Query dbCollection = FirebaseFirestore.getInstance().collection(PATH);
         //query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
         query = dbCollection.whereEqualTo("satisfied",true).orderBy("scanned", Query.Direction.DESCENDING);
+        //swipeRefreshLayout = binding.swipeContainer;
 
         adapter = getPaging();
+//        binding.listView.setAdapter(adapter);
+//        swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
         mFilterDialog = FilterDialogFragment.getInstance();
         mFilterDialog.setCallback(this);
 
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -136,10 +141,24 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(users.getUid()).get();
         task.addOnSuccessListener(documentSnapshot -> {
             User user = documentSnapshot.toObject(User.class);
-            assert user != null;
+            if(user == null) {
+                binding.scroll.setVisibility(View.GONE);
+                binding.uncomplete.setVisibility(View.GONE);
+                binding.text.setVisibility(View.VISIBLE);
+                if(adapter != null)
+                    adapter.stopListening();
+                AuthUI.getInstance()
+                        .signOut(getContext())
+                        .addOnCompleteListener(tasks -> {
+                            if (tasks.isSuccessful()) {
+                                getActivity().getViewModelStore().clear();
+                            }
+                        });
+            }
             if(user.getSatisfied() == null ? false : user.getSatisfied()){
                 binding.editText.setOnClickListener(o-> onFilterClicked());
                 binding.filter.setOnClickListener(o->goToSearch());
+                adapter.startListening();
             }
             else if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
                 binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
@@ -272,7 +291,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 .build();
 
         FirestorePagingOptions<Document> options = new FirestorePagingOptions.Builder<Document>()
-                //.setLifecycleOwner(this)
+                //.setLifecycleOwner(getActivity())
                 .setQuery(query, config, Document.class)
                 .build();
 
@@ -339,13 +358,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (adapter != null) {
-            adapter.startListening();
-        }
-    }
+
 
     @Override
     public void onStop() {

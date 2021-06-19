@@ -85,11 +85,12 @@
                         tools:text="High school reunion lahmidi saldkjasd laksjdlk" />
 
                     <ImageButton
-                        android:paddingEnd="@dimen/grid_2"
+                        android:layout_marginEnd="@dimen/grid_2"
                         android:alpha="?attr/emphasisMediumAlpha"
                         android:id="@+id/navigation_icon"
+                        android:paddingTop="@dimen/album_dp_0"
                         android:layout_width="45dp"
-                        android:layout_height="48dp"
+                        android:layout_height="45dp"
                         android:background="?attr/actionBarItemBackground"
                         android:contentDescription="@string/desc"
                         android:scaleType="fitCenter"
@@ -163,12 +164,13 @@
                         tools:text="High school reunion lahmidi saldkjasd laksjdlk"
                         android:textAppearance="?attr/textAppearanceBody2" />
                     <ImageView
+                        app:goneIf="@{email.path == null || email.path.size() == 0 }"
                         android:layout_marginVertical="@dimen/album_dp_10"
                         android:id="@+id/recipient_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recipient_scroll_view"
+                        app:layout_constraintTop_toBottomOf="@+id/grid"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="@dimen/album_dp_10"
                         android:layout_marginHorizontal="@dimen/grid_2"
@@ -177,12 +179,11 @@
                         android:contentDescription="@string/desc" />
 
                     <ImageView
-                        android:layout_marginTop="@dimen/album_dp_20"
                         android:id="@+id/recipient_divider2"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recycler_view"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:background="@drawable/divider"
@@ -191,7 +192,7 @@
 
 
                     <HorizontalScrollView
-                        android:visibility="gone"
+                        app:goneIf="@{email.isToChange == null || email.isToChange == false}"
                         android:id="@+id/recipient_scroll_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -217,6 +218,80 @@
                             android:scrollbars="none"/>
 
                     </HorizontalScrollView>
+
+                    <GridLayout
+                        app:goneIf="@{email.isToChange == null || email.isToChange == false}"
+                        android:id="@+id/grid"
+                        android:layout_marginStart="@dimen/album_dp_30"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/recipient_scroll_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:rowCount="3"
+                        android:columnCount="2"
+                        >
+                        <TextView
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:layout_margin="@dimen/album_dp_6"
+                            android:text="@string/description"
+                            android:id="@+id/button3"
+                            android:layout_column="0"
+                            android:layout_gravity="left|top"
+                            android:layout_row="0"/>
+
+
+                        <TextView
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:layout_margin="@dimen/album_dp_6"
+                            tools:text="Quantidte"
+                            android:text="@{email.numLot}"
+                            android:id="@+id/button32"
+                            android:layout_column="1"
+                            android:layout_marginStart="@dimen/album_dp_30"
+                            android:layout_gravity="fill_horizontal"
+                            android:layout_row="0"/>
+
+                        <TextView
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:layout_margin="@dimen/album_dp_6"
+                            android:text="@string/date_de_p_remption"
+                            android:layout_column="0"
+                            android:layout_gravity="left|top"
+                            android:layout_row="1"/>
+
+
+                        <TextView
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:layout_margin="@dimen/album_dp_6"
+                            tools:text="Quantidte"
+                            android:text="@{email.dateExpiration}"
+                            android:layout_column="1"
+                            android:layout_marginStart="@dimen/album_dp_30"
+                            android:layout_gravity="fill_horizontal"
+                            android:layout_row="1"/>
+
+                        <TextView
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:layout_margin="@dimen/album_dp_6"
+                            android:text="La quantité"
+                            android:layout_column="0"
+                            android:layout_gravity="left|top"
+                            android:layout_row="2"/>
+
+
+                        <TextView
+                            android:text="@{String.valueOf(email.qte)}"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:layout_margin="@dimen/album_dp_6"
+                            tools:text="date_de_p_remption"
+                            android:layout_column="1"
+                            android:layout_marginStart="@dimen/album_dp_30"
+                            android:layout_gravity="fill_horizontal"
+                            android:layout_row="2"/>
+
+
+                    </GridLayout>
 
 
 
@@ -281,11 +356,21 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:overScrollMode="never"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/textComontair"
                         tools:listitem="@layout/empty_activity" />
+
+                    <TextView
+                        android:id="@+id/empty_layout"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textComontair"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/album_dp_200"
+                        android:text="Pas de commentaire"/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

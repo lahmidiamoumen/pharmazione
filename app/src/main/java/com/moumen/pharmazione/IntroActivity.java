@@ -75,7 +75,7 @@ public class IntroActivity extends AppCompatActivity {
                 R.drawable.ic_free));
 
         // setup viewpager
-        screenPager =findViewById(R.id.screen_viewpager);
+        screenPager = findViewById(R.id.screen_viewpager);
         introViewPagerAdapter = new IntroViewPagerAdapter(this,mList);
         screenPager.setAdapter(introViewPagerAdapter);
 
