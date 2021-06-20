@@ -19,6 +19,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        tools:visibility="gone"
         android:layout_marginBottom="56dp"
         android:id="@+id/constraintLayout"
         android:layout_gravity="center_vertical"
@@ -98,6 +99,7 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:visibility="gone"
+        tools:visibility="visible"
         android:id="@+id/signed"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
@@ -150,10 +152,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="3dp"
                     android:background="?attr/layout_drawable_picture"
-                    android:clickable="true"
                     android:contentDescription="@string/desc"
                     android:elevation="5dp"
-                    android:focusable="true"
                     android:padding="@dimen/album_dp_10"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_nav_settings"
@@ -220,6 +220,21 @@
                         android:layout_marginHorizontal="@dimen/album_dp_20"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+
+                        <ImageButton
+                            android:id="@+id/edit"
+                            android:padding="@dimen/_8"
+                            android:elevation="5dp"
+                            android:layout_marginTop="@dimen/_8"
+                            android:layout_marginEnd="@dimen/album_dp_2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:background="?attr/layout_drawable_picture"
+                            android:src="@drawable/ic_edit"
+                            android:tint="?attr/colorOnSurface"
+                            android:scaleType="fitCenter"
+                            android:layout_width="@dimen/_40"
+                            android:layout_height="@dimen/_40"/>
 
                         <LinearLayout
                             android:layout_marginHorizontal="@dimen/album_dp_10"

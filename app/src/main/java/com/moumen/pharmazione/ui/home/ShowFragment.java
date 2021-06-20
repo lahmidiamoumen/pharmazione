@@ -70,6 +70,7 @@ import com.moumen.pharmazione.persistance.User;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -146,7 +147,6 @@ public class ShowFragment extends Fragment {
             binding.setTimeAgo(niceDateStr);
             binding.setEmail(doc);
             binding.setUrlEmpty(EMPTY_IMAGE);
-
             if(doc.medicines != null && doc.medicines.size() > 0){
                 binding.recipientScrollView.setVisibility(View.VISIBLE);
                 for (Map<String,String> map : doc.medicines) {
@@ -329,6 +329,7 @@ public class ShowFragment extends Fragment {
             notif.setContent(content);
             notif.setTitle(mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication");
             notif.setToUser(userID);
+            notif.setSeen(false);
 
             notification.put("body", content );
             notification.put("title", mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication" );

@@ -11,8 +11,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,9 +28,11 @@ import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +65,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -117,10 +125,14 @@ public class ProfileFragment extends Fragment {
     private String name = null;
 
     private SharedViewModel sharedViewModel;
+    LinearLayout linearLayout;
     private long duration;
 
     private CollectionReference dbCollection;
     private FragmentNotificationsBinding binding;
+
+    android.app.AlertDialog alertDialogPhone;
+    Map<String, Object> initialData ;
 
     private ConstraintLayout constraintLayout;
 
@@ -189,6 +201,112 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    private String lowerToUpper( String hash) {
+        return hash.substring(0,1).toUpperCase() + hash.substring(1).toLowerCase();
+    }
+    private void toggle(boolean show, View v) {
+        View secondPage = v.findViewById(R.id.secondPage);
+        View first = v.findViewById(R.id.firstPage);
+        ViewGroup parent = v.findViewById(R.id.layout);
+
+        Transition transition = new Slide(Gravity.LEFT);
+        transition.setDuration(600L);
+        transition.addTarget(R.id.secondPage);
+
+        Transition transitionFirst = new Fade();
+        transition.setDuration(300L);
+        transition.addTarget(R.id.firstPage);
+
+        TransitionManager.beginDelayedTransition(parent, transition);
+        TransitionManager.beginDelayedTransition(parent, transitionFirst);
+        secondPage.setVisibility(show ? View.VISIBLE : View.GONE);
+        first.setVisibility(!show ? View.VISIBLE : View.GONE);
+
+    }
+
+    void initDialogPhone(){
+        Context c = getContext();
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
+        View mView = layoutInflaterAndroid.inflate(R.layout.dialog_phon_input, null);
+        android.app.AlertDialog.Builder alertDialogBuilderUserInput = new android.app.AlertDialog.Builder(c,R.style.DialogTheme);
+        alertDialogBuilderUserInput.setView(mView);
+
+        TextView ttile = mView.findViewById(R.id.title);
+        ttile.setText("Modifier votre profil");
+        TextInputEditText phone = mView.findViewById(R.id.phone_edit_text);
+        TextInputEditText officine = mView.findViewById(R.id.nom_officine_edit_text);
+        TextInputEditText nom = mView.findViewById(R.id.nom_edit_text);
+        TextInputEditText address = mView.findViewById(R.id.address_edit_text);
+        AutoCompleteTextView wilaya = mView.findViewById(R.id.wilaya_edit_text);
+        TextInputEditText founisseure = mView.findViewById(R.id.founisseure);
+        CheckBox checkBox1 = mView.findViewById(R.id.checkbox1);
+        CheckBox checkBox2 = mView.findViewById(R.id.checkbox2);
+        CheckBox checkBox3 = mView.findViewById(R.id.checkbox3);
+        RadioGroup radioGroup = mView.findViewById(R.id.radioGroup);
+        LinearLayout linearLayout = mView.findViewById(R.id.linearLayout);
+        linearLayout.setVisibility(View.GONE);
+
+        nom.setText(user.getmName());
+        phone.setText(user.getmPhoneNumber());
+        officine.setText(user.getNomOffificine());
+        address.setText(user.getAddresseOfficine());
+        wilaya.setText(user.getWilaya() == null ? "Vide" : user.getWilaya());
+        checkBox1.setChecked(user.getConvention_cnas() == null ? false : user.getConvention_cnas());
+        checkBox2.setChecked(user.getConvention_casnos() == null ? false : user.getConvention_casnos());
+        checkBox3.setChecked(user.getConvention_militair() == null ? false : user.getConvention_militair());
+        founisseure.setText(user.getFournisseure());
+
+        String[] sele = new String[1];
+        String[] cites = getResources().getStringArray(R.array.cities2);
+        ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getActivity(), R.layout.list_item, cites);
+        wilaya.setAdapter(adapter3);
+        wilaya.setOnItemClickListener((parent, view, position, rowId) -> sele[0] = (String)parent.getItemAtPosition(position));
+
+        Button save = mView.findViewById(R.id.poster);
+        Button next = mView.findViewById(R.id.next);
+        Button retour = mView.findViewById(R.id.retour);
+        ImageButton close = mView.findViewById(R.id.close_icon);
+        close.setVisibility(View.VISIBLE);
+        close.setOnClickListener(l-> alertDialogPhone.dismiss());
+        retour.setOnClickListener(o-> toggle(false, mView));
+        initialData = new HashMap<>();
+
+        next.setOnClickListener(o-> {
+            if(phone.getText() == null || !phone.getText().toString().matches("0[567][0-9]{8,}")) {
+                phone.setError("Numéro de téléphone erroné");
+            }  else if(wilaya.getText().toString().isEmpty()){
+                Toast.makeText(getContext(), "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
+            }
+            else {
+                toggle(true,mView);
+            }
+        });
+
+        save.setOnClickListener(o->{
+            if(officine.getText().toString().isEmpty()){
+                Toast.makeText(c, "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
+            } else {
+                initialData.put("mName", nom.getText().toString());
+                initialData.put("mPhoneNumber", phone.getText().toString());
+                initialData.put("nomOffificine", lowerToUpper(officine.getText().toString()));
+                initialData.put("addresseOfficine", lowerToUpper(address.getText().toString()));
+                initialData.put("wilaya", wilaya.getText().toString());
+                initialData.put("fournisseure", lowerToUpper(founisseure.getText().toString()));
+                initialData.put("convention_cnas", checkBox1.isChecked());
+                initialData.put("convention_casnos", checkBox2.isChecked());
+                initialData.put("convention_militair", checkBox3.isChecked());
+                initialData.put("type", radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
+
+                FirebaseFirestore.getInstance().collection(PATH_USER)
+                    .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge()).addOnSuccessListener(aVoid -> toUserClass());
+
+                alertDialogPhone.dismiss();
+            }
+        });
+        alertDialogPhone = alertDialogBuilderUserInput.create();
+        alertDialogPhone.show();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -217,6 +335,13 @@ public class ProfileFragment extends Fragment {
 
         // Queries
 
+    }
+
+    User createUser(){
+        FirebaseUser mUser = mAuth.getCurrentUser();
+        User user = new User(mUser.getEmail(),mUser.getPhoneNumber(),lowerToUpper(mUser.getDisplayName()) ,mUser.getPhotoUrl().toString());
+        FirebaseFirestore.getInstance().collection(PATH_USER).document(mUser.getUid()).set(user);
+        return user;
     }
 
     @Override
@@ -284,6 +409,24 @@ public class ProfileFragment extends Fragment {
 //        onBindNotification();
 //        mListener.onBindNotification(binding.imageButton,getContext());
 
+        if( user == null &&  mAuth.getCurrentUser() != null){
+            FirebaseUser mUser = mAuth.getCurrentUser();
+            user = new User(mUser.getEmail(),mUser.getPhoneNumber(),lowerToUpper(mUser.getDisplayName()) ,mUser.getPhotoUrl().toString());
+            user.setUserId(mAuth.getUid());
+            sharedViewModel.getUserData().setValue(user);
+        }
+        if(user != null && mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getUid().equals(user.getUserId())){
+            if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null &&
+                    !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
+                binding.edit.setOnClickListener(l-> initDialogPhone());
+            else binding.edit.setOnClickListener(l-> showDigAskPhone());
+        } else {
+            binding.edit.setVisibility(View.GONE);
+            binding.imageButton.setVisibility(View.GONE);
+            // binding.parameters.setVisibility(View.GONE);
+            // binding.menu.setVisibility(View.GONE);
+            binding.notifications.setVisibility(View.GONE);
+        }
 
         Button mSignIn = binding.btn;
         if(adapter != null){
@@ -302,6 +445,9 @@ public class ProfileFragment extends Fragment {
             if(user[0] == null) {
                 showSandbar("Something went wrong!");
                 return;
+            }
+            else if (user[0].getUserId() == null || user[0].getUserId().isEmpty()) {
+                user[0] = createUser();
             }
             this.user = user[0];
             sharedViewModel.getUserData().setValue(user[0]);
@@ -466,6 +612,15 @@ public class ProfileFragment extends Fragment {
                     adapter = null;
                     toUserClass();
                 } else {
+                    if(mAuth.getCurrentUser() != null){
+                        user = new User();
+                        user.setmName(mAuth.getCurrentUser().getDisplayName());
+                        user.setmPhotoUri(mAuth.getCurrentUser().getPhotoUrl().getPath());
+                        user.setmEmail(mAuth.getCurrentUser().getEmail());
+                        user.setUserId(mAuth.getCurrentUser().getUid());
+                        sharedViewModel.getUserData().setValue(user);
+                        updateUI(user);
+                    }
                     showDigAskPhone();
                 }
                break;
@@ -477,8 +632,16 @@ public class ProfileFragment extends Fragment {
                     if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null &&
                             !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
                         toUserClass();
-                    else
+                    else {
+                        if( user == null &&  mAuth.getCurrentUser() != null){
+                            user = new User();
+                            user.setmName(mAuth.getCurrentUser().getDisplayName());
+                            user.setmPhotoUri(mAuth.getCurrentUser().getPhotoUrl().getPath());
+                            user.setmEmail(mAuth.getCurrentUser().getEmail());
+                            user.setUserId(mAuth.getCurrentUser().getUid());
+                        }
                         startActivityForResult(ValidatePhone.createIntent(context, response), 521);
+                    }
                 } else {
                     if (response == null) {
                         showSandbar(getResources().getString(R.string.sign_in_cancelled));
@@ -527,6 +690,7 @@ public class ProfileFragment extends Fragment {
                         showSandbar(getResources().getString(R.string.sign_out_failed));
                     }
                 });
+        mAuth.signOut();
     }
 
     private void deleteAccountClicked() {
@@ -650,11 +814,11 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+
         if (adapter != null) {
             adapter.stopListening();
         }
     }
-
 
     private void onBindNotification() {
         binding.imageButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

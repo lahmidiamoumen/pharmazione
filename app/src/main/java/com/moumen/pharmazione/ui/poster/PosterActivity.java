@@ -161,15 +161,15 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             updateLabel(myCalendar);
         };
+
         binding.dateEditText.setOnClickListener(v -> new DatePickerDialog(this, date, myCalendar
                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show());
     }
 
     private void updateLabel(Calendar myCalendar) {
-        String myFormat = "MM/dd/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
+        String myFormat = "dd/MM/yyyy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.FRANCE);
         binding.dateEditText.setText(sdf.format(myCalendar.getTime()));
     }
 

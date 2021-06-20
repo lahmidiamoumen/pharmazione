@@ -71,6 +71,7 @@ import java.util.concurrent.TimeUnit;
 import id.zelory.compressor.Compressor;
 
 import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
 
 public class ValidatePhone extends AppCompatActivity implements ClickListener,
         View.OnClickListener {
@@ -199,15 +200,12 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
 
             }
         };
-
-
-        IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
-        if(response == null)
-            initDialogPhone();
-        else if( response.isNewUser() )
-            createUser(Objects.requireNonNull(mAuth.getCurrentUser()));
-        else
-            initDialogPhone();
+//
+//        IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
+//        if(response == null)
+//            initDialogPhone();
+//        else if( response.isNewUser() )
+        createUser(Objects.requireNonNull(mAuth.getCurrentUser()));
 
     }
 
@@ -227,9 +225,9 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
 
     void createUser(FirebaseUser mUser){
         User user = new User(mUser.getEmail(),mUser.getPhoneNumber(),lowerToUpper(mUser.getDisplayName()) ,mUser.getPhotoUrl().toString());
-        db.collection("med-dwa-users").document(mUser.getUid()).set(user)
-                .addOnSuccessListener(aVoid2 -> initDialogPhone())
-                .addOnFailureListener(e -> showSandbar(R.string.authentication_error));
+        initDialogPhone();
+        db.collection(PATH_USER).document(mUser.getUid()).set(user, SetOptions.merge())
+            .addOnFailureListener(e -> showSandbar(R.string.authentication_error));
     }
 
     private void previewImage(int position) {
@@ -346,6 +344,8 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         Button retour = mView.findViewById(R.id.retour);
 
         retour.setOnClickListener(o-> toggle(false, mView));
+        initialData = new HashMap<>();
+
 
         next.setOnClickListener(o-> {
             if(phone.getText() == null || !phone.getText().toString().matches("0[567][0-9]{8,}")) {
@@ -353,8 +353,16 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
             }  else if(wilaya.getText().toString().isEmpty()){
                 Toast.makeText(getApplicationContext(), "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
             }
-            else
+            else {
+                initialData.put("mName", nom.getText().toString());
+                initialData.put("wilaya", wilaya.getText().toString());
+                initialData.put("addresseOfficine", lowerToUpper(address.getText().toString()));
+                initialData.put("mPhoneNumber", phone.getText().toString());
+                db.collection("med-dwa-users")
+                    .document(Objects.requireNonNull(mAuth.getUid()))
+                    .set(initialData, SetOptions.merge());
                 toggle(true,mView);
+            }
         });
 
         save.setOnClickListener(o->{
@@ -363,8 +371,7 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
             } else if(officine.getText().toString().isEmpty()){
                 Toast.makeText(getApplicationContext(), "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
             } else {
-                initialData = new HashMap<>();
-                initialData.put("mName", phone.getText().toString());
+                initialData.put("mName", nom.getText().toString());
                 initialData.put("mPhoneNumber", phone.getText().toString());
                 initialData.put("nomOffificine", lowerToUpper(officine.getText().toString()));
                 initialData.put("addresseOfficine", lowerToUpper(address.getText().toString()));
@@ -374,6 +381,9 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
                 initialData.put("convention_casnos", checkBox2.isChecked());
                 initialData.put("convention_militair", checkBox3.isChecked());
                 initialData.put("type", radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
+
+               db.collection("med-dwa-users")
+                       .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge());
 
                 String st = phone.getText().toString().replaceFirst("0","+213");
                 mPhoneNumberField.setText(st);

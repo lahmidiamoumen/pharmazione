@@ -14,7 +14,7 @@
   -->
 <resources>
 
-    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="DialogTheme" parent="Theme.MedDwak.DayNight">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <!-- No backgrounds, titles or window float -->

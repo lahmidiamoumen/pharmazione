@@ -16,21 +16,21 @@
 
     <Button
         android:id="@+id/close"
-        android:onClick="onClick"
-        android:layout_marginTop="@dimen/_16dp"
-        android:padding="@dimen/_8"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8"
+        android:layout_marginTop="@dimen/_16dp"
+        android:contentDescription="@string/ferm"
+        android:onClick="onClick"
+        android:padding="@dimen/_8"
         android:text="@string/retour"
-        app:iconSize="@dimen/album_dp_30"
-        app:iconPadding="0dp"
         android:textAppearance="?attr/textAppearanceHeadline6"
         android:textColor="?attr/colorOnSurface"
-        app:iconTint="?attr/colorOnSurface"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
         app:icon="@drawable/ic_ios_arrow_back"
-        android:contentDescription="@string/ferm" />
+        app:iconPadding="0dp"
+        app:iconSize="@dimen/album_dp_30"
+        app:iconTint="?attr/colorOnSurface" />
 
     <TextView
         android:fontFamily="@font/x_regular"

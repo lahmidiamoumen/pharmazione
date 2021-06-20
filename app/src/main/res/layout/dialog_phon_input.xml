@@ -11,14 +11,40 @@
         android:orientation="vertical"
         android:paddingTop="@dimen/album_dp_30"
         android:gravity="center_horizontal">
-        <TextView
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            android:fontFamily="@font/x_regular"
-            android:layout_marginBottom="@dimen/album_dp_20"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="Veuillez remplir les champs suivants"/>
+            android:orientation="horizontal">
+            <TextView
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:fontFamily="@font/x_regular"
+                android:id="@+id/title"
+                android:layout_marginBottom="@dimen/album_dp_20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="Veuillez remplir les champs suivants"/>
+
+            <ImageButton
+                android:visibility="gone"
+                android:id="@+id/close_icon"
+                android:layout_width="@dimen/album_dp_50"
+                android:layout_height="@dimen/album_dp_50"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="centerCrop"
+                android:layout_marginEnd="@dimen/_8"
+                android:padding="@dimen/album_dp_4"
+                android:layout_marginStart="@dimen/grid_1"
+                android:contentDescription="@string/desc"
+                android:background="?attr/actionBarItemBackground"
+                android:tint="?attr/colorOnSurface"
+                app:srcCompat="@drawable/ic_close"
+                app:tint="@color/color_on_surface_emphasis_disabled" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:visibility="gone"
