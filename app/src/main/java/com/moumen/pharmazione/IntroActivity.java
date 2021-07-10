@@ -127,7 +127,7 @@ public class IntroActivity extends AppCompatActivity {
 
             //open main activity
             Intent mainActivity = new Intent(getApplicationContext(),BottomNavigation.class);
-
+            mainActivity.putExtra("firstTime",true);
             startActivity(mainActivity);
             // also we need to save a boolean value to storage so next time when the user run the app
             // we could know that he is already checked the intro screen activity

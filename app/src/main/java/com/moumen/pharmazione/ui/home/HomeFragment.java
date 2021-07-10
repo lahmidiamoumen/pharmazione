@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.FragmentNavigator;
@@ -22,7 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -44,11 +48,18 @@ import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.HorizantallContent;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.ui.poster.ValidatePhone;
+import com.moumen.pharmazione.utils.Connectivity;
 import com.moumen.pharmazione.utils.ItemClickListener;
 import com.moumen.pharmazione.utils.MedClickListener;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static android.app.Activity.RESULT_OK;
 import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
+import static com.moumen.pharmazione.utils.Util.RC_SIGN_IN;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_BESOIN;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 
@@ -59,15 +70,20 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     private SwipeRefreshLayout swipeRefreshLayout;
     private FragmentHomeBinding binding;
     private Query query;
+    FirebaseUser users;
     private FilterDialogFragment mFilterDialog;
     private boolean isVerified;
     FirebaseAuth mAuth;
+    private List<AuthUI.IdpConfig> providers;
     PagedList.Config config;
+    Boolean neverBefore = true;
 
     @Override
     public void onCreate(@Nullable Bundle sss) {
         super.onCreate(sss);
         sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+
         FirebaseApp.initializeApp(getContext());
         config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -87,13 +103,21 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 //        swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
         mFilterDialog = FilterDialogFragment.getInstance();
         mFilterDialog.setCallback(this);
+        providers = Arrays.asList(
+                new AuthUI.IdpConfig.GoogleBuilder().build());
+
+        Boolean uid = getActivity().getIntent().getBooleanExtra("firstTime", false);
+        if(uid != null && uid && neverBefore) {
+            this.neverBefore = false;
+            signIn();
+        }
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if( requestCode == START_ACTIVIY_VALIDATION){
+        if( requestCode == START_ACTIVIY_VALIDATION ) {
            if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
                 binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
                 binding.scroll.setVisibility(View.GONE);
@@ -104,7 +128,50 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 binding.uncomplete.setVisibility(View.GONE);
                 binding.text.setVisibility(View.VISIBLE);
             }
+        } else if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            if (resultCode == RESULT_OK && response != null) {
+                //addListener();
+                if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null &&
+                        !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
+                    userStat(null);
+                else {
+                    startActivityForResult(ValidatePhone.createIntent(getContext(), response), 521);
+                }
+            } else {
+                if (response == null) {
+                    showSandbar(getResources().getString(R.string.sign_in_cancelled));
+                    return;
+                } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    showSandbar(getResources().getString(R.string.no_internet_connection));
+                    return;
+                } else if (response.getError().getErrorCode() == ErrorCodes.ERROR_USER_DISABLED) {
+                    showSandbar(getResources().getString(R.string.account_disabled));
+                    return;
+                } else showSandbar(getResources().getString(R.string.unknown_error));
+                Log.e("Auth Frag", "Sign-in error: ", response.getError());
+            }
+        } else if ( requestCode == 521) {
+            if (resultCode == RESULT_OK) {
+                userStat(null);
+            } else {
+                showDigAskPhone();
+            }
         }
+    }
+
+    private void showDigAskPhone() {
+        new AlertDialog.Builder(getContext())
+                .setMessage("Compléter votre profil")
+                .setPositiveButton("Configurer", (dialogInterface, i) ->
+                        startActivityForResult(ValidatePhone.createIntent(getContext(), null),521))
+                .setNegativeButton("Annuler", (dialogInterface, i) -> {})
+                .show();
+    }
+
+
+    private void showSandbar(String errorMessageRes) {
+        Snackbar.make(binding.getRoot(), errorMessageRes, Snackbar.LENGTH_LONG).show();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -128,12 +195,24 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         //setHorizontalScroll();
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser users = mAuth.getCurrentUser();
+        users = mAuth.getCurrentUser();
         if(users == null) {
+            binding.btn.setOnClickListener(s -> signIn());
             binding.scroll.setVisibility(View.GONE);
             binding.auth.setVisibility(View.VISIBLE);
-            return;
+        } else {
+            userStat(savedInstanceState);
         }
+
+        if(!Connectivity.isConnected(getContext())) {
+            showSandbar(" la connexion internet est perdue");
+        }
+        else if(!Connectivity.isConnectedFast(getContext())) {
+            showSandbar("Votre connection internet est lente");
+        }
+    }
+
+    void userStat(Bundle savedInstanceState) {
         swipeRefreshLayout = binding.swipeContainer;
         binding.listView.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
@@ -340,6 +419,18 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 Log.e("Home Layout", e.getMessage(), e);
             }
         };
+    }
+
+    private void signIn() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
+                        .setAvailableProviders(providers)
+                        .setTheme(R.style.FullscreenTheme)      // Set theme
+                        .setLogo(R.drawable.logo)
+                        .build(),
+                RC_SIGN_IN);
     }
 
 

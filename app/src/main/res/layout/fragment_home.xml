@@ -196,6 +196,7 @@
     </LinearLayout>
 
     <LinearLayout
+        tools:visibility="visible"
         android:id="@+id/auth"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -223,9 +224,23 @@
             android:layout_height="wrap_content"
             android:text="Vous devez vous inscrire afin de consulter \n la liste des publications"
             />
+
+        <com.google.android.material.button.MaterialButton
+            android:gravity="center"
+            android:id="@+id/btn"
+            android:text="@string/rejoignez_nous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_16dp"
+            android:layout_marginBottom="20dp"
+            android:padding="@dimen/album_dp_15"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
+        tools:visibility="gone"
         android:id="@+id/scroll"
         android:fillViewport="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"

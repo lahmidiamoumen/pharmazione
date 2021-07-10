@@ -27,6 +27,7 @@ import com.moumen.pharmazione.databinding.ActivityPosterBinding;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.utils.ClickListener;
+import com.moumen.pharmazione.utils.Connectivity;
 import com.moumen.pharmazione.utils.PermissionUtil;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
@@ -150,6 +151,12 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         binding.sendIcon.setOnClickListener(this);
         binding.recipientAddIcon.setOnClickListener(o->openSearch());
         binding.closeIcon.setOnClickListener(v-> finish());
+        if(!Connectivity.isConnected(this)) {
+            showSandbar(" la connexion internet est perdue");
+        }
+        else if(!Connectivity.isConnectedFast(this)) {
+            showSandbar("Votre connection internet est lente");
+        }
     }
 
     void setCalender(){

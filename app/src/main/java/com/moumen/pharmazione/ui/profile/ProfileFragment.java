@@ -94,6 +94,7 @@ import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.ui.home.DocumentViewHolderProfile;
 import com.moumen.pharmazione.ui.home.ShowFragment;
 import com.moumen.pharmazione.ui.poster.ValidatePhone;
+import com.moumen.pharmazione.utils.Connectivity;
 import com.moumen.pharmazione.utils.OnActivityListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -434,6 +435,12 @@ public class ProfileFragment extends Fragment {
         }
         mSignIn.setOnClickListener(s -> signIn());
         updateUI(user);
+        if(!Connectivity.isConnected(getContext())) {
+            showSandbar(" la connexion internet est perdue");
+        }
+        else if(!Connectivity.isConnectedFast(getContext())) {
+            showSandbar("Votre connection internet est lente");
+        }
         //toolBarIcon();
     }
 

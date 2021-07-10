@@ -89,9 +89,10 @@
 
                 <TextView
                     android:textAppearance="?attr/textAppearanceCaption"
-                    android:textSize="11sp"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/camphor_bold"
                     android:id="@+id/sender_text_view2"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textColor="#BF360C"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/album_dp_4"

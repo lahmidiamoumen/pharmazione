@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -72,6 +73,7 @@ import id.zelory.compressor.Compressor;
 
 import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
+import static com.moumen.pharmazione.utils.Util.load;
 
 public class ValidatePhone extends AppCompatActivity implements ClickListener,
         View.OnClickListener {
@@ -84,7 +86,7 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
     private static final int STATE_VERIFY_SUCCESS = 4;
     private static final int STATE_SIGNIN_FAILED = 5;
     LinearLayout linearLayout;
-    RecyclerView relativeLayout;
+    RelativeLayout relativeLayout;
     private FirebaseAuth mAuth;
     FirebaseStorage storage;
     private ArrayList<AlbumFile> mAlbumFiles;
@@ -106,6 +108,8 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
 
     private Button mVerifyButton;
     private Button mResendButton;
+    private ImageButton imageButton;
+    ImageView imageView;
     ActivityPhoneValidateBinding binding;
 
 
@@ -276,8 +280,16 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
                 .onResult( result -> {
                     mAlbumFiles = result;
                     mAdapter.notifyDataSetChanged(mAlbumFiles);
+                    load(imageView,mAlbumFiles.get(0).getPath());
+
                     relativeLayout.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
                     linearLayout.setVisibility(result.size() > 0 ? View.GONE : View.VISIBLE);
+
+                    imageButton.setOnClickListener(o->{
+                        mAlbumFiles.clear();
+                        linearLayout.setVisibility(View.VISIBLE);
+                        relativeLayout.setVisibility(View.GONE);
+                    });
                 })
                 //.onCancel( result -> showSandbar("selection annuler"))
                 .start();
@@ -288,23 +300,17 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         selectImage();
     }
 
-    private void toggle(boolean show, View v) {
+    private void toggle(boolean show, View v,int i, int tran) {
         View secondPage = v.findViewById(R.id.secondPage);
-        View first = v.findViewById(R.id.firstPage);
+        View firstPage = v.findViewById(R.id.firstPage);
         ViewGroup parent = v.findViewById(R.id.layout);
 
-        Transition transition = new Slide(Gravity.LEFT);
-        transition.setDuration(600L);
-        transition.addTarget(R.id.secondPage);
-
-        Transition transitionFirst = new Fade();
-        transition.setDuration(300L);
-        transition.addTarget(R.id.firstPage);
-
+        Transition transition = new Slide(tran);
+        transition.setDuration(200L);
+        transition.addTarget(i);
         TransitionManager.beginDelayedTransition(parent, transition);
-        TransitionManager.beginDelayedTransition(parent, transitionFirst);
         secondPage.setVisibility(show ? View.VISIBLE : View.GONE);
-        first.setVisibility(!show ? View.VISIBLE : View.GONE);
+        firstPage.setVisibility(show ? View.GONE : View.VISIBLE);
 
     }
 
@@ -328,6 +334,8 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         RadioGroup radioGroup = mView.findViewById(R.id.radioGroup);
         linearLayout = mView.findViewById(R.id.linearLayout);
         relativeLayout = mView.findViewById(R.id.recycler_view55);
+        imageButton = mView.findViewById(R.id.close);
+        imageView = mView.findViewById(R.id.image_close2);
 
         nom.setText(mAuth.getCurrentUser() == null ? "" : mAuth.getCurrentUser().getDisplayName());
         takeImage.setOnClickListener(o-> selectImage());
@@ -343,7 +351,7 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         Button next = mView.findViewById(R.id.next);
         Button retour = mView.findViewById(R.id.retour);
 
-        retour.setOnClickListener(o-> toggle(false, mView));
+        retour.setOnClickListener(o-> toggle(false, mView,R.id.firstPage, Gravity.LEFT));
         initialData = new HashMap<>();
 
 
@@ -361,7 +369,7 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
                 db.collection("med-dwa-users")
                     .document(Objects.requireNonNull(mAuth.getUid()))
                     .set(initialData, SetOptions.merge());
-                toggle(true,mView);
+                toggle(true,mView, R.id.secondPage, Gravity.RIGHT);
             }
         });
 
