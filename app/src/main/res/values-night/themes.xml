@@ -51,6 +51,7 @@
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
         <item name="layout_drawable_picture">@drawable/layout_corner_above_dark</item>
         <item name="layout_drawable_edit">@drawable/search_input_dark</item>
+        <item name="layout_drawable_card">@drawable/card_leftt_dark</item>
 
 
     </style>

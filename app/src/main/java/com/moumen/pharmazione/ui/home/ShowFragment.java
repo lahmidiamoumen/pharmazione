@@ -1,6 +1,5 @@
 package com.moumen.pharmazione.ui.home;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,8 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -33,11 +30,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -48,8 +42,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.color.MaterialColors;
-import com.google.android.material.transition.MaterialContainerTransform;
-import com.google.android.material.transition.MaterialElevationScale;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -70,7 +62,6 @@ import com.moumen.pharmazione.persistance.User;
 
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,7 +70,7 @@ import java.util.Objects;
 import static com.moumen.pharmazione.utils.Util.EMPTY_IMAGE;
 import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_NOTIF;
-import static com.moumen.pharmazione.utils.Util.load;
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
 
 public class ShowFragment extends Fragment {
     private FragmentShowBinding binding;
@@ -94,6 +85,7 @@ public class ShowFragment extends Fragment {
     private String token;
     private String documentID;
     private String userID;
+    private User user;
 
 
     @Override
@@ -129,9 +121,9 @@ public class ShowFragment extends Fragment {
                 binding.attachmentRecyclerView.setAdapter(adapter);
             }
             userID = doc.userID;
-            Task<DocumentSnapshot> task =  db.collection("med-dwa-users").document(doc.userID).get();
+            Task<DocumentSnapshot> task =  db.collection(PATH_USER).document(doc.userID).get();
             task.addOnSuccessListener(documentSnapshot -> {
-                User user = documentSnapshot.toObject(User.class);
+                user = documentSnapshot.toObject(User.class);
                 token = user.getToken();
             });
 
@@ -309,78 +301,89 @@ public class ShowFragment extends Fragment {
             return;
         }
 
-        String content = Objects.requireNonNull(binding.editText.getText()).toString();
-        if(content.isEmpty()) {
-            showToast("vide!");
-            return;
-        }
+        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(user.getUid()).get();
+        task.addOnSuccessListener(documentSnapshot -> {
+            User users = documentSnapshot.toObject(User.class);
+            if (users != null) {
 
 
-        if(userID != null && mAuth.getUid() != null && !mAuth.getUid().equals(userID)) {
-            Notification notif = new Notification();
-            HashMap<String, Object> message = new HashMap<>();
-            HashMap<String, Object> notification = new HashMap<>();
-            HashMap<String, Object> android = new HashMap<>();
-            HashMap<String, String> click_action = new HashMap<>();
-            HashMap<String, String> data = new HashMap<>();
-
-            data.put("id_publication", documentID );
-
-            notif.setContent(content);
-            notif.setTitle(mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication");
-            notif.setToUser(userID);
-            notif.setSeen(false);
-
-            notification.put("body", content );
-            notification.put("title", mAuth.getCurrentUser().getDisplayName()+" a commenté votre publication" );
-            notification.put("click_action","OPEN_ACTIVITY_1");
-
-            click_action.put("click_action", "OPEN_ACTIVITY_1");
-            click_action.put("color", "#7e55c3");
-
-            android.put("notification",click_action);
-
-            message.put("to", token);
-            message.put("notification", notification);
-            message.put("android", android);
-            message.put("data", data);
-
-            JsonObjectRequest logInAPIRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
-                    new JSONObject(message),
-                    response -> {
-                        Log.d("Response", response.toString());
-                        //Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
-                    }, error -> {
-                    VolleyLog.d("Error", "Error: " + error.getMessage());
-                    //Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }){
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
+                String content = Objects.requireNonNull(binding.editText.getText()).toString();
+                if(content.isEmpty()) {
+                    showToast("vide!");
+                    return;
                 }
 
-                @Override
-                public Map<String, String> getHeaders() {
-                    HashMap<String, String> headers = new HashMap<>();
-                    headers.put("Accept","application/json");
-                    headers.put("Content-Type","application/json");
-                    headers.put("Authorization", "key=AAAAepkVf_I:APA91bFsjCWEw2WnWmr97wFvlCb75cjC5Ecu0RFUY03paTo89L781PrzPomVzTAtnAl-2MV6qpsKMJVFwoclj6vcc2lAOP9nDHBe2fVKFObhNtovIH9WDtBsdpvtW_DJkghBgcoIqNOn");
-                    return headers;
+
+                if(userID != null && mAuth.getUid() != null && !mAuth.getUid().equals(userID) ) {
+                    Notification notif = new Notification();
+                    HashMap<String, Object> message = new HashMap<>();
+                    HashMap<String, Object> notification = new HashMap<>();
+                    HashMap<String, Object> android = new HashMap<>();
+                    HashMap<String, String> click_action = new HashMap<>();
+                    HashMap<String, String> data = new HashMap<>();
+
+                    data.put("id_publication", documentID );
+
+
+
+                    notif.setContent(content);
+                    notif.setTitle(users.mName +" a commenté votre publication");
+                    notif.setToUser(userID);
+                    notif.setSeen(false);
+
+                    notification.put("body", content );
+                    notification.put("title", users.getmName() +" a commenté votre publication" );
+                    notification.put("click_action","OPEN_ACTIVITY_1");
+
+                    click_action.put("click_action", "OPEN_ACTIVITY_1");
+                    click_action.put("color", "#7e55c3");
+
+                    android.put("notification",click_action);
+
+                    message.put("to", token);
+                    message.put("notification", notification);
+                    message.put("android", android);
+                    message.put("data", data);
+
+                    JsonObjectRequest logInAPIRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
+                            new JSONObject(message),
+                            response -> {
+                                Log.d("Response", response.toString());
+                                //Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
+                            }, error -> {
+                            VolleyLog.d("Error", "Error: " + error.getMessage());
+                            //Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }){
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+
+                        @Override
+                        public Map<String, String> getHeaders() {
+                            HashMap<String, String> headers = new HashMap<>();
+                            headers.put("Accept","application/json");
+                            headers.put("Content-Type","application/json");
+                            headers.put("Authorization", "key=AAAAepkVf_I:APA91bFsjCWEw2WnWmr97wFvlCb75cjC5Ecu0RFUY03paTo89L781PrzPomVzTAtnAl-2MV6qpsKMJVFwoclj6vcc2lAOP9nDHBe2fVKFObhNtovIH9WDtBsdpvtW_DJkghBgcoIqNOn");
+                            return headers;
+                        }
+                    };
+                    RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+                    requestQueue.add(logInAPIRequest);
+                    db.collection(PATH_NOTIF).document().set(notif);
                 }
-            };
-            RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-            requestQueue.add(logInAPIRequest);
-            db.collection(PATH_NOTIF).document().set(notif);
-        }
-        binding.editText.setText("");
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("created", FieldValue.serverTimestamp());
-        updates.put("content", content);
-        updates.put("userID", content);
-        updates.put("userURL", user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString());
-        updates.put("userName", Objects.requireNonNull(user.getDisplayName()));
-        dbCollection.document().set(updates, SetOptions.merge());
-        System.out.println("In Message end");
+                binding.editText.setText("");
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("created", FieldValue.serverTimestamp());
+                updates.put("content", content);
+                updates.put("userID", content);
+                updates.put("userURL", user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString());
+                updates.put("userName", users.getmName());
+                dbCollection.document().set(updates, SetOptions.merge());
+                System.out.println("In Message end");
+
+            }
+        });
     }
 
     private void showDig(Document doc) {

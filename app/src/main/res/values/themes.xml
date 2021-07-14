@@ -81,5 +81,7 @@
         <item name="layout_drawable_picture">@drawable/layout_corner_above</item>
         <item name="layout_drawable_edit">@drawable/search_input</item>
 
+        <item name="layout_drawable_card">@drawable/card_leftt</item>
+
     </style>
 </resources>

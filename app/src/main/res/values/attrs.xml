@@ -22,6 +22,7 @@
     <attr name="layout_drawable_picture" format="reference"/>
 
     <attr name="layout_drawable_edit" format="reference"/>
+    <attr name="layout_drawable_card" format="reference"/>
 
 
 </resources>

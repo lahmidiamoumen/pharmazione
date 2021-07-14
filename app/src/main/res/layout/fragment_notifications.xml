@@ -204,6 +204,7 @@
 
 
                 <com.google.android.material.card.MaterialCardView
+                    android:layout_marginBottom="@dimen/album_dp_10"
                     android:layout_marginHorizontal="@dimen/album_dp_10"
                     android:id="@+id/view"
                     android:layout_width="0dp"

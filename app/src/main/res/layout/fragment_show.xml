@@ -67,7 +67,7 @@
                     android:id="@+id/menu_item_constraint_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/grid_3"
+                    android:paddingTop="@dimen/_16"
                     android:paddingBottom="@dimen/album_dp_100">
 
                     <TextView
@@ -96,7 +96,7 @@
                         android:scaleType="fitCenter"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/sender_profile_image_view"
-                        app:layout_constraintTop_toTopOf="@+id/subject_text_view"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_arrow_down" />
 
                     <!--                <TextView-->
@@ -109,7 +109,7 @@
                         android:id="@+id/sender_text_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_marginTop="@dimen/album_dp_10"
                         android:layout_marginEnd="@dimen/grid_1"
                         app:layout_constraintEnd_toStartOf="@+id/sender_profile_image_view"
                         app:layout_constraintStart_toStartOf="parent"
@@ -160,7 +160,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         android:fontFamily="@font/camphor_regular"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/sender_profile_image_view"
+                        app:layout_constraintTop_toBottomOf="@id/recipient_divider2"
                         android:text="@{email.body}"
                         tools:text="High school reunion lahmidi saldkjasd laksjdlk"
                         android:textAppearance="?attr/textAppearanceBody2" />
@@ -183,8 +183,9 @@
                         android:id="@+id/recipient_divider2"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/album_dp_10"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recipient_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:background="@drawable/divider"
@@ -224,6 +225,9 @@
                         app:goneIf="@{email.isToChange == null || email.isToChange == false}"
                         android:id="@+id/grid"
                         android:layout_marginStart="@dimen/album_dp_30"
+                        android:background="?attr/layout_drawable_card"
+                        android:paddingStart="@dimen/_16"
+                        android:layout_marginTop="@dimen/_8"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/recipient_scroll_view"
@@ -233,7 +237,7 @@
                         android:columnCount="2"
                         >
                         <TextView
-                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:textAppearance="?attr/textAppearanceHeadline2"
                             android:layout_margin="@dimen/album_dp_6"
                             android:text="@string/description"
                             android:id="@+id/button3"
@@ -254,7 +258,7 @@
                             android:layout_row="0"/>
 
                         <TextView
-                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:textAppearance="?attr/textAppearanceHeadline2"
                             android:layout_margin="@dimen/album_dp_6"
                             android:text="@string/date_de_p_remption"
                             android:layout_column="0"
@@ -274,7 +278,7 @@
                             android:layout_row="1"/>
 
                         <TextView
-                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:textAppearance="?attr/textAppearanceHeadline2"
                             android:layout_margin="@dimen/album_dp_6"
                             android:text="La quantité"
                             android:layout_column="0"
@@ -298,6 +302,8 @@
 
 
                     <TextView
+                        android:textAppearance="?attr/textAppearanceHeadline5"
+                        android:textSize="15sp"
                         android:paddingHorizontal="@dimen/grid_2"
                         android:layout_marginTop="@dimen/_8"
                         app:layout_constraintStart_toStartOf="parent"
@@ -309,22 +315,38 @@
                         android:layout_height="match_parent"
                         android:text="Images"/>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/attachment_recycler_view"
+                    <androidx.cardview.widget.CardView
+                        android:translationY="-10dp"
+                        android:translationX="10dp"
+                        app:cardCornerRadius="@dimen/_8"
+                        android:layout_marginStart="@dimen/_8"
+                        android:layout_marginTop="@dimen/_8"
                         android:layout_width="match_parent"
-                        android:layout_height="140dp"
-                        android:layout_marginTop="@dimen/album_dp_4"
-                        android:paddingStart="@dimen/_8"
-                        android:paddingEnd="12dp"
-                        android:clipToPadding="false"
-                        app:goneIf="@{email.path == null || email.path.size() == 0 }"
-                        android:orientation="horizontal"
+                        app:cardElevation="@dimen/_8"
+                        android:layout_height="160dp"
+                        android:layout_marginVertical="@dimen/album_dp_20"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/textImages"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/show_fragment_preview_item_layout"
-                        android:overScrollMode="never" />
+                        android:paddingStart="@dimen/_16"
+                        android:id="@+id/receylcer_card"
+                        app:goneIf="@{email.path == null || email.path.size() == 0 }">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/attachment_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/layout_drawable_picture"
+                            android:clipToPadding="false"
+                            android:fadingEdgeLength="@dimen/album_dp_30"
+                            android:orientation="horizontal"
+                            android:overScrollMode="never"
+                            android:requiresFadingEdge="horizontal"
+                            android:scrollbars="none"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/show_fragment_preview_item_layout" />
+
+                    </androidx.cardview.widget.CardView>
 
                     <ImageView
                         android:layout_marginTop="@dimen/album_dp_20"
@@ -332,7 +354,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/attachment_recycler_view"
+                        app:layout_constraintTop_toBottomOf="@+id/receylcer_card"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:background="@drawable/divider"
@@ -347,6 +369,8 @@
                         app:layout_constraintTop_toBottomOf="@id/recipient_divider4"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:id="@+id/textComontair"
+                        android:textAppearance="?attr/textAppearanceHeadline5"
+                        android:textSize="15sp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Commentaires"/>

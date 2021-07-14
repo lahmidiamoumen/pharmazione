@@ -300,10 +300,11 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         else if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && response != null) {
-                if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
+                send2Upload();
+                /*if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
                     send2Upload();
                 else
-                    startActivityForResult(ValidatePhone.createIntent(this, response), START_ACTIVIY_VALIDATION);
+                    startActivityForResult(ValidatePhone.createIntent(this, response), START_ACTIVIY_VALIDATION);*/
             } else {
                 if (response == null) {
                     showSandbar(R.string.sign_in_cancelled);
@@ -529,10 +530,11 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         if(mAuth.getCurrentUser() == null)
             showDig();
         else {
-            if(mAuth.getCurrentUser().getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().isEmpty())
+            send2Upload();
+            /*if(mAuth.getCurrentUser().getPhoneNumber() != null && !mAuth.getCurrentUser().getPhoneNumber().isEmpty())
                 send2Upload();
             else
-                showDigAskPhone();
+                showDigAskPhone();*/
         }
     }
 

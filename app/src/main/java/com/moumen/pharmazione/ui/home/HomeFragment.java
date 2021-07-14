@@ -107,7 +107,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
         Boolean uid = getActivity().getIntent().getBooleanExtra("firstTime", false);
-        if(uid != null && uid && neverBefore) {
+        if(uid && neverBefore) {
             this.neverBefore = false;
             signIn();
         }
@@ -217,6 +217,11 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         binding.listView.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
         swipeRefreshLayout.setRefreshing(savedInstanceState == null);
+        users = mAuth.getCurrentUser();
+        if(users == null) {
+            showSandbar("Something went wrong during the authentication process. Please try signing in again.");
+        }
+
         Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(users.getUid()).get();
         task.addOnSuccessListener(documentSnapshot -> {
             User user = documentSnapshot.toObject(User.class);
@@ -237,6 +242,9 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             if(user.getSatisfied() == null ? false : user.getSatisfied()){
                 binding.editText.setOnClickListener(o-> onFilterClicked());
                 binding.filter.setOnClickListener(o->goToSearch());
+                binding.scroll.setVisibility(View.VISIBLE);
+                binding.uncomplete.setVisibility(View.GONE);
+                binding.auth.setVisibility(View.GONE);
                 adapter.startListening();
             }
             else if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
