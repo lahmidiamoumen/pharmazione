@@ -5,8 +5,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
+import java.io.Serializable;
+
 @Keep
-public class User {
+public class User implements Serializable {
 
     @DocumentId
     public String userId;
@@ -35,18 +37,6 @@ public class User {
         this.mName = mName;
         this.mPhotoUri = mPhotoUri;
     }
-
-//    public String getConvention_cnasStr() {
-//        return convention_cnas ? "CNAS" : "";
-//    }
-//
-//    public String getConvention_casnosStr() {
-//        return convention_casnos ? "CNASNOS" : "";
-//    }
-//
-//    public String getConvention_militairStr() {
-//        return convention_militair  ? "MILITAIR" : "";
-//    }
 
     public Boolean getConvention_cnas() {
         return convention_cnas;

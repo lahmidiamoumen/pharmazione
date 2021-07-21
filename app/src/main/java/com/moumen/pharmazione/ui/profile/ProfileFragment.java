@@ -89,6 +89,7 @@ import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SharedViewModel;
 import com.moumen.pharmazione.databinding.CardviewProfileBinding;
 import com.moumen.pharmazione.databinding.FragmentNotificationsBinding;
+import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.ui.home.DocumentViewHolderProfile;
@@ -110,6 +111,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
 import static com.moumen.pharmazione.utils.Util.RC_SIGN_IN;
+import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = "SignedInActivity";
@@ -125,9 +127,7 @@ public class ProfileFragment extends Fragment {
     private List<AuthUI.IdpConfig> providers;
     private String name = null;
 
-    private SharedViewModel sharedViewModel;
-    LinearLayout linearLayout;
-    private long duration;
+    private UserViewModel sharedViewModel;
 
     private CollectionReference dbCollection;
     private FragmentNotificationsBinding binding;
@@ -136,7 +136,6 @@ public class ProfileFragment extends Fragment {
     Map<String, Object> initialData ;
 
     private ConstraintLayout constraintLayout;
-
 
     public ProfileFragment() {}
 
@@ -152,54 +151,6 @@ public class ProfileFragment extends Fragment {
         if(v instanceof ImageButton) {
             ((ImageButton)v).getDrawable().setColorFilter(clr, PorterDuff.Mode.SRC_IN);
         }
-    }
-
-    private void toolBarIcon() {
-        Toolbar toolbar = binding.toolbar;
-        toolbar.setTitle(name == null ? "" : name);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-//        Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-//        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_ios_notifications));
-
-        AppBarLayout appBarLayout = binding.appBar;
-
-        final View v = toolbar.getChildAt(0);
-        final CollapsingToolbarLayout collapsingToolbar = binding.toolbarLayout;
-        collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.fui_transparent)); // transperent color = #00000000
-        collapsingToolbar.setContentScrimColor(MaterialColors.getColor(getContext(), R.attr.backgroundColor, Color.WHITE));
-
-        // int color1 = MaterialColors.getColor(getContext(), R.attr.colorOnSurface, Color.BLACK);
-
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = true;
-            int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if ((collapsingToolbar.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(collapsingToolbar)) && icon != null) {
-                    icon.setColorFilter(getResources().getColor(R.color.quantum_black_100), PorterDuff.Mode.SRC_ATOP);
-                    if (v instanceof ImageButton) {
-                        ((ImageButton) v).getDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.quantum_black_100), PorterDuff.Mode.SRC_IN);
-                    }
-                } else if (icon != null) {
-                    icon.setColorFilter(getResources().getColor(R.color.quantum_grey600), PorterDuff.Mode.SRC_ATOP);
-                    if (v instanceof ImageButton) {
-                        ((ImageButton) v).getDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.quantum_grey600), PorterDuff.Mode.SRC_IN);
-                    }
-                }
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbar.setTitle(mAuth.getCurrentUser().getDisplayName());
-                    isShow = true;
-                } else if (isShow) {
-                    collapsingToolbar.setTitle("");
-                    isShow = false;
-                }
-            }
-        });
     }
 
     private String lowerToUpper( String hash) {
@@ -287,6 +238,7 @@ public class ProfileFragment extends Fragment {
             if(officine.getText().toString().isEmpty()){
                 Toast.makeText(c, "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
             } else {
+                save.setText("Enregistrement...");
                 initialData.put("mName", nom.getText().toString());
                 initialData.put("mPhoneNumber", phone.getText().toString());
                 initialData.put("nomOffificine", lowerToUpper(officine.getText().toString()));
@@ -298,8 +250,25 @@ public class ProfileFragment extends Fragment {
                 initialData.put("convention_militair", checkBox3.isChecked());
                 initialData.put("type", radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
 
+                User user = new User();
+                user.userId = mAuth.getUid();
+                user.setmPhotoUri(mAuth.getCurrentUser().getPhotoUrl().toString());
+                user.setmEmail(mAuth.getCurrentUser().getEmail());
+                user.setmName( nom.getText().toString());
+                user.setmPhoneNumber(phone.getText().toString());
+                user.nomOffificine =  lowerToUpper(officine.getText().toString());
+                user.setAddresseOfficine( lowerToUpper(address.getText().toString()));
+                user.setWilaya( wilaya.getText().toString());
+                user.setFournisseure(lowerToUpper(founisseure.getText().toString()));
+                user.setConvention_casnos(checkBox2.isChecked());
+                user.setConvention_cnas(checkBox1.isChecked());
+                user.setConvention_militair(checkBox3.isChecked());
+                user.setType(radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
+
                 FirebaseFirestore.getInstance().collection(PATH_USER)
-                    .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge()).addOnSuccessListener(aVoid -> toUserClass());
+                    .document(Objects.requireNonNull(mAuth.getUid()))
+                    .set(initialData, SetOptions.merge())
+                    .addOnSuccessListener(aVoid ->  sharedViewModel.getLiveBlogData().postValue(user));
 
                 alertDialogPhone.dismiss();
             }
@@ -312,37 +281,13 @@ public class ProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setHasOptionsMenu(true);
-
-        duration = getResources().getInteger(R.integer.reply_motion_duration_large);
         mAuth = FirebaseAuth.getInstance();
 
         providers = Arrays.asList(
                 new AuthUI.IdpConfig.GoogleBuilder().build()
                 /*new AuthUI.IdpConfig.FacebookBuilder().build()*/);
 
-        sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-
-        sharedViewModel.getUserData().observe(getActivity(), doc ->  {
-            user = doc;
-            name = doc.getmName();
-            dbCollection = FirebaseFirestore.getInstance().collection(PATH);
-            baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUserId());
-            setUpAdapter();
-        });
-
-        //FireBase init
-//        user = mAuth.getCurrentUser();
-//        if(user == null) return;
-
-        // Queries
-
-    }
-
-    User createUser(){
-        FirebaseUser mUser = mAuth.getCurrentUser();
-        User user = new User(mUser.getEmail(),mUser.getPhoneNumber(),lowerToUpper(mUser.getDisplayName()) ,mUser.getPhotoUrl().toString());
-        FirebaseFirestore.getInstance().collection(PATH_USER).document(mUser.getUid()).set(user);
-        return user;
+        sharedViewModel =  new ViewModelProvider(requireActivity()).get(UserViewModel.class);
     }
 
     @Override
@@ -366,7 +311,6 @@ public class ProfileFragment extends Fragment {
         popup.show();
         popup.setOnMenuItemClickListener(this::onOptionsItemSelected);
     }
-
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -410,31 +354,21 @@ public class ProfileFragment extends Fragment {
 //        onBindNotification();
 //        mListener.onBindNotification(binding.imageButton,getContext());
 
-        if( user == null &&  mAuth.getCurrentUser() != null){
-            FirebaseUser mUser = mAuth.getCurrentUser();
-            user = new User(mUser.getEmail(),mUser.getPhoneNumber(),lowerToUpper(mUser.getDisplayName()) ,mUser.getPhotoUrl().toString());
-            user.setUserId(mAuth.getUid());
-            sharedViewModel.getUserData().setValue(user);
-        }
-        if(user != null && mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getUid().equals(user.getUserId())){
-            if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null &&
-                    !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
-                binding.edit.setOnClickListener(l-> initDialogPhone());
-            else binding.edit.setOnClickListener(l-> showDigAskPhone());
-        } else {
-            binding.edit.setVisibility(View.GONE);
-            binding.imageButton.setVisibility(View.GONE);
-            // binding.parameters.setVisibility(View.GONE);
-            // binding.menu.setVisibility(View.GONE);
-            binding.notifications.setVisibility(View.GONE);
-        }
+        sharedViewModel.getLiveBlogData().observe(getActivity(), doc ->  {
+            user = doc;
+            name = doc.getmName();
+            dbCollection = FirebaseFirestore.getInstance().collection(PATH);
+            baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUserId());
+            setUpAdapter();
+            updateUI(user);
+        });
 
         Button mSignIn = binding.btn;
         if(adapter != null){
             setAdapt();
         }
         mSignIn.setOnClickListener(s -> signIn());
-        updateUI(user);
+        //updateUI(user);
         if(!Connectivity.isConnected(getContext())) {
             showSandbar(" la connexion internet est perdue");
         }
@@ -444,23 +378,6 @@ public class ProfileFragment extends Fragment {
         //toolBarIcon();
     }
 
-    public void toUserClass(){
-        final User[] user = new User[1];
-        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
-        task.addOnSuccessListener(documentSnapshot -> {
-            user[0] = documentSnapshot.toObject(User.class);
-            if(user[0] == null) {
-                showSandbar("Something went wrong!");
-                return;
-            }
-            else if (user[0].getUserId() == null || user[0].getUserId().isEmpty()) {
-                user[0] = createUser();
-            }
-            this.user = user[0];
-            sharedViewModel.getUserData().setValue(user[0]);
-            updateUI(user[0]);
-        });
-    }
 
     private void goToNotifications(){
         if(mAuth.getCurrentUser() == null){
@@ -567,14 +484,31 @@ public class ProfileFragment extends Fragment {
     private void updateUI(User currentUser) {
         //Show Sign In Button Only
         if(currentUser == null) {
-            if (mAuth.getCurrentUser() != null){
-                toUserClass();
-                return;
-            }
+//            if (mAuth.getCurrentUser() != null){
+//                toUserClass();
+//                return;
+//            }
+            binding.edit.setVisibility(View.GONE);
+            binding.imageButton.setVisibility(View.GONE);
+            binding.notifications.setVisibility(View.GONE);
+
             System.out.println("User is null");
             scrollView.setVisibility(View.GONE);
             constraintLayout.setVisibility(View.VISIBLE);
         }else{
+            binding.imageButton.setVisibility(View.VISIBLE);
+            binding.notifications.setVisibility(View.VISIBLE);
+            if( mAuth.getUid() != null && currentUser.userId != null && currentUser.userId.equals(mAuth.getUid())) {
+                binding.edit.setVisibility(View.VISIBLE);
+                if (user.getmPhoneNumber() != null && !user.getmPhoneNumber().isEmpty())
+                    binding.edit.setOnClickListener(l-> initDialogPhone());
+                else
+                    binding.edit.setOnClickListener(l-> showDigAskPhone());
+            } else {
+                binding.edit.setVisibility(View.GONE);
+            }
+
+
             adapter = null;
             user = currentUser;
             scrollView.setVisibility(View.VISIBLE);
@@ -604,8 +538,8 @@ public class ProfileFragment extends Fragment {
         new AlertDialog.Builder(context)
                 .setMessage("Compléter votre profil")
                 .setPositiveButton("Configurer", (dialogInterface, i) ->
-                    startActivityForResult(ValidatePhone.createIntent(context, null),521))
-                .setNegativeButton("Annuler", (dialogInterface, i) -> toUserClass())
+                    startActivityForResult(ValidatePhone.createIntent(context, null),START_ACTIVIY_VALIDATION))
+                .setNegativeButton("Annuler", (dialogInterface, i) -> {})
                 .show();
     }
 
@@ -614,41 +548,33 @@ public class ProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-           case 521: {
+           case START_ACTIVIY_VALIDATION: {
                 if (resultCode == RESULT_OK) {
                     adapter = null;
-                    toUserClass();
+                    User user = (User) data.getExtras().getSerializable("KEY_GOES_HERE");
+                    sharedViewModel.getLiveBlogData().postValue(user);
                 } else {
-                    if(mAuth.getCurrentUser() != null){
-                        user = new User();
-                        user.setmName(mAuth.getCurrentUser().getDisplayName());
-                        user.setmPhotoUri(mAuth.getCurrentUser().getPhotoUrl().getPath());
-                        user.setmEmail(mAuth.getCurrentUser().getEmail());
-                        user.setUserId(mAuth.getCurrentUser().getUid());
-                        sharedViewModel.getUserData().setValue(user);
-                        updateUI(user);
-                    }
                     showDigAskPhone();
+                    Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
+                    task.addOnSuccessListener(documentSnapshot -> {
+                        User user = documentSnapshot.toObject(User.class);
+                        sharedViewModel.getLiveBlogData().postValue(user);
+                    });
                 }
                break;
            }
             case RC_SIGN_IN: {
                 IdpResponse response = IdpResponse.fromResultIntent(data);
                 if (resultCode == RESULT_OK && response != null) {
-                    //addListener();
-                    if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null &&
-                            !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
-                        toUserClass();
-                    else {
-                        if( user == null &&  mAuth.getCurrentUser() != null){
-                            user = new User();
-                            user.setmName(mAuth.getCurrentUser().getDisplayName());
-                            user.setmPhotoUri(mAuth.getCurrentUser().getPhotoUrl().getPath());
-                            user.setmEmail(mAuth.getCurrentUser().getEmail());
-                            user.setUserId(mAuth.getCurrentUser().getUid());
+                    Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
+                    task.addOnSuccessListener(documentSnapshot -> {
+                        User user = documentSnapshot.toObject(User.class);
+                        if (user.getmPhoneNumber() != null && !user.getmPhoneNumber().isEmpty() ) {
+                            sharedViewModel.getLiveBlogData().postValue(user);
+                        } else {
+                            startActivityForResult(ValidatePhone.createIntent(context, response), START_ACTIVIY_VALIDATION);
                         }
-                        startActivityForResult(ValidatePhone.createIntent(context, response), 521);
-                    }
+                    });
                 } else {
                     if (response == null) {
                         showSandbar(getResources().getString(R.string.sign_in_cancelled));
@@ -685,7 +611,8 @@ public class ProfileFragment extends Fragment {
 
     private void signOut() {
         //detachListener();
-        adapter.stopListening();
+        if( adapter != null)
+            adapter.stopListening();
         AuthUI.getInstance()
                 .signOut(context)
                 .addOnCompleteListener(task -> {
@@ -785,8 +712,6 @@ public class ProfileFragment extends Fragment {
 //
 //        this.setExitTransition(  new MaterialElevationScale( false)
 //                .setDuration(duration));
-
-
 
         FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
                 .addSharedElement(sliderLayout, sliderLayout.getTransitionName())

@@ -85,13 +85,13 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
     private static final int STATE_VERIFY_FAILED = 3;
     private static final int STATE_VERIFY_SUCCESS = 4;
     private static final int STATE_SIGNIN_FAILED = 5;
+    User user;
     LinearLayout linearLayout;
     RelativeLayout relativeLayout;
     private FirebaseAuth mAuth;
     FirebaseStorage storage;
     private ArrayList<AlbumFile> mAlbumFiles;
     AlbumAdapter mAdapter;
-
 
     AlertDialog alertDialogPhone;
     Map<String, Object> initialData ;
@@ -102,7 +102,6 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
-
     private EditText mPhoneNumberField;
     private VerificationCodeEditText mVerificationField;
 
@@ -111,7 +110,6 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
     private ImageButton imageButton;
     ImageView imageView;
     ActivityPhoneValidateBinding binding;
-
 
     @NonNull
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
@@ -127,7 +125,6 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         setContentView(binding.getRoot());
 
         db = FirebaseFirestore.getInstance();
-
 
         // Restore instance state
         if (savedInstanceState != null) {
@@ -158,58 +155,58 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         visibilityVisibleViews(binding.back);
         binding.back.setOnClickListener(view -> back(RESULT_CANCELED));
 
-
-        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-            @Override
-            public void onVerificationCompleted(PhoneAuthCredential credential) {
-                Log.d(TAG, "onVerificationCompleted:" + credential);
-                mVerificationInProgress = false;
-                visibilityGoneViews(binding.progressBar);
-                signInWithPhoneAuthCredential(credential);
-                //updateUI(STATE_VERIFY_SUCCESS, credential);
-            }
-
-
-            @Override
-            public void onVerificationFailed(FirebaseException e) {
-                Log.w(TAG, "onVerificationFailed", e);
-                mVerificationInProgress = false;
-                visibilityGoneViews(binding.progressBar);
-
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    mPhoneNumberField.setError("Invalid phone number.");
-
-                } else if (e instanceof FirebaseTooManyRequestsException) {
-                    showSandbar(R.string.depasse_limit);
-                }
-                visibilityVisibleViews(binding.back);
-                binding.back.setOnClickListener(view -> back(RESULT_CANCELED));
-            }
-
-
-            @Override
-            public void onCodeSent(String verificationId,
-                                   PhoneAuthProvider.ForceResendingToken token) {
-                // The SMS verification code has been sent to the provided phone number, we
-                // now need to ask the user to enter the code and then construct a credential
-                // by combining the code with a verification ID.
-                Log.d(TAG, "onCodeSent:" + verificationId);
-
-                // Save verification ID and resending token so we can use them later
-                mVerificationId = verificationId;
-                mResendToken = token;
-                visibilityGoneViews(binding.progressBar);
-                visibilityVisibleViews(mVerificationField,mVerifyButton,mResendButton,mPhoneNumberField);
-
-            }
-        };
+//        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 //
+//            @Override
+//            public void onVerificationCompleted(PhoneAuthCredential credential) {
+//                Log.d(TAG, "onVerificationCompleted:" + credential);
+//                mVerificationInProgress = false;
+//                visibilityGoneViews(binding.progressBar);
+//                signInWithPhoneAuthCredential(credential);
+//                //updateUI(STATE_VERIFY_SUCCESS, credential);
+//            }
+//
+//            @Override
+//            public void onVerificationFailed(FirebaseException e) {
+//                Log.w(TAG, "onVerificationFailed", e);
+//                mVerificationInProgress = false;
+//                visibilityGoneViews(binding.progressBar);
+//
+//                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+//                    mPhoneNumberField.setError("Invalid phone number.");
+//
+//                } else if (e instanceof FirebaseTooManyRequestsException) {
+//                    showSandbar(R.string.depasse_limit);
+//
+//                }
+//                visibilityVisibleViews(binding.back);
+//                binding.back.setOnClickListener(view -> back(RESULT_CANCELED));
+//            }
+//
+//            @Override
+//            public void onCodeSent(String verificationId,
+//                                   PhoneAuthProvider.ForceResendingToken token) {
+//                // The SMS verification code has been sent to the provided phone number, we
+//                // now need to ask the user to enter the code and then construct a credential
+//                // by combining the code with a verification ID.
+//                Log.d(TAG, "onCodeSent:" + verificationId);
+//
+//                // Save verification ID and resending token so we can use them later
+//                mVerificationId = verificationId;
+//                mResendToken = token;
+//                visibilityGoneViews(binding.progressBar);
+//                visibilityVisibleViews(mVerificationField,mVerifyButton,mResendButton,mPhoneNumberField);
+//
+//            }
+//        };
+
+        initDialogPhone();
+
 //        IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
 //        if(response == null)
 //            initDialogPhone();
 //        else if( response.isNewUser() )
-        createUser(Objects.requireNonNull(mAuth.getCurrentUser()));
+        //createUser(Objects.requireNonNull(mAuth.getCurrentUser()));
 
     }
 
@@ -218,8 +215,11 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
     }
 
     private void back(int result){
+        if(alertDialogPhone != null)
+            alertDialogPhone.dismiss();
         Intent intent = new Intent();
         setResult(result, intent);
+        intent.putExtra("KEY_GOES_HERE", user);
         finish();
     }
 
@@ -228,30 +228,29 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
     }
 
     void createUser(FirebaseUser mUser){
-        User user = new User(mUser.getEmail(),mUser.getPhoneNumber(),lowerToUpper(mUser.getDisplayName()) ,mUser.getPhotoUrl().toString());
         initDialogPhone();
-        db.collection(PATH_USER).document(mUser.getUid()).set(user, SetOptions.merge())
-            .addOnFailureListener(e -> showSandbar(R.string.authentication_error));
+//        db.collection(PATH_USER).document(mUser.getUid()).set(user, SetOptions.merge())
+//            .addOnFailureListener(e -> showSandbar(R.string.authentication_error));
     }
 
     private void previewImage(int position) {
         if (mAlbumFiles != null || mAlbumFiles.size() != 0) {
             Album.galleryAlbum(this)
-                    .checkable(true)
-                    .checkedList(mAlbumFiles)
-                    .currentPosition(position)
-                    .widget(
-                            Widget.newDarkBuilder(this)
-                                    .title("Choisissez entre images")
-                                    .build()
-                    )
-                    .onResult(result -> {
-                        mAlbumFiles = result;
-                        mAdapter.notifyDataSetChanged(mAlbumFiles);
-                        relativeLayout.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
-                        linearLayout.setVisibility( result.size() > 0 ? View.GONE : View.VISIBLE);
-                    })
-                    .start();
+                .checkable(true)
+                .checkedList(mAlbumFiles)
+                .currentPosition(position)
+                .widget(
+                        Widget.newDarkBuilder(this)
+                                .title("Choisissez entre images")
+                                .build()
+                )
+                .onResult(result -> {
+                    mAlbumFiles = result;
+                    mAdapter.notifyDataSetChanged(mAlbumFiles);
+                    relativeLayout.setVisibility(result.size() > 0 ? View.VISIBLE : View.GONE);
+                    linearLayout.setVisibility( result.size() > 0 ? View.GONE : View.VISIBLE);
+                })
+                .start();
         }
     }
 
@@ -311,10 +310,9 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         TransitionManager.beginDelayedTransition(parent, transition);
         secondPage.setVisibility(show ? View.VISIBLE : View.GONE);
         firstPage.setVisibility(show ? View.GONE : View.VISIBLE);
-
     }
 
-    void initDialogPhone(){
+    void initDialogPhone() {
         Context c = ValidatePhone.this;
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
         View mView = layoutInflaterAndroid.inflate(R.layout.dialog_phon_input, null);
@@ -354,7 +352,6 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
         retour.setOnClickListener(o-> toggle(false, mView,R.id.firstPage, Gravity.LEFT));
         initialData = new HashMap<>();
 
-
         next.setOnClickListener(o-> {
             if(phone.getText() == null || !phone.getText().toString().matches("0[567][0-9]{8,}")) {
                 phone.setError("Numéro de téléphone erroné");
@@ -366,19 +363,21 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
                 initialData.put("wilaya", wilaya.getText().toString());
                 initialData.put("addresseOfficine", lowerToUpper(address.getText().toString()));
                 initialData.put("mPhoneNumber", phone.getText().toString());
-                db.collection("med-dwa-users")
+                db.collection(PATH_USER)
                     .document(Objects.requireNonNull(mAuth.getUid()))
                     .set(initialData, SetOptions.merge());
                 toggle(true,mView, R.id.secondPage, Gravity.RIGHT);
             }
         });
 
-        save.setOnClickListener(o->{
+        save.setOnClickListener( o-> {
            if(mAlbumFiles == null || mAlbumFiles.size() <= 0) {
                 Toast.makeText(getApplicationContext(), "Veuillez ajouter votre carte professionnelle.",Toast.LENGTH_LONG).show();
             } else if(officine.getText().toString().isEmpty()){
                 Toast.makeText(getApplicationContext(), "Veuillez vérifier les champs",Toast.LENGTH_LONG).show();
             } else {
+               save.setText("Enregistrement...");
+               String st = phone.getText().toString().replaceFirst("0","+213");
                 initialData.put("mName", nom.getText().toString());
                 initialData.put("mPhoneNumber", phone.getText().toString());
                 initialData.put("nomOffificine", lowerToUpper(officine.getText().toString()));
@@ -390,16 +389,32 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
                 initialData.put("convention_militair", checkBox3.isChecked());
                 initialData.put("type", radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
 
-               db.collection("med-dwa-users")
-                       .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge());
+               user = new User();
+               user.userId = mAuth.getUid();
+               user.setmPhotoUri(mAuth.getCurrentUser().getPhotoUrl().toString());
+               user.setmEmail(mAuth.getCurrentUser().getEmail());
+               user.setmName( nom.getText().toString());
+               user.setmPhoneNumber(phone.getText().toString());
+               user.nomOffificine =  lowerToUpper(officine.getText().toString());
+               user.setAddresseOfficine( lowerToUpper(address.getText().toString()));
+               user.setWilaya( wilaya.getText().toString());
+               user.setFournisseure(lowerToUpper(founisseure.getText().toString()));
+               user.setConvention_casnos(checkBox2.isChecked());
+               user.setConvention_cnas(checkBox1.isChecked());
+               user.setConvention_militair(checkBox3.isChecked());
+               user.setType(radioGroup.getCheckedRadioButtonId() == R.id.radio_button_1 ? "titulaire" : "assistant " );
 
-                String st = phone.getText().toString().replaceFirst("0","+213");
+               db.collection(PATH_USER)
+                   .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge());
+
                 mPhoneNumberField.setText(st);
                 mPhoneNumberField.setText(phone.getText());
-                startPhoneNumberVerification(st);
-                alertDialogPhone.dismiss();
+                // startPhoneNumberVerification(st);
+
+               uploadImage();
             }
         });
+
         alertDialogPhone = alertDialogBuilderUserInput.create();
         alertDialogPhone.show();
     }
@@ -435,17 +450,14 @@ public class ValidatePhone extends AppCompatActivity implements ClickListener,
             }
             return riversRef.getDownloadUrl();
         }).addOnSuccessListener(uri -> {
-
-
             initialData.put("carte",  uri.toString());
 
-            db.collection("med-dwa-users")
+            db.collection(PATH_USER)
                 .document(Objects.requireNonNull(mAuth.getUid())).set(initialData, SetOptions.merge())
-                .addOnSuccessListener(s -> {
-                    visibilityGoneViews(mVerifyButton,mResendButton,binding.progressBar);
-                    visibilityVisibleViews(binding.back,binding.textVerified,binding.iconVerified);
-                });
-        });
+                .addOnSuccessListener(s -> back(RESULT_OK))
+                .addOnFailureListener(e-> back(RESULT_CANCELED));
+
+        }).addOnFailureListener(e-> back(RESULT_CANCELED));
 
 //        int finalI = urlsDownloded.size() + 1;
 //        uploadTask

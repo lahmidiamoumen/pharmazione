@@ -44,6 +44,7 @@ import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SearchableActivity;
 import com.moumen.pharmazione.SharedViewModel;
 import com.moumen.pharmazione.databinding.FragmentHomeBinding;
+import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.HorizantallContent;
 import com.moumen.pharmazione.persistance.User;
@@ -65,7 +66,7 @@ import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 
 public class HomeFragment extends Fragment implements ItemClickListener, FilterDialogFragment.FilterListener, MedClickListener<HorizantallContent> {
 
-    private SharedViewModel sharedViewModel;
+    private UserViewModel sharedViewModel;
     private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FragmentHomeBinding binding;
@@ -81,8 +82,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     @Override
     public void onCreate(@Nullable Bundle sss) {
         super.onCreate(sss);
-        sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-
+        sharedViewModel =  new ViewModelProvider(getActivity()).get(UserViewModel.class);
 
         FirebaseApp.initializeApp(getContext());
         config = new PagedList.Config.Builder()
@@ -91,7 +91,6 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 .setPageSize(10)
                 .build();
 
-//      sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 //      setEnterTransition(new MaterialFadeThrough().setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
         Query dbCollection = FirebaseFirestore.getInstance().collection(PATH);
         //query = dbCollection.whereEqualTo("isVerified",true).whereEqualTo("satisfied",false).orderBy("scanned", Query.Direction.DESCENDING);
@@ -107,37 +106,83 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
         Boolean uid = getActivity().getIntent().getBooleanExtra("firstTime", false);
-        if(uid && neverBefore) {
+        if(uid && neverBefore && sss == null) {
             this.neverBefore = false;
             signIn();
         }
 
+
+    }
+
+    void updateUI(User user) {
+        if( user == null) {
+            binding.scroll.setVisibility(View.GONE);
+            binding.uncomplete.setVisibility(View.GONE);
+            binding.text.setVisibility(View.VISIBLE);
+            if(adapter != null)
+                adapter.stopListening();
+                AuthUI.getInstance()
+                    .signOut(getContext())
+                    .addOnCompleteListener(tasks -> {
+                        if (tasks.isSuccessful()) {
+                            getActivity().getViewModelStore().clear();
+                        }
+                    });
+        } else if( user.getmPhoneNumber() == null || user.getmPhoneNumber().isEmpty()) {
+            binding.buttonResend
+                    .setOnClickListener(o ->
+                    startActivityForResult(ValidatePhone
+                            .createIntent(getContext(), null),
+                            START_ACTIVIY_VALIDATION));
+            binding.scroll.setVisibility(View.GONE);
+            binding.text.setVisibility(View.GONE);
+            binding.auth.setVisibility(View.GONE);
+            binding.uncomplete.setVisibility(View.VISIBLE);
+        } else if (user.satisfied == null || !user.satisfied){
+            binding.auth.setVisibility(View.GONE);
+            binding.scroll.setVisibility(View.GONE);
+            binding.uncomplete.setVisibility(View.GONE);
+            binding.text.setVisibility(View.VISIBLE);
+        } else {
+            binding.editText.setOnClickListener(o-> onFilterClicked());
+            binding.filter.setOnClickListener(o->goToSearch());
+            binding.scroll.setVisibility(View.VISIBLE);
+            binding.uncomplete.setVisibility(View.GONE);
+            binding.auth.setVisibility(View.GONE);
+            adapter.startListening();
+            swipeRefreshLayout = binding.swipeContainer;
+            binding.listView.setAdapter(adapter);
+            swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if( requestCode == START_ACTIVIY_VALIDATION ) {
-           if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
-                binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
-                binding.scroll.setVisibility(View.GONE);
-                binding.text.setVisibility(View.GONE);
-                binding.uncomplete.setVisibility(View.VISIBLE);
-            }else {
-                binding.scroll.setVisibility(View.GONE);
-                binding.uncomplete.setVisibility(View.GONE);
-                binding.text.setVisibility(View.VISIBLE);
+            if (resultCode == RESULT_OK) {
+                User user = (User) data.getExtras().getSerializable("KEY_GOES_HERE");
+                sharedViewModel.getLiveBlogData().postValue(user);
+            } else {
+                showDigAskPhone();
+                Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
+                task.addOnSuccessListener(documentSnapshot -> {
+                    User user = documentSnapshot.toObject(User.class);
+                    sharedViewModel.getLiveBlogData().postValue(user);
+                });
             }
         } else if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK && response != null) {
-                //addListener();
-                if (Objects.requireNonNull(mAuth.getCurrentUser()).getPhoneNumber() != null &&
-                        !mAuth.getCurrentUser().getPhoneNumber().trim().isEmpty())
-                    userStat(null);
-                else {
-                    startActivityForResult(ValidatePhone.createIntent(getContext(), response), 521);
-                }
+                Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getCurrentUser().getUid()).get();
+                task.addOnSuccessListener(documentSnapshot -> {
+                    User user = documentSnapshot.toObject(User.class);
+                    if (user.getmPhoneNumber() == null || user.getmPhoneNumber().isEmpty()) {
+                        startActivityForResult(ValidatePhone.createIntent(getContext(), response), START_ACTIVIY_VALIDATION);
+                    } else {
+                        sharedViewModel.getLiveBlogData().postValue(user);
+                    }
+                });
             } else {
                 if (response == null) {
                     showSandbar(getResources().getString(R.string.sign_in_cancelled));
@@ -151,12 +196,6 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 } else showSandbar(getResources().getString(R.string.unknown_error));
                 Log.e("Auth Frag", "Sign-in error: ", response.getError());
             }
-        } else if ( requestCode == 521) {
-            if (resultCode == RESULT_OK) {
-                userStat(null);
-            } else {
-                showDigAskPhone();
-            }
         }
     }
 
@@ -164,7 +203,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         new AlertDialog.Builder(getContext())
                 .setMessage("Compléter votre profil")
                 .setPositiveButton("Configurer", (dialogInterface, i) ->
-                        startActivityForResult(ValidatePhone.createIntent(getContext(), null),521))
+                        startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION))
                 .setNegativeButton("Annuler", (dialogInterface, i) -> {})
                 .show();
     }
@@ -191,6 +230,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         super.onViewCreated(view, savedInstanceState);
         postponeEnterTransition();
         startPostponedEnterTransition();
+        sharedViewModel.getLiveBlogData().observe(getActivity(), this::updateUI);
 
         //setHorizontalScroll();
 
@@ -201,7 +241,14 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             binding.scroll.setVisibility(View.GONE);
             binding.auth.setVisibility(View.VISIBLE);
         } else {
-            userStat(savedInstanceState);
+            swipeRefreshLayout = binding.swipeContainer;
+            binding.listView.setAdapter(adapter);
+            swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
+            swipeRefreshLayout.setRefreshing(savedInstanceState == null);
+            users = mAuth.getCurrentUser();
+            if(users == null) {
+                showSandbar("Something went wrong during the authentication process. Please try signing in again.");
+            }
         }
 
         if(!Connectivity.isConnected(getContext())) {
@@ -210,54 +257,6 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         else if(!Connectivity.isConnectedFast(getContext())) {
             showSandbar("Votre connection internet est lente");
         }
-    }
-
-    void userStat(Bundle savedInstanceState) {
-        swipeRefreshLayout = binding.swipeContainer;
-        binding.listView.setAdapter(adapter);
-        swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
-        swipeRefreshLayout.setRefreshing(savedInstanceState == null);
-        users = mAuth.getCurrentUser();
-        if(users == null) {
-            showSandbar("Something went wrong during the authentication process. Please try signing in again.");
-        }
-
-        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(users.getUid()).get();
-        task.addOnSuccessListener(documentSnapshot -> {
-            User user = documentSnapshot.toObject(User.class);
-            if(user == null) {
-                binding.scroll.setVisibility(View.GONE);
-                binding.uncomplete.setVisibility(View.GONE);
-                binding.text.setVisibility(View.VISIBLE);
-                if(adapter != null)
-                    adapter.stopListening();
-                AuthUI.getInstance()
-                        .signOut(getContext())
-                        .addOnCompleteListener(tasks -> {
-                            if (tasks.isSuccessful()) {
-                                getActivity().getViewModelStore().clear();
-                            }
-                        });
-            }
-            if(user.getSatisfied() == null ? false : user.getSatisfied()){
-                binding.editText.setOnClickListener(o-> onFilterClicked());
-                binding.filter.setOnClickListener(o->goToSearch());
-                binding.scroll.setVisibility(View.VISIBLE);
-                binding.uncomplete.setVisibility(View.GONE);
-                binding.auth.setVisibility(View.GONE);
-                adapter.startListening();
-            }
-            else if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
-                binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
-                binding.scroll.setVisibility(View.GONE);
-                binding.text.setVisibility(View.GONE);
-                binding.uncomplete.setVisibility(View.VISIBLE);
-            }else {
-                binding.scroll.setVisibility(View.GONE);
-                binding.uncomplete.setVisibility(View.GONE);
-                binding.text.setVisibility(View.VISIBLE);
-            }
-        });
     }
 
     public void setUp(Query baseQuery) {

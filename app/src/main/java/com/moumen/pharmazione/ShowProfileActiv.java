@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.ui.home.ShowFragment;
@@ -19,13 +20,13 @@ import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
 
 public class ShowProfileActiv extends AppCompatActivity {
-    private SharedViewModel sharedViewModel;
+    private UserViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notif_comment);
-        sharedViewModel =  new ViewModelProvider(this).get(SharedViewModel.class);
+        sharedViewModel =  new ViewModelProvider(this).get(UserViewModel.class);
         FirebaseApp.initializeApp(this);
 
         String uid = getIntent().getStringExtra("id_user");
@@ -33,7 +34,7 @@ public class ShowProfileActiv extends AppCompatActivity {
             Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(PATH_USER).document(uid).get();
             task.addOnSuccessListener(documentSnapshot -> {
                 User user = documentSnapshot.toObject(User.class);
-                sharedViewModel.getUserData().setValue(user);
+                sharedViewModel.getLiveBlogData().postValue(user);
                 Fragment newFragment = new ProfileFragment();
 
                 getSupportFragmentManager()

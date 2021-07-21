@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,17 +34,20 @@ import com.moumen.pharmazione.SharedViewModel;
 import com.moumen.pharmazione.ShowProfileActiv;
 import com.moumen.pharmazione.databinding.FragmentDoctorsBinding;
 import com.moumen.pharmazione.databinding.PharmaItemBinding;
+import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.ui.poster.ValidatePhone;
 import com.moumen.pharmazione.utils.MedClickListener;
 
+import static android.app.Activity.RESULT_OK;
+import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 
 public class DoctorsFragment extends Fragment implements MedClickListener<User> {
     private LinearLayout emptyLayout;
     private RecyclerView recyclerView;
-    private SharedViewModel sharedViewModel;
+    private UserViewModel sharedViewModel;
     FirebaseAuth mAuth;
     private FirestorePagingAdapter<User, RecyclerView.ViewHolder> adapter = null;
     private FragmentDoctorsBinding binding;
@@ -67,58 +71,58 @@ public class DoctorsFragment extends Fragment implements MedClickListener<User> 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if( requestCode == START_ACTIVIY_VALIDATION){
-            if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
-                binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
-                binding.recyclerView.setVisibility(View.GONE);
-                binding.text.setVisibility(View.GONE);
-                binding.uncomplete.setVisibility(View.VISIBLE);
-                binding.progressBar.setVisibility(View.GONE);
-            }else {
-                binding.recyclerView.setVisibility(View.GONE);
-                binding.uncomplete.setVisibility(View.GONE);
-                binding.text.setVisibility(View.VISIBLE);
-                binding.progressBar.setVisibility(View.GONE);
+            if (resultCode == RESULT_OK) {
+                adapter = null;
+                User user = (User) data.getExtras().getSerializable("KEY_GOES_HERE");
+                sharedViewModel.getLiveBlogData().postValue(user);
+            } else {
+                Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
+                task.addOnSuccessListener(documentSnapshot -> {
+                    User user = documentSnapshot.toObject(User.class);
+                    sharedViewModel.getLiveBlogData().postValue(user);
+                });
             }
+        }
+    }
+
+    private void updateUI(User user) {
+        if(user == null) {
+            if(adapter != null) {
+                adapter.stopListening();
+            }
+            binding.progressBar.setVisibility(View.GONE);
+            binding.auth.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.uncomplete.setVisibility(View.GONE);
+            binding.text.setVisibility(View.GONE);
+        }
+        else if (user.getmPhoneNumber() == null || user.getmPhoneNumber().isEmpty()) {
+            binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.text.setVisibility(View.GONE);
+            binding.uncomplete.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
+        } else if (user.getSatisfied() == null ? false : user.getSatisfied()) {
+            start();
+            binding.progressBar.setVisibility(View.GONE);
+        } else {
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.uncomplete.setVisibility(View.GONE);
+            binding.text.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
-        mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser() == null) {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.auth.setVisibility(View.VISIBLE);
-            return;
-        }
+        sharedViewModel =  new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
+        mAuth = FirebaseAuth.getInstance();
         recyclerView = binding.recyclerView;
         emptyLayout = binding.emptySearchList;
 
-        if (mAuth.getCurrentUser().getPhoneNumber() == null || mAuth.getCurrentUser().getPhoneNumber().isEmpty()) {
-            binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null), START_ACTIVIY_VALIDATION));
-            binding.recyclerView.setVisibility(View.GONE);
-            binding.text.setVisibility(View.GONE);
-            binding.uncomplete.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
-        } else {
-            Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
-            task.addOnSuccessListener(documentSnapshot -> {
-                User user = documentSnapshot.toObject(User.class);
-                assert user != null;
-                if(user.getSatisfied() == null ? false : user.getSatisfied()){
-                    start();
-                    binding.progressBar.setVisibility(View.GONE);
-                }
-                else {
-                    binding.progressBar.setVisibility(View.GONE);
-                    binding.recyclerView.setVisibility(View.GONE);
-                    binding.uncomplete.setVisibility(View.GONE);
-                    binding.text.setVisibility(View.VISIBLE);
-                }
-            });
-        }
+        sharedViewModel.getLiveBlogData().observe(getActivity(), doc -> updateUI(doc));
     }
 
     private void start () {

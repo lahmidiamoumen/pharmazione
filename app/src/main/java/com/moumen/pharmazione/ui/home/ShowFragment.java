@@ -55,6 +55,7 @@ import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SharedViewModel;
 import com.moumen.pharmazione.ShowProfileActiv;
 import com.moumen.pharmazione.databinding.FragmentShowBinding;
+import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Comment;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.Notification;
@@ -74,7 +75,7 @@ import static com.moumen.pharmazione.utils.Util.PATH_USER;
 
 public class ShowFragment extends Fragment {
     private FragmentShowBinding binding;
-    private SharedViewModel sharedViewModel;
+    private UserViewModel sharedViewModel;
     private long duration;
     private FirestoreRecyclerAdapter<Comment, RecyclerView.ViewHolder> adapter;
     private CollectionReference dbCollection;
@@ -94,7 +95,7 @@ public class ShowFragment extends Fragment {
 
         setHasOptionsMenu(true);
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
-        sharedViewModel =  new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        sharedViewModel =  new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         //prepareTransitions();
     }
 

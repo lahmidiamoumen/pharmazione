@@ -17,8 +17,8 @@ import java.util.List;
 public class SharedViewModel extends ViewModel {
     private MutableLiveData<Integer> badge;
     private MutableLiveData<EventListener<QuerySnapshot>> eventListenerMutableLiveData;
-    private MutableLiveData<Document> doc;
     private MutableLiveData<User> user;
+    private MutableLiveData<Document> doc;
     private MutableLiveData<HorizantallContent> hc;
     private MutableLiveData<Doctors> doctors;
     private LiveData<List<DonBesoin>> donBesoin;
