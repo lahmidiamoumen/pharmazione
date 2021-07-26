@@ -11,19 +11,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.ui.home.ShowFragment;
 
 import static com.moumen.pharmazione.utils.Util.PATH;
 
 public class NotifComment extends AppCompatActivity {
-    private SharedViewModel sharedViewModel;
+    private UserViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notif_comment);
-        sharedViewModel =  new ViewModelProvider(this).get(SharedViewModel.class);
+        sharedViewModel =  new ViewModelProvider(this).get(UserViewModel.class);
         FirebaseApp.initializeApp(this);
 
         Bundle bundle = getIntent().getExtras();

@@ -149,6 +149,8 @@
                         tools:src="@drawable/avatar_3" />
 
                     <TextView
+                        android:textSize="@dimen/album_sp_14"
+                        android:textColor="@color/quantum_black_100"
                         android:paddingStart="@dimen/_16"
                         android:paddingEnd="@dimen/_8"
                         android:id="@+id/body_text_view"
@@ -162,8 +164,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/recipient_divider2"
                         android:text="@{email.body}"
-                        tools:text="High school reunion lahmidi saldkjasd laksjdlk"
-                        android:textAppearance="?attr/textAppearanceBody2" />
+                        tools:text="High school reunion lahmidi saldkjasd laksjdlk" />
                     <ImageView
                         app:goneIf="@{email.path == null || email.path.size() == 0 }"
                         android:layout_marginVertical="@dimen/album_dp_10"

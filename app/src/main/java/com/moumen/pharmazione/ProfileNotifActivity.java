@@ -10,8 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.firebase.firestore.Query;
 import com.moumen.pharmazione.databinding.ActivityNotificationBinding;
 import com.moumen.pharmazione.persistance.DonBesoin;
+import com.moumen.pharmazione.persistance.Notification;
 import com.moumen.pharmazione.utils.MedClickListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,8 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.moumen.pharmazione.utils.Util.PATH_NOTIF;
 
-public class ProfileNotifActivity extends AppCompatActivity implements MedClickListener<DonBesoin>, View.OnClickListener {
+
+public class ProfileNotifActivity extends AppCompatActivity implements MedClickListener<Notification>, View.OnClickListener {
 
 
     ActivityNotificationBinding binding;
@@ -43,23 +47,26 @@ public class ProfileNotifActivity extends AppCompatActivity implements MedClickL
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        db.collection("don-besoin-binds")
-                .whereEqualTo("user_id",mAuth.getUid())
-                .limit(12)
+        db.collection(PATH_NOTIF)
+                .whereEqualTo("toUser",mAuth.getUid())
+                .orderBy("created",Query.Direction.DESCENDING)
+                .limit(40)
                 .get().addOnCompleteListener(task -> {
                         if(task.isSuccessful()){
                             QuerySnapshot snapshots = task.getResult();
                             assert snapshots != null;
                             if (snapshots.size() == 0) {
                                 binding.rwSearch.setVisibility(View.GONE);
+                                binding.progressBar.setVisibility(View.GONE);
                                 binding.emptySearchList.setVisibility(View.VISIBLE);
                                 return;
                             }
 
                             binding.emptySearchList.setVisibility(View.GONE);
+                            binding.progressBar.setVisibility(View.GONE);
                             binding.rwSearch.setVisibility(View.VISIBLE);
 
-                            List<DonBesoin> types = snapshots.toObjects(DonBesoin.class);
+                            List<Notification> types = snapshots.toObjects(Notification.class);
                             if (profileNotifAdapter != null && !types.isEmpty()) {
                                 profileNotifAdapter.submitList(types);
                             }
@@ -67,14 +74,15 @@ public class ProfileNotifActivity extends AppCompatActivity implements MedClickL
                             for (DocumentSnapshot snap : snapshots.getDocuments()) {
                                 DonBesoin donBesoin = snap.toObject(DonBesoin.class);
                                 assert donBesoin != null;
-                                if(!donBesoin.seen){
+                                if( donBesoin.seen == null || !donBesoin.seen){
                                     String uid = snap.getId();
                                     Map<String, Boolean> map = new HashMap<>();
                                     map.put("seen", true);
-                                    db.collection("don-besoin-binds").document(uid).set(map, SetOptions.merge());
+                                    db.collection(PATH_NOTIF).document(uid).set(map, SetOptions.merge());
                                 }
                             }
                         }else {
+                            binding.progressBar.setVisibility(View.GONE);
                             binding.rwSearch.setVisibility(View.GONE);
                             binding.emptySearchList.setVisibility(View.VISIBLE);
                         }
@@ -83,15 +91,15 @@ public class ProfileNotifActivity extends AppCompatActivity implements MedClickL
 
     private void setHorizontalScroll() {
 
-        profileNotifAdapter = new ProfileNotifAdapter(this,new DiffUtil.ItemCallback<DonBesoin>() {
+        profileNotifAdapter = new ProfileNotifAdapter(this,new DiffUtil.ItemCallback<Notification>() {
             @Override
-            public boolean areItemsTheSame(@NonNull DonBesoin oldItem, @NonNull DonBesoin newItem) {
-                return oldItem.name.equals(newItem.name) ;
+            public boolean areItemsTheSame(@NonNull Notification oldItem, @NonNull Notification newItem) {
+                return oldItem.content.equals(newItem.content) ;
             }
 
             @Override
-            public boolean areContentsTheSame(@NonNull DonBesoin oldItem, @NonNull DonBesoin newItem) {
-                return oldItem.donneur_name.equals(newItem.donneur_name);
+            public boolean areContentsTheSame(@NonNull Notification oldItem, @NonNull Notification newItem) {
+                return oldItem.toUser.equals(newItem.toUser);
             }
         });
 
@@ -103,8 +111,13 @@ public class ProfileNotifActivity extends AppCompatActivity implements MedClickL
 
 
     @Override
-    public void onClick(View view, DonBesoin phone) {
-        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone.donneur_phone));
+    public void onClick(View view, Notification phone) {
+//      Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone.donneur_phone));
+//      startActivity(intent);
+        if( phone.publicationId == null) return;
+
+        Intent intent = new Intent(this, NotifComment.class);
+        intent.putExtra("id_publication", phone.publicationId);
         startActivity(intent);
     }
 

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="RtlSymmetry">
+
+    <data>
+
+        <import type="android.text.TextUtils"/>
+        <variable
+            name="item"
+            type="com.moumen.pharmazione.persistance.DonBesoin"/>
+
+        <variable
+            name="urlEmpty"
+            type="String" />
+
+        <variable
+            name="handler"
+            type="com.moumen.pharmazione.utils.MedClickListener" />
+
+    </data>
+
+<LinearLayout
+    android:id="@+id/layout"
+    android:background='@{item.seen == false ? @color/lighten_blue : @color/fui_transparent}'
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:theme="@style/Theme.MedDwak.DayNight"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical"
+    android:id="@+id/cardView"
+    android:background="@drawable/bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="4dp"
+    android:elevation="2dp">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:layout_marginStart="@dimen/album_dp_10"
+        android:layout_marginEnd="@dimen/album_dp_10"
+        android:layout_width="match_parent"
+        android:layout_height="130dp">
+
+
+        <ImageView
+            app:url="@{TextUtils.isEmpty(item.path) ? urlEmpty : item.path}"
+            app:layout_constraintDimensionRatio="1:1"
+            android:scaleType="fitCenter"
+            android:layout_weight="0.3"
+            android:id="@+id/imageSlider"
+            android:layout_width="0dp"
+            android:layout_height="130dp"
+            tools:src="@drawable/avatar_3"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/dwa_image" />
+
+        <LinearLayout
+            android:paddingTop="@dimen/_16"
+            android:paddingStart="@dimen/_16"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.7"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/propellantTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/le_medicament"
+                android:layout_marginBottom="@dimen/_16"
+                android:textAppearance="?attr/textAppearanceCaption" />
+
+            <TextView
+                android:id="@+id/nameTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-10dp"
+                android:maxLines="2"
+                android:text="@{item.name}"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textSize="30sp"
+                tools:text="Med Name" />
+        </LinearLayout>
+    </LinearLayout>
+    <com.google.android.material.card.MaterialCardView
+
+        app:cardCornerRadius="@dimen/_16"
+        app:cardElevation="2dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/_16dp"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/_16dp"
+            android:layout_marginEnd="@dimen/_16dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:fontFamily="@font/x_regular"
+                android:textSize="30sp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Le Donneur"
+                />
+
+            <View
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_width="150dp"
+                android:layout_height="0.8dp"
+                android:background="#717171"/>
+
+            <RelativeLayout
+                android:layout_marginBottom="@dimen/album_dp_20"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:text="@{item.donneur_name}"
+                        android:fontFamily="@font/x_regular_thin"
+                        android:id="@+id/text_partage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textSize="20sp"
+                        tools:text="Lahmidi Moumen"
+                        android:textColor="?attr/colorOnSurface"/>
+
+                    <TextView
+                        android:autoLink="phone"
+                        android:linksClickable="true"
+                        android:layout_marginTop="@dimen/album_dp_4"
+                        android:fontFamily="@font/x_regular_thin"
+                        android:id="@+id/text_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textSize="14sp"
+                        android:layout_marginStart="@dimen/_8"
+                        tools:text="0667989898"
+                        android:text="@{item.donneur_phone}"
+                        android:textColor="?attr/colorOnSurface"/>
+                </LinearLayout>
+
+                <ImageButton
+
+                    android:onClick="@{view -> handler.onClick(view,item)}"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_ios_call"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:padding="@dimen/_8"
+                    android:background="?attr/layout_drawable_picture"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="fitCenter"
+                    android:tint="?attr/colorControlNormal"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>
+</LinearLayout>
+</layout>

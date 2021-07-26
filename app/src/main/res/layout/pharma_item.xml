@@ -146,9 +146,6 @@
         app:layout_constraintStart_toEndOf="@id/course_slocation"
         app:layout_constraintTop_toTopOf="@id/categ" />
 
-
-
-
   </androidx.constraintlayout.widget.ConstraintLayout>
   </com.google.android.material.card.MaterialCardView>
 </layout>

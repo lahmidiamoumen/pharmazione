@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.moumen.pharmazione">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
-        android:largeHeap="true"
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MedDwak.DayNight">
@@ -22,8 +24,7 @@
                 <action android:name="OPEN_ACTIVITY_1" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
-        <!-- android:name=".utils.MyFirebaseMessagingService" -->
+        </activity> <!-- android:name=".utils.MyFirebaseMessagingService" -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
@@ -48,11 +49,16 @@
 
         <activity
             android:name=".BottomNavigation"
-            android:label="@string/title_activity_bottom_navigation">
-        </activity>
+            android:label="@string/title_activity_bottom_navigation" />
         <activity
             android:name=".BottomNav2Show"
             android:label="Show" />
+        <activity
+            android:name=".Chat.FirestorePagingActivity"
+            android:label="Paging" />
+        <activity
+            android:name=".Chat.FirestoreChatActivity"
+            android:label="Chat" />
         <activity
             android:name=".ShowProfileActiv"
             android:label="Show" />
@@ -90,7 +96,6 @@
             android:theme="@style/Theme.MedDwak.DayNight">
             <intent-filter>
                 <action android:name="ProfileNotifActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

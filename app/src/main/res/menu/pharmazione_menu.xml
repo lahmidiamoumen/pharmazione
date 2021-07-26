@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_meddwak"
+        android:icon="@drawable/ic_pahrma"
+        app:showAsAction="always"
+        android:title="@string/menu_ocr" />
+
+    <item android:id="@+id/menu_contact"
+        android:icon="@drawable/ic_contact"
+        app:showAsAction="ifRoom"
+        android:title="@string/menu_delete" />
+
+    <item android:id="@+id/menu_faq"
+        android:icon="@drawable/ic_help"
+        app:showAsAction="ifRoom"
+        android:title="@string/faq" />
+
+    <item android:id="@+id/menu_shar"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="always"
+        android:title="@string/partager_l_application" />
+</menu>

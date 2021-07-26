@@ -87,14 +87,14 @@ public class BottomNavigation extends AppCompatActivity implements NavController
             navView = findViewById(R.id.nav_view);
 
             // Add New Item Activity
-            navView.getMenu()
-               .getItem(0)
-               .setOnMenuItemClickListener(o ->{
-                    Intent intent = new Intent(this, PosterActivity.class);
-                    startActivity(intent);
-                    return true;
-                });
-            int firstPage = navView.getMenu().getItem(1).getItemId();
+//            navView.getMenu()
+//               .getItem(0)
+//               .setOnMenuItemClickListener(o ->{
+//                    Intent intent = new Intent(this, PosterActivity.class);
+//                    startActivity(intent);
+//                    return true;
+//                });
+            int firstPage = navView.getMenu().getItem(0).getItemId();
             navView.setSelectedItemId(firstPage);
 
 

@@ -48,6 +48,8 @@
 
     <color name="reply_red_200">#cf7779</color>
     <color name="reply_red_400">#ff4c5d</color>
+    <color name="material_gray_300">#ECECEC</color>
+    <color name="material_green_300" >#6BB56E</color>
 
     <!--Nav bar color protection for behavior differences between Android P and Q. All sdk-->
     <!--levels should draw fullscreen. P should color the nav bar with a translucent background -->

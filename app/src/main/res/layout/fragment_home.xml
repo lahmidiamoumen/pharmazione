@@ -8,270 +8,304 @@
         <variable
             name="email"
             type="String" />
+
+        <variable
+            name="connected"
+            type="Boolean" />
     </data>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
-    android:layout_marginBottom="56dp"
-    android:theme="@style/Theme.MedDwak.DayNight">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:background="@android:color/transparent"
-        android:id="@+id/app_bar"
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        tools:openDrawer="start"
         android:fitsSystemWindows="true">
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
+<!--        tools:openDrawer="start"-->
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="@color/quantum_grey500"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            android:fitsSystemWindows="false"
+            android:layout_marginBottom="56dp"
+            android:theme="@style/Theme.MedDwak.DayNight">
 
-            <LinearLayout
-                android:id="@+id/linearLayout"
+            <com.google.android.material.appbar.AppBarLayout
+                android:background="@android:color/transparent"
+                android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="@dimen/album_dp_4"
-                android:paddingTop="3dp"
                 android:fitsSystemWindows="true">
-                <LinearLayout
-                    android:background="?attr/layout_drawable_picture"
-                    android:orientation="horizontal"
-                    android:id="@+id/linearLayoutToll"
-                    android:layout_marginStart="@dimen/album_dp_10"
-                    android:layout_marginEnd="@dimen/album_dp_10"
-                    android:layout_marginBottom="@dimen/_16"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-<!--                    <ImageButton-->
-<!--                        android:id="@+id/editTextLogo"-->
-<!--                        android:elevation="3dp"-->
-<!--                        android:layout_width="65dp"-->
-<!--                        android:layout_gravity="center"-->
-<!--                        android:layout_height="45dp"-->
-<!--                        android:background="@color/fui_transparent"-->
-<!--                        android:clickable="true"-->
-<!--                        android:tint="?attr/colorControlNormal"-->
-<!--                        android:focusable="true"-->
-<!--                        android:scaleType="centerInside"-->
-<!--                        android:src="@drawable/logo"-->
-<!--                        android:contentDescription="@string/icon" />-->
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="@dimen/_16"
-                        android:layout_weight="0.5"
-                        android:text="Accueil"
-                        android:textAppearance="?attr/textAppearanceHeadline5" />
 
-                    <ImageButton
-                        android:tint="?attr/colorControlNormal"
-                        android:elevation="4dp"
-                        android:layout_margin="5dp"
-                        android:id="@+id/filter"
+                    <com.google.android.material.appbar.CollapsingToolbarLayout
+                        android:id="@+id/toolbar_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fitsSystemWindows="true"
+                        app:contentScrim="@color/quantum_grey500"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="@dimen/album_dp_4"
+                            android:paddingTop="3dp"
+                            android:fitsSystemWindows="true">
+                            <LinearLayout
+                                android:background="?attr/layout_drawable_picture"
+                                android:orientation="horizontal"
+                                android:id="@+id/linearLayoutToll"
+                                android:layout_marginStart="@dimen/album_dp_10"
+                                android:layout_marginEnd="@dimen/album_dp_10"
+                                android:layout_marginBottom="@dimen/_16"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                            <ImageButton
+                                android:id="@+id/menu_btn"
+                                android:elevation="3dp"
+                                android:layout_width="65dp"
+                                android:layout_gravity="center"
+                                android:layout_height="45dp"
+                                android:background="@color/fui_transparent"
+                                android:clickable="true"
+                                android:tint="?attr/colorControlNormal"
+                                android:focusable="true"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/ic_baseline_menu_24"
+                                android:contentDescription="@string/icon" />
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="@dimen/_16"
+                                    android:layout_weight="0.5"
+                                    android:text="Accueil"
+                                    android:textAppearance="?attr/textAppearanceHeadline5" />
+
+                                <ImageButton
+                                    android:tint="?attr/colorControlNormal"
+                                    android:elevation="4dp"
+                                    android:layout_margin="5dp"
+                                    android:id="@+id/filter"
+                                    android:layout_height="wrap_content"
+                                    android:layout_width="45dp"
+                                    android:background="?attr/layout_drawable_picture"
+                                    android:src="@drawable/ic_menu_search"
+                                    android:hint="@string/chercher_un_m_dicament"
+                                    android:padding="10dp"
+                                    android:contentDescription="@string/desc" />
+                                <ImageButton
+                                    android:id="@+id/editText"
+                                    android:elevation="4dp"
+                                    android:layout_width="45dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_marginStart="6dp"
+                                    android:padding="10dp"
+                                    android:background="?attr/layout_drawable_picture"
+                                    android:clickable="true"
+                                    android:tint="?attr/colorControlNormal"
+                                    android:focusable="true"
+                                    android:src="@drawable/ic_sort_white_24px"
+                                    android:contentDescription="@string/icon" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_gravity="center_vertical"
+                                android:id="@+id/textCat"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="22dp"
+                                android:textSize="12sp"
+                                android:text="Tous"/>
+
+
+                            <!--                <androidx.recyclerview.widget.RecyclerView-->
+                            <!--                    android:layout_marginStart="@dimen/album_dp_10"-->
+                            <!--                    android:layout_marginTop="@dimen/_16dp"-->
+                            <!--                    android:id="@+id/also_like_list"-->
+                            <!--                    android:layout_width="match_parent"-->
+                            <!--                    android:layout_height="118dp"-->
+                            <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                            <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                            <!--                    app:layout_constraintTop_toBottomOf="@+id/linearLayout"-->
+                            <!--                    android:paddingStart="@dimen/grid_2"-->
+                            <!--                    android:paddingEnd="@dimen/grid_2"-->
+                            <!--                    android:clipToPadding="false"-->
+                            <!--                    android:orientation="horizontal"-->
+                            <!--                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+                            <!--                    app:hasFixedSize="@{true}"-->
+                            <!--                    tools:listitem="@layout/med_item"/>-->
+
+                        </LinearLayout>
+
+
+                    </com.google.android.material.appbar.CollapsingToolbarLayout>
+                </com.google.android.material.appbar.AppBarLayout>
+
+                <LinearLayout
+                    android:id="@+id/uncomplete"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/empty_search_list_icons"
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:background="@drawable/ic_id_card_rafiki" />
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_width="45dp"
-                        android:background="?attr/layout_drawable_picture"
-                        android:src="@drawable/ic_menu_search"
-                        android:hint="@string/chercher_un_m_dicament"
-                        android:padding="10dp"
-                        android:contentDescription="@string/desc" />
-                    <ImageButton
-                        android:id="@+id/editText"
-                        android:elevation="4dp"
-                        android:layout_width="45dp"
+                        android:text="Vous devez compléter votre inscription"
+                        />
+
+                    <Button
+                        android:layout_gravity="center"
+                        android:background="#00000000"
+                        android:textColor="@color/colorPrimary"
+                        android:textAllCaps="false"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/button_resend"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="6dp"
-                        android:padding="10dp"
-                        android:background="?attr/layout_drawable_picture"
-                        android:clickable="true"
-                        android:tint="?attr/colorControlNormal"
-                        android:focusable="true"
-                        android:src="@drawable/ic_sort_white_24px"
-                        android:contentDescription="@string/icon" />
+                        android:text="Continuer"/>
                 </LinearLayout>
 
-                <TextView
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/text"
                     android:layout_width="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/textCat"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="22dp"
-                    android:textSize="12sp"
-                    android:text="Tous"/>
+                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/empty_search_list_icon"
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:background="@drawable/ic_id_card_rafiki" />
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Votre inscription a été effectué avec succès."
+                        />
+
+                    <TextView
+                        android:layout_marginTop="@dimen/_8"
+                        android:textSize="@dimen/album_sp_16"
+                        android:textAppearance="?attr/textAppearanceCaption"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vous recevez une réponse après \n vérification de vos données"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    tools:visibility="visible"
+                    android:id="@+id/auth"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/s"
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:background="@drawable/ic_confirmed_rafiki" />
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="VOUS ÊTES PHARMACIEN D'OFFICINE ?"
+                        />
+
+                    <TextView
+                        android:layout_marginTop="@dimen/_8"
+                        android:textSize="@dimen/album_sp_16"
+                        android:textAppearance="?attr/textAppearanceCaption"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vous devez vous inscrire afin de consulter \n la liste des publications"
+                        />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:gravity="center"
+                        android:id="@+id/btn"
+                        android:text="@string/rejoignez_nous"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_16dp"
+                        android:layout_marginBottom="20dp"
+                        android:padding="@dimen/album_dp_15"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </LinearLayout>
+
+                <androidx.core.widget.NestedScrollView
+                    tools:visibility="gone"
+                    android:id="@+id/scroll"
+                    android:fillViewport="true"
+                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
 
-<!--                <androidx.recyclerview.widget.RecyclerView-->
-<!--                    android:layout_marginStart="@dimen/album_dp_10"-->
-<!--                    android:layout_marginTop="@dimen/_16dp"-->
-<!--                    android:id="@+id/also_like_list"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="118dp"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/linearLayout"-->
-<!--                    android:paddingStart="@dimen/grid_2"-->
-<!--                    android:paddingEnd="@dimen/grid_2"-->
-<!--                    android:clipToPadding="false"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--                    app:hasFixedSize="@{true}"-->
-<!--                    tools:listitem="@layout/med_item"/>-->
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:id="@+id/swipeContainer">
 
-            </LinearLayout>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:transitionName="shared_element"
+                            android:id="@+id/listView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+                            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                            android:paddingBottom="8dp"
+                            android:transitionGroup="true"
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/email_item_layout"/>
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+                </androidx.core.widget.NestedScrollView>
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+               android:text="Poster"
+                app:fabSize="mini"
+               android:id="@+id/fab"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="bottom|end"
+               android:layout_margin="@dimen/fab_margin"
+               app:icon="@drawable/ic_category_medical"
+               android:contentDescription="@string/fui_progress_dialog_signing_up" />
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <LinearLayout
-        android:id="@+id/uncomplete"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/empty_search_list_icons"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:background="@drawable/ic_id_card_rafiki" />
-        <TextView
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vous devez compléter votre inscription"
-            />
-
-        <Button
-            android:layout_gravity="center"
-            android:background="#00000000"
-            android:textColor="@color/colorPrimary"
-            android:textAllCaps="false"
+        <com.google.android.material.navigation.NavigationView
+            android:background="?android:colorBackground"
+            app:behavior_hideable="true"
+            android:id="@+id/nav_view"
             android:layout_width="wrap_content"
-            android:id="@+id/button_resend"
-            android:layout_height="wrap_content"
-            android:text="Continuer"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/empty_search_list_icon"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:background="@drawable/ic_id_card_rafiki" />
-        <TextView
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Votre inscription a été effectué avec succès."
-        />
-
-        <TextView
-            android:layout_marginTop="@dimen/_8"
-            android:textSize="@dimen/album_sp_16"
-            android:textAppearance="?attr/textAppearanceCaption"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vous recevez une réponse après \n vérification de vos données"
-        />
-    </LinearLayout>
-
-    <LinearLayout
-        tools:visibility="visible"
-        android:id="@+id/auth"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/s"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:background="@drawable/ic_confirmed_rafiki" />
-        <TextView
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="VOUS ÊTES PHARMACIEN D'OFFICINE ?"
-            />
-
-        <TextView
-            android:layout_marginTop="@dimen/_8"
-            android:textSize="@dimen/album_sp_16"
-            android:textAppearance="?attr/textAppearanceCaption"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vous devez vous inscrire afin de consulter \n la liste des publications"
-            />
-
-        <com.google.android.material.button.MaterialButton
-            android:gravity="center"
-            android:id="@+id/btn"
-            android:text="@string/rejoignez_nous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_16dp"
-            android:layout_marginBottom="20dp"
-            android:padding="@dimen/album_dp_15"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </LinearLayout>
-
-    <androidx.core.widget.NestedScrollView
-        tools:visibility="gone"
-        android:id="@+id/scroll"
-        android:fillViewport="true"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/swipeContainer">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:transitionName="shared_element"
-                android:id="@+id/listView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-                app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-                android:paddingBottom="8dp"
-                android:transitionGroup="true"
-                android:clipToPadding="false"
-                tools:listitem="@layout/email_item_layout"/>
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="false"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/pharmazione_menu" />
+    </androidx.drawerlayout.widget.DrawerLayout>
 
 </layout>

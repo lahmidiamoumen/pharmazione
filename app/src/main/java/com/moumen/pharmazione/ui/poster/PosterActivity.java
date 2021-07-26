@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.google.android.gms.tasks.Task;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SearchableMedecinActivity;
 import com.moumen.pharmazione.databinding.ActivityPosterBinding;
+import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.utils.ClickListener;
@@ -60,6 +62,7 @@ import java.util.Objects;
 
 import id.zelory.compressor.Compressor;
 
+import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
 import static com.moumen.pharmazione.utils.Util.RC_SIGN_IN;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_BESOIN;
@@ -69,7 +72,6 @@ import static com.moumen.pharmazione.utils.Util.load;
 
 public class PosterActivity extends AppCompatActivity implements View.OnClickListener, ClickListener {
 
-    private static final String PATH = "med-dwa-pharmazion";
     AlertDialog alertDialogAndroid;
     
     FirebaseStorage storage;
@@ -85,6 +87,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     View parentLayout;
     TextView dialogText = null;
     private ArrayList<AlbumFile> mAlbumFiles;
+    private UserViewModel sharedViewModel;
+
 
     ActivityPosterBinding binding;
 
@@ -107,6 +111,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
                 new AuthUI.IdpConfig.FacebookBuilder().build()*/);
 
         parentLayout = findViewById(android.R.id.content);
+        sharedViewModel =  new ViewModelProvider(this).get(UserViewModel.class);
 
         //String[] cites = getResources().getStringArray(R.array.cities2);
 
@@ -151,6 +156,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         binding.sendIcon.setOnClickListener(this);
         binding.recipientAddIcon.setOnClickListener(o->openSearch());
         binding.closeIcon.setOnClickListener(v-> finish());
+
         if(!Connectivity.isConnected(this)) {
             showSandbar(" la connexion internet est perdue");
         }
@@ -366,9 +372,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
       }
       document.setDocumentID(id);
       if(mAlbumFiles != null && mAlbumFiles.size() > 0){
-          task.addOnSuccessListener(documentSnapshot -> {
-              User user = documentSnapshot.toObject(User.class);
-              assert user != null;
+          sharedViewModel.getLiveBlogData().observe(this, user ->  {
+              if( user == null) return;
               if(user.getSatisfied() == null || !user.getSatisfied()) {
                   showEndDig("Votre compte est n'est pas vérifié");
                   return;
@@ -385,9 +390,8 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
           });
 
       }else {
-          task.addOnSuccessListener(documentSnapshot -> {
-              User user = documentSnapshot.toObject(User.class);
-              assert user != null;
+          sharedViewModel.getLiveBlogData().observe(this, user ->  {
+              if( user == null) return;
               if(user.getSatisfied() == null || !user.getSatisfied()) {
                   showEndDig("Votre compte est n'est pas vérifié");
                   return;
@@ -404,7 +408,6 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
           });
       }
   }
-
 
 
    private void uploadImage(String id, List<String> urlsDownloded){

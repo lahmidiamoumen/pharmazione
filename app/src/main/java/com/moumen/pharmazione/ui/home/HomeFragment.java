@@ -1,5 +1,6 @@
 package com.moumen.pharmazione.ui.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -7,16 +8,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ShareCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,47 +30,55 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.moumen.pharmazione.databinding.EmailItemLayoutBinding;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
-import com.google.android.material.transition.MaterialElevationScale;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.transition.MaterialSharedAxis;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.SetOptions;
+import com.moumen.pharmazione.Chat.FirestoreChatActivity;
+import com.moumen.pharmazione.Chat.FirestorePagingActivity;
 import com.moumen.pharmazione.FilterDialogFragment;
 import com.moumen.pharmazione.Filters;
+import com.moumen.pharmazione.ProfileNotifActivity;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SearchableActivity;
-import com.moumen.pharmazione.SharedViewModel;
+import com.moumen.pharmazione.databinding.EmailItemLayoutBinding;
 import com.moumen.pharmazione.databinding.FragmentHomeBinding;
 import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.HorizantallContent;
 import com.moumen.pharmazione.persistance.User;
+import com.moumen.pharmazione.ui.poster.PosterActivity;
 import com.moumen.pharmazione.ui.poster.ValidatePhone;
 import com.moumen.pharmazione.utils.Connectivity;
 import com.moumen.pharmazione.utils.ItemClickListener;
 import com.moumen.pharmazione.utils.MedClickListener;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 import static com.moumen.pharmazione.utils.Util.PATH;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
 import static com.moumen.pharmazione.utils.Util.RC_SIGN_IN;
-import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_BESOIN;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_VALIDATION;
 
 public class HomeFragment extends Fragment implements ItemClickListener, FilterDialogFragment.FilterListener, MedClickListener<HorizantallContent> {
 
+    private DrawerLayout mDrawer;
     private UserViewModel sharedViewModel;
     private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter = null;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -78,10 +91,15 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     private List<AuthUI.IdpConfig> providers;
     PagedList.Config config;
     Boolean neverBefore = true;
+    private String TAG = "HomeFragment";
+
+    public HomeFragment() { }
 
     @Override
     public void onCreate(@Nullable Bundle sss) {
         super.onCreate(sss);
+        setHasOptionsMenu(true);
+
         sharedViewModel =  new ViewModelProvider(getActivity()).get(UserViewModel.class);
 
         FirebaseApp.initializeApp(getContext());
@@ -110,25 +128,33 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             this.neverBefore = false;
             signIn();
         }
-
-
     }
+
 
     void updateUI(User user) {
         if( user == null) {
+            binding.navView.getMenu().clear();
+            binding.navView.inflateMenu(R.menu.pharmazione_menu);
+
             binding.scroll.setVisibility(View.GONE);
             binding.uncomplete.setVisibility(View.GONE);
-            binding.text.setVisibility(View.VISIBLE);
+            binding.text.setVisibility(View.GONE);
+            binding.auth.setVisibility(View.VISIBLE);
+            binding.fab.setVisibility(View.GONE);
             if(adapter != null)
                 adapter.stopListening();
+            if(mAuth.getCurrentUser() != null)
                 AuthUI.getInstance()
-                    .signOut(getContext())
-                    .addOnCompleteListener(tasks -> {
-                        if (tasks.isSuccessful()) {
-                            getActivity().getViewModelStore().clear();
-                        }
-                    });
+                        .signOut(getContext())
+                        .addOnCompleteListener(tasks -> {
+                            if (tasks.isSuccessful()) {
+                                getActivity().getViewModelStore().clear();
+                            }
+                        });
         } else if( user.getmPhoneNumber() == null || user.getmPhoneNumber().isEmpty()) {
+            binding.navView.getMenu().clear();
+            binding.navView.inflateMenu(R.menu.pharmazione_menu);
+
             binding.buttonResend
                     .setOnClickListener(o ->
                     startActivityForResult(ValidatePhone
@@ -138,12 +164,18 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             binding.text.setVisibility(View.GONE);
             binding.auth.setVisibility(View.GONE);
             binding.uncomplete.setVisibility(View.VISIBLE);
+            binding.fab.setVisibility(View.GONE);
         } else if (user.satisfied == null || !user.satisfied){
+            binding.navView.getMenu().clear();
+            binding.navView.inflateMenu(R.menu.pharmazione_menu_wait);
+
             binding.auth.setVisibility(View.GONE);
             binding.scroll.setVisibility(View.GONE);
             binding.uncomplete.setVisibility(View.GONE);
             binding.text.setVisibility(View.VISIBLE);
+            binding.fab.setVisibility(View.GONE);
         } else {
+            binding.fab.setVisibility(View.VISIBLE);
             binding.editText.setOnClickListener(o-> onFilterClicked());
             binding.filter.setOnClickListener(o->goToSearch());
             binding.scroll.setVisibility(View.VISIBLE);
@@ -153,6 +185,9 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             swipeRefreshLayout = binding.swipeContainer;
             binding.listView.setAdapter(adapter);
             swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
+            // Navigation Items
+            binding.navView.getMenu().clear();
+            binding.navView.inflateMenu(R.menu.activity_main_drawer);
         }
     }
 
@@ -223,6 +258,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.navigation_drawer, menu);
     }
 
     @Override
@@ -232,6 +268,38 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         startPostponedEnterTransition();
         sharedViewModel.getLiveBlogData().observe(getActivity(), this::updateUI);
 
+        ExtendedFloatingActionButton fab = binding.fab;
+        fab.setOnClickListener(v -> startActivity(new Intent(getActivity(), PosterActivity.class)));
+        mDrawer = binding.drawerLayout;
+        binding.menuBtn.setOnClickListener(view1 -> {
+            mDrawer.openDrawer(GravityCompat.START);
+            getActivity().invalidateOptionsMenu();
+        });
+
+        binding.navView.setNavigationItemSelectedListener(menu -> {
+            onOptionsItemSelected(menu);
+            mDrawer.close();
+            return true;
+        });
+
+        binding.listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                if (newState == RecyclerView.SCREEN_STATE_OFF) {
+//                    fab.extend();
+//                }
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 && fab.isExtended()) {
+                    fab.shrink();
+                } /*else  if (dy < -15 && !fab.isExtended())
+                    fab.extend();*/
+            }
+        });
+
         //setHorizontalScroll();
 
         mAuth = FirebaseAuth.getInstance();
@@ -240,6 +308,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             binding.btn.setOnClickListener(s -> signIn());
             binding.scroll.setVisibility(View.GONE);
             binding.auth.setVisibility(View.VISIBLE);
+            binding.fab.setVisibility(View.GONE);
         } else {
             swipeRefreshLayout = binding.swipeContainer;
             binding.listView.setAdapter(adapter);
@@ -268,6 +337,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         adapter.updateOptions(options);
 
     }
+
 
     private void showToast() {
         Toast.makeText(getContext(), "An error occurred.", Toast.LENGTH_SHORT).show();
@@ -336,8 +406,8 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 //       this.setEnterTransition(  new MaterialSharedAxis(MaterialSharedAxis.Z, false)
 //        .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
 //
-//       this.setExitTransition( new MaterialSharedAxis(MaterialSharedAxis.Z, true)
-//        .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
+       this.setExitTransition( new MaterialSharedAxis(MaterialSharedAxis.X, true)
+        .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
 //        this.setEnterTransition( new MaterialElevationScale(true)
 //                .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
 //        this.setExitTransition( new MaterialContainerTransform()
@@ -350,7 +420,6 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 
 //        this.setExitTransition(  new MaterialElevationScale( false)
 //                .setDuration(duration));
-
 
         NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_showFragment);
     }
@@ -368,7 +437,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         }
     }
 
-    private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> getPaging(){
+    private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> getPaging() {
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -456,7 +525,53 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
     }
 
 
+    @SuppressLint("NonConstantResourceId")
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                NavHostFragment.findNavController(this).navigate(R.id.home_to_profile);
+                break;
+            case R.id.menu_logout:
+                signOut();
+                return true;
+            case R.id.menu_contact:
+                nosContacter();
+                return true;
+            case R.id.menu_meddwak:
+                deleteAccountClicked();
+                break;
+            case R.id.nav_gallery:
+                startActivity(new Intent(getContext(), ProfileNotifActivity.class /*FirestorePagingActivity.class*/));
+                break;
+            case R.id.nav_slideshow:
+                startActivity(new Intent(getContext(), FirestoreChatActivity.class));
+                break;
+            case R.id.menu_shar:
+                ShareCompat.IntentBuilder.from(getActivity())
+                        .setType("text/plain")
+                        .setChooserTitle("Pharmazione")
+                        .setText("http://play.google.com/store/apps/details?id=" + getActivity().getPackageName())
+                        .startChooser();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
+    private void signOut() {
+        //detachListener();
+        updateUI(null);
+    }
+
+    private void deleteAccountClicked() {
+        new AlertDialog.Builder(getContext())
+                .setMessage("Pharmazione a pour but principal la création d’un réseau solidaire entre pharmaciens d’officine, en leur permettant d’élargir leur réseau professionnel, d’échanger des informations avec leurs confrères et d’avoir une plus grande visibilité sur le marché.")
+                .setPositiveButton("J'adore", (dialogInterface, i) -> showSandbar(
+                        "Merci "))
+                .setNegativeButton("Sortie", null)
+                .show();
+    }
 
     @Override
     public void onStop() {
@@ -465,6 +580,41 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
             adapter.stopListening();
         }
     }
+
+    void  nosContacter(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.dialog_layout, null, false);
+        // Set up the input
+        EditText body =  viewInflated.findViewById(R.id.bodyss);
+        builder.setView(viewInflated);
+
+        builder.setTitle("");
+        // Set up the buttons
+        builder.setPositiveButton("Envoyer", (dialog, which) -> {
+
+            if( body.getText().toString().isEmpty()){
+                Toast.makeText(getContext(),"le champ est vide!", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("created", FieldValue.serverTimestamp());
+            updates.put("content", body.getText().toString());
+            if( mAuth.getCurrentUser() != null) {
+                updates.put("userID", mAuth.getCurrentUser().getUid());
+                updates.put("userURL", mAuth.getCurrentUser().getPhotoUrl() == null ? "" : mAuth.getCurrentUser().getPhotoUrl().toString());
+                updates.put("userName", Objects.requireNonNull(mAuth.getCurrentUser().getDisplayName()));
+            }
+            FirebaseFirestore.getInstance().collection("pharmazion-feedback").document().set(updates, SetOptions.merge())
+                    .addOnSuccessListener(o-> Toast.makeText(getContext(),"Message envoyé", Toast.LENGTH_LONG).show())
+                    .addOnFailureListener(o-> Toast.makeText(getContext(),"Une erreur s'est produite!", Toast.LENGTH_LONG).show());
+            dialog.dismiss();
+
+        });
+        builder.setNegativeButton("Annuler", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
 
 
 //    private void setHorizontalScroll() {

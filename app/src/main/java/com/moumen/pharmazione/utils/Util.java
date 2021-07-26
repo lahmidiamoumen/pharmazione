@@ -36,7 +36,8 @@ public class Util {
     public final static int START_ACTIVIY_DON = 511;
     @SuppressLint("SimpleDateFormat")
     public static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    public final static String PATH = "med-dwa-pharmazion";
+    //public final static String PATH = "med-dwa-pharmazion-test";
+    public final static String PATH = "med-dwa-pharmazion-test";
     public final static String PATH_NOTIF = "pharmazione-notification";
     public final static String PATH_USER = "med-dwa-users";
     public final static String EMPTY_IMAGE = "https://firebasestorage.googleapis.com/v0/b/data-278806.appspot.com/o/images%2Fempty.png?alt=media&token=7015119e-0356-4387-9f0f-3c807db65861";
@@ -110,10 +111,10 @@ public class Util {
     public static void bindGlideSrc(ImageView imageView,@Nullable String url,@Nullable Drawable drawable,@Nullable boolean glideCenterCrop,@Nullable boolean glideCircularCrop) {
         Context context = imageView.getContext();
         RequestBuilder requestBuilder;
-        if(url == null && drawable != null){
+        if((url == null || url.isEmpty()) && drawable != null){
             requestBuilder = Glide.with(context).load(drawable).transition(DrawableTransitionOptions.withCrossFade());
         }
-        else if( drawable == null && url != null){
+        else if( drawable == null && (url != null && !url.isEmpty())){
             requestBuilder = Glide.with(context).load(url).transition(DrawableTransitionOptions.withCrossFade());
             //.placeholder(R.drawable.start_logo).error(R.drawable.start_logo);
         }
@@ -127,7 +128,6 @@ public class Util {
             requestBuilder.circleCrop();
         }
         requestBuilder.into(imageView);
-
     }
 
 

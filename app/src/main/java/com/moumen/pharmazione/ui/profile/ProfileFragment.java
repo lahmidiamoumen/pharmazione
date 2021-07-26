@@ -84,6 +84,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.moumen.pharmazione.BottomNavigation;
+import com.moumen.pharmazione.Chat.FirestoreChatActivity;
+import com.moumen.pharmazione.Chat.FirestorePagingActivity;
 import com.moumen.pharmazione.ProfileNotifActivity;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SharedViewModel;
@@ -125,7 +127,6 @@ public class ProfileFragment extends Fragment {
     private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter;
     private FirebaseAuth mAuth;
     private List<AuthUI.IdpConfig> providers;
-    private String name = null;
 
     private UserViewModel sharedViewModel;
 
@@ -312,6 +313,7 @@ public class ProfileFragment extends Fragment {
         popup.setOnMenuItemClickListener(this::onOptionsItemSelected);
     }
 
+    @SuppressLint("NonConstantResourceId")
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_logout:
@@ -322,6 +324,12 @@ public class ProfileFragment extends Fragment {
                 return true;
             case R.id.menu_meddwak:
                 deleteAccountClicked();
+                break;
+            case R.id.menu_paging:
+                startActivity(new Intent(getContext(), FirestorePagingActivity.class));
+                break;
+            case R.id.menu_chat:
+                startActivity(new Intent(getContext(), FirestoreChatActivity.class));
                 break;
             case R.id.menu_shar: {
 //                final String appPackageName = getActivity().getPackageName(); // getPackageName() from Context or Activity object
@@ -356,18 +364,14 @@ public class ProfileFragment extends Fragment {
 
         sharedViewModel.getLiveBlogData().observe(getActivity(), doc ->  {
             user = doc;
-            name = doc.getmName();
             dbCollection = FirebaseFirestore.getInstance().collection(PATH);
             baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUserId());
-            setUpAdapter();
+            adapter = setUpAdapter();
+            setAdapt();
             updateUI(user);
         });
 
-        Button mSignIn = binding.btn;
-        if(adapter != null){
-            setAdapt();
-        }
-        mSignIn.setOnClickListener(s -> signIn());
+        binding.btn.setOnClickListener(s -> signIn());
         //updateUI(user);
         if(!Connectivity.isConnected(getContext())) {
             showSandbar(" la connexion internet est perdue");
@@ -379,14 +383,6 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void goToNotifications(){
-        if(mAuth.getCurrentUser() == null){
-            return;
-        }
-        Intent intent = new Intent(getContext(), ProfileNotifActivity.class);
-        startActivity(intent);
-    }
-
     private void setAdapt(){
         swipeRefreshLayout = binding.swipeContainer;
         swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
@@ -394,6 +390,8 @@ public class ProfileFragment extends Fragment {
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 int totalNumberOfItems = adapter.getItemCount();
+                System.out.println("Total Number Of Items: "+totalNumberOfItems);
+
                 if(totalNumberOfItems == 0) {
 //                    binding.progressBar.setVisibility(View.VISIBLE);
                     binding.listView.setVisibility(View.GONE);
@@ -419,7 +417,7 @@ public class ProfileFragment extends Fragment {
         binding.listView.setAdapter(adapter);
     }
 
-    private void setUpAdapter() {
+    private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> setUpAdapter() {
         // This configuration comes from the Paging Support Library
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -432,7 +430,7 @@ public class ProfileFragment extends Fragment {
                 .setQuery(baseQuery, config, Document.class)
                 .build();
 
-        adapter = new FirestorePagingAdapter<Document, RecyclerView.ViewHolder>(options) {
+        return new FirestorePagingAdapter<Document, RecyclerView.ViewHolder>(options) {
             @NonNull
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -484,18 +482,16 @@ public class ProfileFragment extends Fragment {
     private void updateUI(User currentUser) {
         //Show Sign In Button Only
         if(currentUser == null) {
-//            if (mAuth.getCurrentUser() != null){
-//                toUserClass();
-//                return;
-//            }
+            if( adapter != null) {
+                adapter.stopListening();
+                adapter = null;
+            }
             binding.edit.setVisibility(View.GONE);
             binding.imageButton.setVisibility(View.GONE);
             binding.notifications.setVisibility(View.GONE);
-
-            System.out.println("User is null");
             scrollView.setVisibility(View.GONE);
             constraintLayout.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             binding.imageButton.setVisibility(View.VISIBLE);
             binding.notifications.setVisibility(View.VISIBLE);
             if( mAuth.getUid() != null && currentUser.userId != null && currentUser.userId.equals(mAuth.getUid())) {
@@ -508,12 +504,10 @@ public class ProfileFragment extends Fragment {
                 binding.edit.setVisibility(View.GONE);
             }
 
-
-            adapter = null;
-            user = currentUser;
             scrollView.setVisibility(View.VISIBLE);
             constraintLayout.setVisibility(View.GONE);
             populateProfile();
+
             if(adapter == null){
                 if( dbCollection == null) {
                     dbCollection = FirebaseFirestore.getInstance().collection(PATH);
@@ -522,10 +516,11 @@ public class ProfileFragment extends Fragment {
                     showSandbar("Il y a un problem!");
                 } else {
                     baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUserId());
-                    setUpAdapter();
+                    adapter = setUpAdapter();
                     setAdapt();
-                    adapter.startListening();
                 }
+            } else {
+                adapter.startListening();
             }
         }
     }
@@ -611,8 +606,6 @@ public class ProfileFragment extends Fragment {
 
     private void signOut() {
         //detachListener();
-        if( adapter != null)
-            adapter.stopListening();
         AuthUI.getInstance()
                 .signOut(context)
                 .addOnCompleteListener(task -> {

@@ -95,7 +95,7 @@ public class ShowFragment extends Fragment {
 
         setHasOptionsMenu(true);
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
-        sharedViewModel =  new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        sharedViewModel =  new ViewModelProvider(getActivity()).get(UserViewModel.class);
         //prepareTransitions();
     }
 
@@ -302,11 +302,9 @@ public class ShowFragment extends Fragment {
             return;
         }
 
-        Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(user.getUid()).get();
-        task.addOnSuccessListener(documentSnapshot -> {
-            User users = documentSnapshot.toObject(User.class);
+        sharedViewModel.getLiveBlogData().observe(getActivity(), users -> {
             if (users != null) {
-
+                String id = db.collection(PATH).document().getId();
 
                 String content = Objects.requireNonNull(binding.editText.getText()).toString();
                 if(content.isEmpty()) {
@@ -314,8 +312,8 @@ public class ShowFragment extends Fragment {
                     return;
                 }
 
-
                 if(userID != null && mAuth.getUid() != null && !mAuth.getUid().equals(userID) ) {
+
                     Notification notif = new Notification();
                     HashMap<String, Object> message = new HashMap<>();
                     HashMap<String, Object> notification = new HashMap<>();
@@ -325,9 +323,12 @@ public class ShowFragment extends Fragment {
 
                     data.put("id_publication", documentID );
 
-
-
                     notif.setContent(content);
+                    notif.publicationId = documentID;
+                    notif.commentId = id;
+                    notif.userID = user.getUid();
+                    notif.userURL = user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString();
+                    notif.userName =  users.getmName();
                     notif.setTitle(users.mName +" a commenté votre publication");
                     notif.setToUser(userID);
                     notif.setSeen(false);
@@ -372,17 +373,18 @@ public class ShowFragment extends Fragment {
                     RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
                     requestQueue.add(logInAPIRequest);
                     db.collection(PATH_NOTIF).document().set(notif);
+                    //db.collection(PATH_NOTIF).document(userID).collection("notification").document().set(notif);
+
                 }
                 binding.editText.setText("");
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("created", FieldValue.serverTimestamp());
                 updates.put("content", content);
-                updates.put("userID", content);
+                updates.put("userID", user.getUid());
                 updates.put("userURL", user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString());
                 updates.put("userName", users.getmName());
-                dbCollection.document().set(updates, SetOptions.merge());
+                dbCollection.document(id).set(updates, SetOptions.merge());
                 System.out.println("In Message end");
-
             }
         });
     }

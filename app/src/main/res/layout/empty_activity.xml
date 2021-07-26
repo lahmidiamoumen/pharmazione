@@ -26,6 +26,7 @@
         android:id="@+id/comment_name"
         android:layout_marginStart="8dp"
         android:textSize="12sp"
+        android:textColor="@color/quantum_black_100"
         android:layout_toEndOf="@+id/avatar"
         android:layout_alignTop="@+id/avatar"
         android:layout_width="wrap_content"
@@ -42,11 +43,39 @@
         android:background="@drawable/comment"
         android:textColor="#252525"
         android:paddingStart="@dimen/_8"
-        android:paddingEnd="15dp"
+        android:paddingEnd="@dimen/album_dp_20"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:elevation="1dp"
         android:textSize="14sp"
         android:text="How are you doing? This is a long message that should probably wrap."
         />
+
+    <TextView
+        android:layout_marginTop="@dimen/album_dp_6"
+        android:id="@+id/comment_date"
+        android:layout_marginStart="@dimen/_16dp"
+        android:textSize="12sp"
+        android:layout_toEndOf="@+id/comment_reply"
+        android:layout_below="@+id/message_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="1dp"
+        android:text="5w ago"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/comment_reply"
+        android:textSize="12sp"
+        android:padding="@dimen/album_dp_2"
+        android:minHeight="@dimen/album_dp_0"
+        android:minWidth="@dimen/album_dp_0"
+        android:textColor="#535353"
+        android:layout_alignStart="@+id/message_body"
+        android:layout_below="@+id/message_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="1dp"
+        android:text="Reply"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:contentDescription="@string/ferm" />
 </RelativeLayout>

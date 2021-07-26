@@ -13,6 +13,9 @@
         <action app:destination="@id/showFragment"
             android:id="@+id/action_navigation_home_to_showFragment"/>
 
+        <action app:destination="@id/navigation_notifications"
+            android:id="@+id/home_to_profile"/>
+
         <action
             android:id="@+id/action_navigation_home_to_specialityFrag"
             app:destination="@id/specialityFrag" />

@@ -12,6 +12,16 @@
         app:showAsAction="always"
         android:title="@string/menu_ocr" />
 
+    <item android:id="@+id/menu_paging"
+        android:icon="@drawable/ic_med"
+        app:showAsAction="always"
+        android:title="List" />
+
+    <item android:id="@+id/menu_chat"
+        android:icon="@drawable/ic_med"
+        app:showAsAction="always"
+        android:title="Chat" />
+
     <item android:id="@+id/menu_contact"
         android:icon="@drawable/ic_chat"
         app:showAsAction="always"

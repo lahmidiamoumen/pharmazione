@@ -10,6 +10,11 @@ public class Notification {
     public String title;
     public String content;
     public String toUser;
+    public String userID;
+    public String userURL;
+    public String userName;
+    public String publicationId;
+    public String commentId;
     public Boolean seen;
     @ServerTimestamp
     public Timestamp created;
