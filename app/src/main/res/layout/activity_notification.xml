@@ -36,32 +36,22 @@
         app:iconTint="?attr/colorOnSurface" />
 
     <TextView
-        android:fontFamily="@font/x_regular"
         android:id="@+id/logText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/album_dp_45"
-        android:layout_marginEnd="20dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:text="Les notifications"
-        android:textAppearance="?attr/textAppearanceHeadline5"
-        />
-
-    <TextView
-        android:textAppearance="?attr/textAppearanceCaption"
-        android:layout_marginStart="@dimen/album_dp_45"
         android:layout_marginEnd="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/les_dons_li_s_a_votre_besoins"/>
+        android:layout_marginBottom="15dp"
+        android:fontFamily="@font/x_regular"
+        android:text="Mes notifications"
+        android:textAppearance="?attr/textAppearanceHeadline5" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="gone"
         tools:visibility="visible"
-
         android:id="@+id/rwSearch"
-        android:paddingHorizontal="@dimen/album_dp_20"
+        android:paddingHorizontal="@dimen/album_dp_4"
         android:paddingTop="@dimen/_16dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:paddingBottom="8dp"

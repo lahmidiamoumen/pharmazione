@@ -19,14 +19,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.SearchableMedecinActivity;
 import com.moumen.pharmazione.databinding.ActivityPosterBinding;
 import com.moumen.pharmazione.logic.user.UserViewModel;
 import com.moumen.pharmazione.persistance.Document;
+import com.moumen.pharmazione.persistance.Notification;
 import com.moumen.pharmazione.persistance.User;
 import com.moumen.pharmazione.utils.ClickListener;
 import com.moumen.pharmazione.utils.Connectivity;
@@ -47,6 +54,8 @@ import com.yanzhenjie.album.api.widget.Widget;
 import com.yanzhenjie.album.widget.divider.Api21ItemDivider;
 import com.yanzhenjie.album.widget.divider.Divider;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -63,6 +72,7 @@ import java.util.Objects;
 import id.zelory.compressor.Compressor;
 
 import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_NOTIF;
 import static com.moumen.pharmazione.utils.Util.PATH_USER;
 import static com.moumen.pharmazione.utils.Util.RC_SIGN_IN;
 import static com.moumen.pharmazione.utils.Util.START_ACTIVIY_BESOIN;
@@ -77,6 +87,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     FirebaseStorage storage;
     FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    User users;
     Document document;
     String mCurrentPhotoPath;
     private List<AuthUI.IdpConfig> providers;
@@ -112,6 +123,10 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 
         parentLayout = findViewById(android.R.id.content);
         sharedViewModel =  new ViewModelProvider(this).get(UserViewModel.class);
+        sharedViewModel.getLiveBlogData().observe(this, user -> {
+            users = user;
+            binding.sendIcon.setOnClickListener(this);
+        });
 
         //String[] cites = getResources().getStringArray(R.array.cities2);
 
@@ -153,7 +168,6 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
 //            }
 //        });
 
-        binding.sendIcon.setOnClickListener(this);
         binding.recipientAddIcon.setOnClickListener(o->openSearch());
         binding.closeIcon.setOnClickListener(v-> finish());
 
@@ -239,6 +253,71 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+
+    public void sendNotif(String documentID) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(mAuth.getCurrentUser() == null || users == null) return;
+        Notification notif = new Notification();
+        HashMap<String, Object> message = new HashMap<>();
+        HashMap<String, Object> notification = new HashMap<>();
+        HashMap<String, Object> android = new HashMap<>();
+        HashMap<String, String> click_action = new HashMap<>();
+        HashMap<String, String> data = new HashMap<>();
+
+        data.put("id_publication", documentID );
+
+        String content = "Nouvelle publication ";
+
+        notif.setContent(content);
+        notif.publicationId = documentID;
+        notif.userID = user.getUid();
+        notif.userURL = user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString();
+        notif.userName =  users.getmName();
+        notif.setTitle("Nouvelle publication par"+ users.getmName());
+        notif.setToUser("global");
+        notif.setSeen(false);
+
+        notification.put("body", content );
+        notification.put("title", "Nouvelle publication par"+ users.getmName());
+        notification.put("click_action","OPEN_ACTIVITY_1");
+
+        click_action.put("click_action", "OPEN_ACTIVITY_1");
+        click_action.put("color", "#7e55c3");
+
+        android.put("notification",click_action);
+
+        message.put("to", "/topics/global");
+        message.put("notification", notification);
+        message.put("android", android);
+        message.put("data", data);
+
+        JsonObjectRequest logInAPIRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
+                new JSONObject(message),
+                response -> {
+                    Log.d("Response", response.toString());
+                    //Toast.makeText(getContext(), "" + response.toString(), Toast.LENGTH_SHORT).show();
+                }, error -> {
+            VolleyLog.d("Error", "Error: " + error.getMessage());
+            //Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+        }){
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Accept","application/json");
+                headers.put("Content-Type","application/json");
+                headers.put("Authorization", "key=AAAAepkVf_I:APA91bFsjCWEw2WnWmr97wFvlCb75cjC5Ecu0RFUY03paTo89L781PrzPomVzTAtnAl-2MV6qpsKMJVFwoclj6vcc2lAOP9nDHBe2fVKFObhNtovIH9WDtBsdpvtW_DJkghBgcoIqNOn");
+                return headers;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(logInAPIRequest);
+        db.collection(PATH_NOTIF).add(notif);
+    }
 
     public void openSearch(){
         Intent i = new Intent(this, SearchableMedecinActivity.class);
@@ -361,7 +440,6 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
   {
       dialog("");
       String id = db.collection(PATH).document().getId();
-      Task<DocumentSnapshot> task =  db.collection(PATH_USER).document(mAuth.getUid()).get();
       document.setUserID(mAuth.getUid());
       document.setToChange(binding.getSwitchers());
       if(binding.getSwitchers()) {
@@ -371,42 +449,28 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
           document.setQte(Integer.valueOf(getValue(binding.qteEditText)));
       }
       document.setDocumentID(id);
-      if(mAlbumFiles != null && mAlbumFiles.size() > 0){
-          sharedViewModel.getLiveBlogData().observe(this, user ->  {
-              if( user == null) return;
-              if(user.getSatisfied() == null || !user.getSatisfied()) {
-                  showEndDig("Votre compte est n'est pas vérifié");
-                  return;
-              }
-              document.setUserName(caseSensitive(user.mName));
-              document.setUserUrl(user.mPhotoUri);
-              document.setLocation(user.getWilaya());
-              document.setToken(user.getToken());
-              document.setSatisfied(user.getSatisfied());
-              db.collection(PATH)
-                      .document(id)
-                      .set(document)
-                      .addOnSuccessListener(s-> uploadImage(id,  new ArrayList<>()));
-          });
-
-      }else {
-          sharedViewModel.getLiveBlogData().observe(this, user ->  {
-              if( user == null) return;
-              if(user.getSatisfied() == null || !user.getSatisfied()) {
-                  showEndDig("Votre compte est n'est pas vérifié");
-                  return;
-              }
-              document.setUserName(caseSensitive(user.mName));
-              document.setUserUrl(user.mPhotoUri);
-              document.setLocation(user.getWilaya());
-              document.setSatisfied(user.getSatisfied());
-              db.collection(PATH)
-                      .document(id)
-                      .set(document)
-                      .addOnSuccessListener(aVoid2 -> dialog("don"))
-                      .addOnFailureListener(e -> dialog("Upload suspendu"));
-          });
+      if( users == null) return;
+      if(users.getSatisfied() == null || !users.getSatisfied()) {
+          showEndDig("Votre compte est n'est pas vérifié");
+          return;
       }
+      document.setUserName(caseSensitive(users.mName));
+      document.setUserUrl(users.mPhotoUri);
+      document.setLocation(users.getWilaya());
+      document.setToken(users.getToken());
+      document.setSatisfied(users.getSatisfied());
+      db.collection(PATH)
+              .document(id)
+              .set(document)
+              .addOnSuccessListener(s-> {
+                  if(mAlbumFiles != null && mAlbumFiles.size() > 0)
+                    uploadImage(id, new ArrayList<>());
+                   else
+                      dialog("don");
+
+                  sendNotif(id);
+                  System.out.println("INN 1");
+              }).addOnFailureListener(e -> dialog("Upload suspendu"));
   }
 
 
@@ -460,6 +524,7 @@ public class PosterActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     void send2Upload(){
+        System.out.println("Called times");
         if (checkDon()) upload();
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,7 +27,7 @@ public class SplashScreen extends AppCompatActivity {
                 .setAlbumLoader(new MediaLoader())
                 .build());
 
-        FirebaseMessaging.getInstance().subscribeToTopic("all");
+        //FirebaseMessaging.getInstance().subscribeToTopic("global").addOnSuccessListener(aVoid -> Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_LONG).show());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.

@@ -26,8 +26,12 @@ public class DocumentViewHolderProfile extends  RecyclerView.ViewHolder
     {
         binding.setItem(word);
         ShowFragmentImagesAdapter adapter = new ShowFragmentImagesAdapter(null);
-        String niceDateStr = DateUtils.getRelativeTimeSpanString(word.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
-        binding.setTimeAgo(niceDateStr);
+        if(word.scanned != null){
+            String niceDateStr = DateUtils.getRelativeTimeSpanString(word.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
+            binding.setTimeAgo(niceDateStr);
+        } else {
+            binding.setTimeAgo("-");
+        }
         if(word.path != null){
             adapter.submitList(word.path);
             binding.attachmentRecyclerView.setAdapter(adapter);

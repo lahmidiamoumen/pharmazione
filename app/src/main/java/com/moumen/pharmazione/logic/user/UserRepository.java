@@ -32,16 +32,27 @@ public class UserRepository {
     }
 
     //get blog from firebase firestore
-    public MutableLiveData<User> getUserMutableLiveData() {
-        if(mAuth.getCurrentUser() == null) {
-            return blogMutableLiveData;
+    public MutableLiveData<User> getUserMutableLiveData(String uid) {
+        if(uid == null) {
+            if(mAuth.getCurrentUser() != null)
+                mFirestore.collection(PATH_USER)
+                    .document(mAuth.getUid())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        User user = documentSnapshot.toObject(User.class);
+                        blogMutableLiveData.setValue(user);
+                    });
+        } else {
+            blogMutableLiveData = new MutableLiveData<>();
+                mFirestore.collection(PATH_USER)
+                        .document(uid)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            User user = documentSnapshot.toObject(User.class);
+                            blogMutableLiveData.setValue(user);
+                        });
         }
-        Log.i("TAG", "getBlogListMutableLiveData: ");
-        Task<DocumentSnapshot> task =  mFirestore.collection(PATH_USER).document(mAuth.getUid()).get();
-        task.addOnSuccessListener(documentSnapshot -> {
-           User user = documentSnapshot.toObject(User.class);
-           blogMutableLiveData.postValue(user);
-        });
+
         return blogMutableLiveData;
     }
 

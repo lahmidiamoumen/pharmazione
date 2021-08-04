@@ -4,6 +4,7 @@ package com.moumen.pharmazione.Chat;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RotateDrawable;
+import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -21,13 +22,15 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.moumen.pharmazione.utils.Util.load;
 
 public class ChatHolder extends RecyclerView.ViewHolder {
     private final TextView mNameField;
     private final TextView mTextField;
     private final FrameLayout mLeftArrow;
-    private final FrameLayout mRightArrow;
     private final RelativeLayout mMessageContainer;
     private final LinearLayout mMessage;
     private final ImageView sliderLayout;
@@ -39,7 +42,6 @@ public class ChatHolder extends RecyclerView.ViewHolder {
         mNameField = itemView.findViewById(R.id.name_text);
         mTextField = itemView.findViewById(R.id.message_text);
         mLeftArrow = itemView.findViewById(R.id.left_arrow);
-        mRightArrow = itemView.findViewById(R.id.right_arrow);
         mMessageContainer = itemView.findViewById(R.id.message_container);
         mMessage = itemView.findViewById(R.id.message);
         sliderLayout = itemView.findViewById(R.id.comment_image);
@@ -47,8 +49,14 @@ public class ChatHolder extends RecyclerView.ViewHolder {
         mGray300 = ContextCompat.getColor(itemView.getContext(), R.color.material_gray_300);
     }
 
-    public void bind(@NonNull AbstractChat chat) {
-        setName(chat.getUserName());
+    public void bind(@NonNull Chat chat) {
+        String niceDateStr;
+        if(chat.getTimestamp() == null)
+            niceDateStr = "Now";
+        else
+            niceDateStr = DateUtils.getRelativeTimeSpanString(chat.getTimestamp().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
+
+        setName(niceDateStr);
         setMessage(chat.getMessage());
         load(sliderLayout,chat.getUserURL());
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -67,20 +75,15 @@ public class ChatHolder extends RecyclerView.ViewHolder {
         final int color;
         if (isSender) {
             color = mGreen300;
-            mLeftArrow.setVisibility(View.GONE);
-            mRightArrow.setVisibility(View.VISIBLE);
-            mMessageContainer.setGravity(Gravity.END);
+            mMessageContainer.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            mMessage.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         } else {
             color = mGray300;
-            mLeftArrow.setVisibility(View.VISIBLE);
-            mRightArrow.setVisibility(View.GONE);
-            mMessageContainer.setGravity(Gravity.START);
+            mMessageContainer.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         }
 
         ((GradientDrawable) mMessage.getBackground()).setColor(color);
         ((RotateDrawable) mLeftArrow.getBackground()).getDrawable()
-                .setColorFilter(color, PorterDuff.Mode.SRC);
-        ((RotateDrawable) mRightArrow.getBackground()).getDrawable()
                 .setColorFilter(color, PorterDuff.Mode.SRC);
     }
 }

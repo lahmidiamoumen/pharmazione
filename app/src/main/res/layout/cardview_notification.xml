@@ -23,7 +23,6 @@
     </data>
 
 <com.google.android.material.card.MaterialCardView
-        android:layout_margin="@dimen/album_dp_4"
         app:cardElevation="@dimen/album_dp_2"
         android:onClick="@{view -> handler.onClick(view,item)}"
         android:layout_width="match_parent"
@@ -39,12 +38,9 @@
                 android:layout_height="0.8dp"
                 android:background="#717171"/>
             <LinearLayout
+                android:padding="@dimen/_16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
                 android:background='@{(item.seen == null || item.seen == false ) ? @color/lighten_blue : @color/material_gray_300}'
                 android:orientation="vertical">
 
@@ -55,6 +51,7 @@
                     android:orientation="horizontal">
 
                     <androidx.cardview.widget.CardView
+                        app:goneIf="@{item.userURL == null }"
                         android:id="@+id/avatar"
                         android:layout_width="34dp"
                         android:layout_height="34dp"

@@ -109,21 +109,20 @@
 
                 <TextView
                     android:id="@+id/subject_text_view"
-                    android:ellipsize="end"
                     android:layout_width="0dp"
-                    android:textSize="@dimen/album_sp_18"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/grid_2"
                     android:layout_marginTop="@dimen/album_dp_4"
-                    android:layout_marginEnd="@dimen/grid_2"
-                    android:layout_marginStart="@dimen/grid_2"
-                    android:textAppearance="?attr/textAppearanceHeadline5"
-                    app:layout_goneMarginEnd="@dimen/grid_2"
+                    android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{item.title}"
-                    tools:text="Title"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:textSize="@dimen/album_sp_18"
+                    app:layout_constraintEnd_toStartOf="@+id/sender_profile_image_view"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sender_text_view2"/>
+                    app:layout_constraintTop_toBottomOf="@+id/sender_text_view2"
+                    app:layout_goneMarginEnd="@dimen/grid_2"
+                    tools:text="Title" />
 
                 <TextView
                     android:textAppearance="?attr/textAppearanceBody2"

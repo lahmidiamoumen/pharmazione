@@ -13,19 +13,35 @@ import com.firebase.ui.auth.util.ui.ImeHelper;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.databinding.ActivityChatBinding;
+import com.moumen.pharmazione.persistance.ChatCollector;
+import com.moumen.pharmazione.persistance.User;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.moumen.pharmazione.utils.Util.PATH;
+import static com.moumen.pharmazione.utils.Util.PATH_CHAT;
+import static com.moumen.pharmazione.utils.Util.PATH_USER;
 
 /**
  * Class demonstrating how to setup a {@link RecyclerView} with an adapter while taking sign-in
@@ -39,12 +55,15 @@ import androidx.recyclerview.widget.RecyclerView;
 public class FirestoreChatActivity extends AppCompatActivity
         implements FirebaseAuth.AuthStateListener {
     private static final String TAG = "FirestoreChatActivity";
+    private  final Map<String, Object> updates = new HashMap<>();
+
 
     private static final CollectionReference sChatCollection =
-            FirebaseFirestore.getInstance().collection("chats");
+            FirebaseFirestore.getInstance().collection(PATH_CHAT);
+
+    private CollectionReference chatCollection;
     /** Get the last 50 chat messages ordered by timestamp . */
-    private static final Query sChatQuery =
-            sChatCollection.orderBy("timestamp", Query.Direction.DESCENDING).limit(50);
+    private static Query sChatQuery;
 
     static {
         FirebaseFirestore.setLoggingEnabled(true);
@@ -57,6 +76,7 @@ public class FirestoreChatActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         mBinding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        mBinding.messagesList.setVisibility(View.INVISIBLE);
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setReverseLayout(true);
@@ -71,17 +91,15 @@ public class FirestoreChatActivity extends AppCompatActivity
             }
         });
 
-        ImeHelper.setImeOnDoneListener(mBinding.messageEdit, () -> onSendClick());
-
-        mBinding.sendButton.setOnClickListener(view -> onSendClick());
+//        ImeHelper.setImeOnDoneListener(mBinding.messageEdit, () -> onSendClick());
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (isSignedIn()) {
-            attachRecyclerViewAdapter();
-        }
+//        if (isSignedIn()) {
+//            attachRecyclerViewAdapter();
+//        }
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
@@ -109,10 +127,64 @@ public class FirestoreChatActivity extends AppCompatActivity
     }
 
     private void attachRecyclerViewAdapter() {
+        final String chatWith = getIntent().getStringExtra("chatWith");
+        final String chatWithName = getIntent().getStringExtra("chatWithName");
+        final String chatWithUrl = getIntent().getStringExtra("chatWithUrl");
+
+        final String messageID = getIntent().getStringExtra("chatID");
+        final FirebaseUser mUse = FirebaseAuth.getInstance().getCurrentUser();
+        String uID = mUse.getUid();
+        if ( messageID != null ) {
+            // the message between the chatters already created
+            setMessagesUI(messageID);
+        } else if( chatWith != null) {
+            // create new message page
+            sChatCollection
+                    .whereArrayContains("chatters", uID)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            if(task.getResult().size() == 0) {
+                                System.out.println("is zwero");
+                                ChatCollector chatCollector = new ChatCollector(Arrays.asList(chatWith, uID), Arrays.asList(chatWithName, mUse.getDisplayName()), Arrays.asList(chatWithUrl, mUse.getPhotoUrl().toString()));
+
+                                String id = sChatCollection.document().getId();
+                                sChatCollection.document(id).set(chatCollector).addOnSuccessListener(c-> setMessagesUI(id));
+                            } else {
+                                boolean bool = false;
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    System.out.println("=>>> " + document.getData());
+                                    if(((List<String>) document.getData().get("chatters")).contains(chatWith)) {
+                                        setMessagesUI(document.getId());
+                                        bool = true;
+                                        break;
+                                    }
+                                }
+                                if(!bool) {
+                                    ChatCollector chatCollector = new ChatCollector(Arrays.asList(chatWith, uID), Arrays.asList(chatWithName, mUse.getDisplayName()), Arrays.asList(chatWithUrl, mUse.getPhotoUrl().toString()));
+
+                                    String id = sChatCollection.document().getId();
+                                    sChatCollection.document(id).set(chatCollector).addOnSuccessListener(c-> setMessagesUI(id));
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    });
+        } else {
+            Toast.makeText(this, "Something went rong" ,Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void setMessagesUI(String uid) {
+        chatCollection = sChatCollection.document(uid).collection("messages");
+        // update last seen date
+        updates.put("lastSeen", FieldValue.serverTimestamp());
+        FirebaseFirestore.getInstance().collection(PATH_CHAT).document(uid).set(updates, SetOptions.merge());
+
+        mBinding.messagesList.setVisibility(View.VISIBLE);
+        mBinding.sendButton.setOnClickListener(view -> onSendClick());
+        sChatQuery = chatCollection.orderBy("timestamp", Query.Direction.DESCENDING).limit(50);
         final RecyclerView.Adapter adapter = newAdapter();
-
-        System.out.println("IN SSS");
-
         // Scroll to bottom on new messages
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -120,7 +192,6 @@ public class FirestoreChatActivity extends AppCompatActivity
                 mBinding.messagesList.smoothScrollToPosition(0);
             }
         });
-
         mBinding.messagesList.setAdapter(adapter);
     }
 
@@ -164,6 +235,6 @@ public class FirestoreChatActivity extends AppCompatActivity
     }
 
     private void onAddMessage(@NonNull Chat chat) {
-        sChatCollection.add(chat).addOnFailureListener(this, e -> Log.e(TAG, "Failed to write message", e));
+        chatCollection.add(chat).addOnFailureListener(this, e -> Log.e(TAG, "Failed to write message", e));
     }
 }

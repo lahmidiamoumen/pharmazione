@@ -1,34 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:background="@drawable/ic_chat_message_background"
-    android:orientation="vertical">
+    tools:ignore="RtlSymmetry">
 
-    <TextView
-        android:fontFamily="@font/x_regular_norma"
-        android:id="@+id/item_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textIsSelectable="false"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="My Text" />
+    <data>
 
-    <TextView
-        android:fontFamily="@font/x_regular_norma"
-        android:id="@+id/item_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textIsSelectable="false"
-        android:textSize="12sp"
-        tools:text="1234" />
+        <import type="android.text.TextUtils"/>
 
-</LinearLayout>
+        <variable
+            name="timeAgo"
+            type="String" />
+        <variable
+            name="item"
+            type="com.moumen.pharmazione.persistance.ChatCollector"/>
+
+
+        <variable
+            name="handler"
+            type="com.moumen.pharmazione.utils.MedClickListener" />
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        app:cardElevation="@dimen/album_dp_2"
+        android:onClick="@{view -> handler.onClick(view,item.chatID)}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:background="#717171"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background='@color/browser_actions_bg_grey'
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/_16"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/avatar"
+                        android:layout_margin="@dimen/album_dp_4"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        app:cardCornerRadius="18dp">
+
+                        <ImageView
+                            app:glideCenterCrop="@{true}"
+                            app:glideCircularCrop="@{true}"
+                            app:url="@{item.chattersUrls.get(0)}"
+                            android:id="@+id/comment_image"
+                            android:src="@drawable/ic_anon_user_48dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_marginStart="@dimen/album_dp_10"
+                        android:fontFamily="@font/x_regular_norma"
+                        android:id="@+id/notifSnderName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textIsSelectable="false"
+                        android:textSize="16sp"
+                        android:textColor="@color/reply_black_800"
+                        android:text="@{item.chattersNames.get(0)}"
+                        android:textStyle="bold"
+                        tools:text="My Text" />
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/album_dp_4"
+                        android:fontFamily="@font/x_regular_norma"
+                        android:id="@+id/notifContent"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textIsSelectable="false"
+                        tools:text="• 5 days ago"
+                        android:textColor="#6D6D6D"
+                        android:text='@{" • "+timeAgo}'
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

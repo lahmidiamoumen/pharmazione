@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ public class ProfileNotifActivity extends AppCompatActivity implements MedClickL
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         db.collection(PATH_NOTIF)
-                .whereEqualTo("toUser",mAuth.getUid())
+                //.whereEqualTo("toUser",mAuth.getUid())
+                .whereIn("toUser", Arrays.asList(mAuth.getUid(), "global"))
                 .orderBy("created",Query.Direction.DESCENDING)
                 .limit(40)
                 .get().addOnCompleteListener(task -> {

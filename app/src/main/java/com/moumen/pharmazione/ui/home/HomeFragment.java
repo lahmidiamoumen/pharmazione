@@ -36,6 +36,8 @@ import com.firebase.ui.firestore.paging.LoadingState;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.transition.MaterialContainerTransform;
+import com.google.android.material.transition.MaterialElevationScale;
 import com.google.android.material.transition.MaterialSharedAxis;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -135,6 +137,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
         if( user == null) {
             binding.navView.getMenu().clear();
             binding.navView.inflateMenu(R.menu.pharmazione_menu);
+            binding.btn.setOnClickListener(s -> signIn());
 
             binding.scroll.setVisibility(View.GONE);
             binding.uncomplete.setVisibility(View.GONE);
@@ -406,8 +409,8 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 //       this.setEnterTransition(  new MaterialSharedAxis(MaterialSharedAxis.Z, false)
 //        .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
 //
-       this.setExitTransition( new MaterialSharedAxis(MaterialSharedAxis.X, true)
-        .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
+//       this.setExitTransition( new MaterialSharedAxis(MaterialSharedAxis.X, true)
+//        .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
 //        this.setEnterTransition( new MaterialElevationScale(true)
 //                .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
 //        this.setExitTransition( new MaterialContainerTransform()
@@ -418,8 +421,8 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
 //        this.setReenterTransition(  new MaterialElevationScale( true)
 //                .setDuration(duration));
 
-//        this.setExitTransition(  new MaterialElevationScale( false)
-//                .setDuration(duration));
+        this.setExitTransition(  new MaterialElevationScale( false)
+                .setDuration(getResources().getInteger(R.integer.reply_motion_duration_large)));
 
         NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_showFragment);
     }
@@ -544,7 +547,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, FilterD
                 startActivity(new Intent(getContext(), ProfileNotifActivity.class /*FirestorePagingActivity.class*/));
                 break;
             case R.id.nav_slideshow:
-                startActivity(new Intent(getContext(), FirestoreChatActivity.class));
+                startActivity(new Intent(getContext(), FirestorePagingActivity.class));
                 break;
             case R.id.menu_shar:
                 ShareCompat.IntentBuilder.from(getActivity())

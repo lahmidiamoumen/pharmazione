@@ -7,8 +7,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.moumen.pharmazione.persistance.Document;
 import com.moumen.pharmazione.persistance.User;
 
+import javax.annotation.Nullable;
+
 public class UserViewModel extends ViewModel {
-    MutableLiveData<User> blogListMutableLiveData;
     FirebaseFirestore mFirestore;
     UserRepository blogRepository;
 
@@ -17,12 +18,15 @@ public class UserViewModel extends ViewModel {
 
     public UserViewModel() {
         blogRepository = new UserRepository();
-        blogListMutableLiveData=  blogRepository.getUserMutableLiveData();
         mFirestore = FirebaseFirestore.getInstance();
     }
 
     public MutableLiveData<User> getLiveBlogData() {
-        return blogListMutableLiveData;
+        return blogRepository.getUserMutableLiveData(null);
+    }
+
+    public MutableLiveData<User> getLiveBlogData(String uid) {
+        return blogRepository.getUserMutableLiveData(uid);
     }
 
     public MutableLiveData<Document> getDocData() {

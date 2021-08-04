@@ -92,13 +92,11 @@ public class ShowFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
-
         setHasOptionsMenu(true);
         duration = getResources().getInteger(R.integer.reply_motion_duration_large);
         sharedViewModel =  new ViewModelProvider(getActivity()).get(UserViewModel.class);
         //prepareTransitions();
     }
-
 
     @Nullable
     @Override
@@ -131,20 +129,30 @@ public class ShowFragment extends Fragment {
             documentID = doc.documentID;
 
             binding.senderProfileImageView.setOnClickListener(o->{
+//                 FirebaseFirestore.getInstance().collection(PATH_USER).document(doc.userID).get().addOnSuccessListener(documentSnapshot -> {
+//                    User user = documentSnapshot.toObject(User.class);
+//                    sharedViewModel.getLiveBlogData().postValue(user);
+//                     NavHostFragment.findNavController(this).navigate(R.id.showFragment_to_ProfileFragment);
+//                 });
                 Intent mIntent = new Intent(c, ShowProfileActiv.class);
                 mIntent.putExtra("id_user", doc.userID);
                 startActivity(mIntent);
             });
 
-            String niceDateStr = DateUtils.getRelativeTimeSpanString(doc.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
-            binding.setTimeAgo(niceDateStr);
+            if(doc.scanned != null) {
+                String niceDateStr = DateUtils.getRelativeTimeSpanString(doc.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
+                binding.setTimeAgo(niceDateStr);
+            } else {
+                binding.setTimeAgo("-");
+            }
+
             binding.setEmail(doc);
             binding.setUrlEmpty(EMPTY_IMAGE);
             if(doc.medicines != null && doc.medicines.size() > 0){
                 binding.recipientScrollView.setVisibility(View.VISIBLE);
                 for (Map<String,String> map : doc.medicines) {
                     String nom = map.get("medName");
-                    Chip chip =(Chip)getLayoutInflater().inflate(R.layout.compose_recipient_chip,binding.recipientChipGroup,false);
+                    Chip chip = (Chip) getLayoutInflater().inflate(R.layout.compose_recipient_chip,binding.recipientChipGroup,false);
                     chip.setText(nom);
                     binding.recipientChipGroup.addView(chip);
                 }
@@ -161,8 +169,6 @@ public class ShowFragment extends Fragment {
         toolBarIcon();
         //startTransitions();
     }
-
-
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -285,14 +291,13 @@ public class ShowFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        adapter.stopListening();
+        if(adapter != null)
+            adapter.stopListening();
     }
 
     private void showToast(String s){
         Toast.makeText(getContext(), s,Toast.LENGTH_SHORT).show();
     }
-
-
 
     private void sendMessage() {
         System.out.println("In Message");

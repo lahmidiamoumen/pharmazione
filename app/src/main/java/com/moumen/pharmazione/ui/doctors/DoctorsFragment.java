@@ -67,6 +67,10 @@ public class DoctorsFragment extends Fragment implements MedClickListener<User> 
         return binding.getRoot();
     }
 
+    private boolean isSignedIn() {
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -90,26 +94,30 @@ public class DoctorsFragment extends Fragment implements MedClickListener<User> 
             if(adapter != null) {
                 adapter.stopListening();
             }
-            binding.progressBar.setVisibility(View.GONE);
             binding.auth.setVisibility(View.VISIBLE);
-            binding.recyclerView.setVisibility(View.GONE);
+            binding.swipeContainer.setVisibility(View.GONE);
             binding.uncomplete.setVisibility(View.GONE);
             binding.text.setVisibility(View.GONE);
         }
         else if (user.getmPhoneNumber() == null || user.getmPhoneNumber().isEmpty()) {
             binding.buttonResend.setOnClickListener(o -> startActivityForResult(ValidatePhone.createIntent(getContext(), null),START_ACTIVIY_VALIDATION));
-            binding.recyclerView.setVisibility(View.GONE);
+            binding.swipeContainer.setVisibility(View.GONE);
             binding.text.setVisibility(View.GONE);
             binding.uncomplete.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
         } else if (user.getSatisfied() == null ? false : user.getSatisfied()) {
+            System.out.println("In");
+            binding.auth.setVisibility(View.GONE);
+            binding.uncomplete.setVisibility(View.GONE);
+            binding.text.setVisibility(View.GONE);
+            binding.swipeContainer.setVisibility(View.VISIBLE);
             start();
-            binding.progressBar.setVisibility(View.GONE);
+            if(adapter != null) {
+                adapter.startListening();
+            }
         } else {
-            binding.recyclerView.setVisibility(View.GONE);
+            binding.swipeContainer.setVisibility(View.GONE);
             binding.uncomplete.setVisibility(View.GONE);
             binding.text.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -123,6 +131,9 @@ public class DoctorsFragment extends Fragment implements MedClickListener<User> 
         emptyLayout = binding.emptySearchList;
 
         sharedViewModel.getLiveBlogData().observe(getActivity(), doc -> updateUI(doc));
+        if(!isSignedIn()) {
+            updateUI(null);
+        }
     }
 
     private void start () {
@@ -138,14 +149,15 @@ public class DoctorsFragment extends Fragment implements MedClickListener<User> 
                     emptyLayout.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
                 }
-                else if(s.length() > 1)
-                    setUp( s.toString());
+                else if(s.length() > 1) {
+                    emptyLayout.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    setUp(s.toString());
+                }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         config = new PagedList.Config.Builder()
@@ -188,6 +200,7 @@ public class DoctorsFragment extends Fragment implements MedClickListener<User> 
     }
 
     public void doMySearch(FirestorePagingOptions<User> options){
+
         adapter = new FirestorePagingAdapter<User, RecyclerView.ViewHolder>(options) {
             @NonNull
             @Override
@@ -207,29 +220,53 @@ public class DoctorsFragment extends Fragment implements MedClickListener<User> 
 
             @Override
             protected void onLoadingStateChanged(@NonNull LoadingState state) {
-                if (state == LoadingState.ERROR) {
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                    showToast("An error occurred.");
-                    retry();
-                }else if(state == LoadingState.LOADED){
-                    emptyLayout.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
+                switch (state) {
+                    case LOADING_INITIAL:
+                        binding.swipeContainer.setRefreshing(true);
+                        break;
+//                    case LOADING_MORE:
+//                        binding.swipeContainer.setRefreshing(true);
+//                        break;
+                    case LOADED:
+                        binding.swipeContainer.setRefreshing(false);
+                        break;
+                    case FINISHED:{
+                        binding.swipeContainer.setRefreshing(false);
+                        break;}
+                    case ERROR:
+                        binding.swipeContainer.setRefreshing(true);
+                        retry();
+                        break;
                 }
+//                if (state == LoadingState.ERROR) {
+//                    emptyLayout.setVisibility(View.VISIBLE);
+//                    recyclerView.setVisibility(View.GONE);
+//                    showToast("An error occurred.");
+//                    retry();
+//                }else if(state == LoadingState.LOADED){
+//                    emptyLayout.setVisibility(View.GONE);
+//                    recyclerView.setVisibility(View.VISIBLE);
+//                }
             }
             @Override
             protected void onError(@NonNull Exception e) {
                 Log.e("Home Layout", e.getMessage(), e);
             }
         };
+        binding.swipeContainer.setOnRefreshListener(() -> adapter.refresh());
+
         recyclerView.setAdapter(adapter);
 
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 int totalNumberOfItems = adapter.getItemCount();
+                System.out.println("totalNumberOfItems : "+totalNumberOfItems);
                 if(totalNumberOfItems == 0) {
                     recyclerView.setVisibility(View.GONE);
                     emptyLayout.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyLayout.setVisibility(View.GONE);
                 }
             }
         });

@@ -19,7 +19,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        tools:visibility="gone"
+        android:visibility="gone"
         android:layout_marginBottom="56dp"
         android:id="@+id/constraintLayout"
         android:layout_gravity="center_vertical"
@@ -110,7 +110,7 @@
             android:background="@color/fui_transparent"
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="470dp"
+            android:layout_height="480dp"
             android:fitsSystemWindows="true"
             android:theme="@style/Theme.MedDwak.DayNight">
 
@@ -143,35 +143,37 @@
                     app:layout_constraintGuide_percent="0.9557292" />
 
 
-                <ImageButton
-                    android:id="@+id/menu"
-                    android:layout_width="@dimen/album_dp_45"
-                    android:layout_height="@dimen/album_dp_45"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="@dimen/album_dp_20"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="3dp"
-                    android:background="?attr/layout_drawable_picture"
-                    android:contentDescription="@string/desc"
-                    android:elevation="5dp"
-                    android:padding="@dimen/album_dp_10"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_nav_settings"
-                    android:tint="?attr/colorOnSurface"
-                    app:layout_constraintEnd_toEndOf="@+id/parameters"
-                    app:layout_constraintStart_toStartOf="@+id/parameters"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <ImageButton
+                        android:id="@+id/menu"
+                        android:layout_width="@dimen/album_dp_45"
+                        android:layout_height="@dimen/album_dp_45"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="@dimen/album_dp_20"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="?attr/layout_drawable_picture"
+                        android:clickable="true"
+                        android:contentDescription="@string/desc"
+                        android:elevation="5dp"
+                        android:focusable="true"
+                        android:padding="@dimen/album_dp_10"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_nav_settings"
+                        android:tint="?attr/colorOnSurface"
+                        app:layout_constraintEnd_toEndOf="@+id/parameters"
+                        app:layout_constraintStart_toStartOf="@+id/parameters"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/parameters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/album_dp_4"
-                    android:text="@string/parameters"
-                    android:textAppearance="?attr/textAppearanceCaption"
-                    app:layout_constraintEnd_toEndOf="@id/guideline2"
-                    app:layout_constraintTop_toBottomOf="@id/menu"
-                    tools:ignore="SmallSp" />
+                    <TextView
+                        android:id="@+id/parameters"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/album_dp_4"
+                        android:text="@string/parameters"
+                        android:textAppearance="?attr/textAppearanceCaption"
+                        app:layout_constraintEnd_toEndOf="@id/guideline2"
+                        app:layout_constraintTop_toBottomOf="@id/menu"
+                        tools:ignore="SmallSp" />
 
                 <ImageButton
                     android:id="@+id/imageButton"
@@ -182,10 +184,9 @@
                     android:clickable="true"
                     android:elevation="5dp"
                     android:focusable="true"
-                    android:padding="@dimen/album_dp_10"
+                    android:padding="@dimen/album_dp_4"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_ios_notifications"
-                    android:tint="?attr/colorOnSurface"
+                    android:src="@drawable/ic_consult_online_home"
                     app:layout_constraintEnd_toEndOf="@+id/notifications"
                     app:layout_constraintStart_toStartOf="@+id/notifications"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -195,7 +196,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/album_dp_4"
-                    android:text="Notifications"
+                    android:text="Message"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceCaption"
                     app:layout_constraintStart_toStartOf="@+id/guideline0"
@@ -203,299 +204,281 @@
                     tools:ignore="SmallSp" />
 
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_marginBottom="@dimen/album_dp_10"
-                    android:layout_marginHorizontal="@dimen/album_dp_10"
-                    android:id="@+id/view"
-                    android:layout_width="0dp"
-                    android:layout_height="320dp"
-                    android:layout_marginTop="110dp"
-                    app:cardCornerRadius="@dimen/_16"
-                    app:cardElevation="@dimen/album_dp_10"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/guideline0"
-                    app:layout_constraintTop_toTopOf="parent">
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/view"
+                        android:layout_width="0dp"
+                        android:layout_height="310dp"
+                        android:layout_marginHorizontal="@dimen/album_dp_10"
+                        android:layout_marginBottom="@dimen/album_dp_2"
+                        app:cardCornerRadius="@dimen/_16"
+                        app:cardElevation="@dimen/album_dp_10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/guideline0"
+                        app:layout_constraintTop_toBottomOf="@+id/imageButton">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_marginHorizontal="@dimen/album_dp_20"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <ImageButton
-                            android:id="@+id/edit"
-                            android:padding="@dimen/_8"
-                            android:elevation="5dp"
-                            android:layout_marginTop="@dimen/_8"
-                            android:layout_marginEnd="@dimen/album_dp_2"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:background="?attr/layout_drawable_picture"
-                            android:src="@drawable/ic_edit"
-                            android:tint="?attr/colorOnSurface"
-                            android:scaleType="fitCenter"
-                            android:layout_width="@dimen/_40"
-                            android:layout_height="@dimen/_40"/>
-
-                        <LinearLayout
-                            android:layout_marginHorizontal="@dimen/album_dp_10"
-                            android:id="@+id/textEmail"
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8"
-                            android:orientation="vertical"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent">
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="Informations de contact"-->
-<!--                                android:textAppearance="?attr/textAppearanceHeadline5"-->
-<!--                                android:textSize="16sp" />-->
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="@dimen/album_dp_20">
 
                             <LinearLayout
-                                android:id="@+id/textView12"
+                                android:id="@+id/textEmail"
                                 android:layout_width="match_parent"
-                                android:layout_height="@dimen/album_dp_45"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/album_dp_10"
+                                android:layout_marginStart="@dimen/_8"
+                                android:orientation="vertical"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent">
 
-                                <ImageView
-                                    android:layout_width="@dimen/album_dp_20"
-                                    android:layout_height="@dimen/album_dp_20"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:layout_marginEnd="@dimen/album_dp_20"
-                                    android:contentDescription="@string/desc"
-                                    android:src="@drawable/le_clair_512" />
+                                <!--                            <TextView-->
+                                <!--                                android:layout_width="wrap_content"-->
+                                <!--                                android:layout_height="wrap_content"-->
+                                <!--                                android:text="Informations de contact"-->
+                                <!--                                android:textAppearance="?attr/textAppearanceHeadline5"-->
+                                <!--                                android:textSize="16sp" />-->
 
                                 <LinearLayout
+                                    android:id="@+id/textView12"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:orientation="vertical">
+                                    android:layout_height="@dimen/album_dp_45"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent">
 
-                                    <TextView
+                                    <ImageView
+                                        android:layout_width="@dimen/album_dp_20"
+                                        android:layout_height="@dimen/album_dp_20"
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:layout_marginEnd="@dimen/album_dp_20"
+                                        android:contentDescription="@string/desc"
+                                        android:src="@drawable/le_clair_512" />
+
+                                    <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:text='@{TextUtils.isEmpty(item.nomOffificine) ? " vide" : item.nomOffificine}'
-                                        android:textAppearance="?attr/textAppearanceHeadline4"
-                                        tools:text="Cit 400" />
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:orientation="vertical">
 
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="Pharmacien "
-                                        android:textAppearance="?attr/textAppearanceCaption"
-                                        android:textColor="#6D6D6D" />
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:text='@{TextUtils.isEmpty(item.nomOffificine) ? " vide" : item.nomOffificine}'
+                                            android:textAppearance="?attr/textAppearanceHeadline4"
+                                            tools:text="Cit 400" />
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="Pharmacien "
+                                            android:textAppearance="?attr/textAppearanceCaption"
+                                            android:textColor="#6D6D6D" />
+
+                                    </LinearLayout>
+
 
                                 </LinearLayout>
 
-
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:id="@+id/textWialay"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/album_dp_45"
-                                android:layout_marginTop="@dimen/_8"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                app:layout_constraintBottom_toTopOf="@id/textView10"
-                                app:layout_constraintStart_toStartOf="parent">
-
-                                <ImageView
-                                    android:layout_width="@dimen/album_dp_20"
-                                    android:layout_height="@dimen/album_dp_20"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:layout_marginEnd="@dimen/album_dp_20"
-                                    android:contentDescription="@string/desc"
-                                    android:src="@drawable/ic_home_black_24dp"  />
-
                                 <LinearLayout
-
+                                    android:id="@+id/textWialay"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:orientation="vertical">
+                                    android:layout_height="@dimen/album_dp_45"
+                                    android:layout_marginTop="@dimen/_8"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintBottom_toTopOf="@id/textView10"
+                                    app:layout_constraintStart_toStartOf="parent">
 
-                                    <TextView
+                                    <ImageView
+                                        android:layout_width="@dimen/album_dp_20"
+                                        android:layout_height="@dimen/album_dp_20"
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:layout_marginEnd="@dimen/album_dp_20"
+                                        android:contentDescription="@string/desc"
+                                        android:src="@drawable/ic_home_black_24dp" />
+
+                                    <LinearLayout
+
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:text='@{TextUtils.isEmpty(item.wilaya) ? " vide" : item.wilaya}'
-                                        android:textAppearance="?attr/textAppearanceHeadline4"
-                                        tools:text="Alger" />
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:orientation="vertical">
 
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/wilaya"
-                                        android:textAppearance="?attr/textAppearanceCaption"
-                                        android:textColor="#6D6D6D" />
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:text='@{TextUtils.isEmpty(item.wilaya) ? " vide" : item.wilaya}'
+                                            android:textAppearance="?attr/textAppearanceHeadline4"
+                                            tools:text="Alger" />
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/wilaya"
+                                            android:textAppearance="?attr/textAppearanceCaption"
+                                            android:textColor="#6D6D6D" />
+
+                                    </LinearLayout>
 
                                 </LinearLayout>
 
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:id="@+id/textEmaila"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/album_dp_45"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                app:layout_constraintBottom_toTopOf="@id/textView10"
-                                app:layout_constraintStart_toStartOf="parent">
-
-                                <ImageView
-                                    android:layout_width="@dimen/album_dp_20"
-                                    android:layout_height="@dimen/album_dp_20"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:layout_marginEnd="@dimen/album_dp_20"
-                                    android:contentDescription="@string/desc"
-                                    android:src="@drawable/ic_ios_mail" />
-
                                 <LinearLayout
-
+                                    android:id="@+id/textEmaila"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:orientation="vertical">
+                                    android:layout_height="@dimen/album_dp_45"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintBottom_toTopOf="@id/textView10"
+                                    app:layout_constraintStart_toStartOf="parent">
 
-                                    <TextView
+                                    <ImageView
+                                        android:layout_width="@dimen/album_dp_20"
+                                        android:layout_height="@dimen/album_dp_20"
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:layout_marginEnd="@dimen/album_dp_20"
+                                        android:contentDescription="@string/desc"
+                                        android:src="@drawable/ic_ios_mail" />
+
+                                    <LinearLayout
+
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:text='@{TextUtils.isEmpty(item.mEmail) ? " vide" : item.mEmail}'
-                                        android:textAppearance="?attr/textAppearanceHeadline4"
-                                        tools:text="email@univ.dz" />
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:orientation="vertical">
 
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/fui_email_hint"
-                                        android:textAppearance="?attr/textAppearanceCaption"
-                                        android:textColor="#6D6D6D" />
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:text='@{TextUtils.isEmpty(item.mEmail) ? " vide" : item.mEmail}'
+                                            android:textAppearance="?attr/textAppearanceHeadline4"
+                                            tools:text="email@univ.dz" />
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/fui_email_hint"
+                                            android:textAppearance="?attr/textAppearanceCaption"
+                                            android:textColor="#6D6D6D" />
+
+                                    </LinearLayout>
 
                                 </LinearLayout>
 
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:id="@+id/textView10"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/album_dp_45"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent">
-
-                                <ImageView
-                                    android:layout_width="@dimen/album_dp_20"
-                                    android:layout_height="@dimen/album_dp_20"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:layout_marginEnd="@dimen/album_dp_20"
-                                    android:contentDescription="@string/desc"
-                                    android:src="@drawable/ic_call_blue" />
-
                                 <LinearLayout
+                                    android:id="@+id/textView10"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:orientation="vertical">
+                                    android:layout_height="@dimen/album_dp_45"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent">
 
-                                    <TextView
+                                    <ImageView
+                                        android:layout_width="@dimen/album_dp_20"
+                                        android:layout_height="@dimen/album_dp_20"
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:layout_marginEnd="@dimen/album_dp_20"
+                                        android:contentDescription="@string/desc"
+                                        android:src="@drawable/ic_call_blue" />
+
+                                    <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:text='@{TextUtils.isEmpty(item.mPhoneNumber) ? " vide" : item.mPhoneNumber}'
-                                        android:textAppearance="?attr/textAppearanceHeadline4"
-                                        tools:text="066788787" />
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:orientation="vertical">
 
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/fui_idp_name_phone"
-                                        android:textAppearance="?attr/textAppearanceCaption"
-                                        android:textColor="#6D6D6D" />
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:text='@{TextUtils.isEmpty(item.mPhoneNumber) ? " vide" : item.mPhoneNumber}'
+                                            android:textAppearance="?attr/textAppearanceHeadline4"
+                                            tools:text="066788787" />
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/fui_idp_name_phone"
+                                            android:textAppearance="?attr/textAppearanceCaption"
+                                            android:textColor="#6D6D6D" />
+
+                                    </LinearLayout>
 
                                 </LinearLayout>
 
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:id="@+id/textView11"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/album_dp_45"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent">
-
-                                <ImageView
-                                    android:layout_width="@dimen/album_dp_20"
-                                    android:layout_height="@dimen/album_dp_20"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:layout_marginEnd="@dimen/album_dp_20"
-                                    android:contentDescription="@string/desc"
-                                    android:src="@drawable/ic_location_home" />
-
                                 <LinearLayout
+                                    android:id="@+id/textView11"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_8"
-                                    android:orientation="vertical">
+                                    android:layout_height="@dimen/album_dp_45"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent">
 
-                                    <TextView
+                                    <ImageView
+                                        android:layout_width="@dimen/album_dp_20"
+                                        android:layout_height="@dimen/album_dp_20"
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:layout_marginEnd="@dimen/album_dp_20"
+                                        android:contentDescription="@string/desc"
+                                        android:src="@drawable/ic_location_home" />
+
+                                    <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:text='@{TextUtils.isEmpty(item.addresseOfficine) ? " vide" : item.addresseOfficine}'
-                                        android:textAppearance="?attr/textAppearanceHeadline4"
-                                        tools:text="Cit 400" />
+                                        android:layout_marginStart="@dimen/_8"
+                                        android:orientation="vertical">
 
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:text="Adresse"
-                                        android:textAppearance="?attr/textAppearanceCaption"
-                                        android:textColor="#6D6D6D" />
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:text='@{TextUtils.isEmpty(item.addresseOfficine) ? " vide" : item.addresseOfficine}'
+                                            android:textAppearance="?attr/textAppearanceHeadline4"
+                                            tools:text="Cit 400" />
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:text="Adresse"
+                                            android:textAppearance="?attr/textAppearanceCaption"
+                                            android:textColor="#6D6D6D" />
+
+                                    </LinearLayout>
+
 
                                 </LinearLayout>
 
-
-
+                                <View
+                                    android:layout_width="200dp"
+                                    android:layout_height="0.8dp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="12dp"
+                                    android:background="#717171" />
                             </LinearLayout>
 
-                            <View
-                                android:layout_width="200dp"
-                                android:layout_gravity="center"
-                                android:layout_height="0.8dp"
-                                android:layout_marginTop="12dp"
-                                android:background="#717171" />
-                        </LinearLayout>
+                            <TextView
+                                android:id="@+id/user_display_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/album_dp_45"
+                                android:fontFamily="@font/x_regular_thin"
+                                android:text='@{TextUtils.isEmpty(item.mName) ? " vide" : item.mName}'
+                                android:textAppearance="?attr/textAppearanceHeadline4"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.497"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Lahmidi Moumen" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                        <TextView
-                            android:id="@+id/user_display_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/album_dp_45"
-                            android:fontFamily="@font/x_regular_thin"
-                            android:text='@{TextUtils.isEmpty(item.mName) ? " vide" : item.mName}'
-                            android:textAppearance="?attr/textAppearanceHeadline4"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.497"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Lahmidi Moumen" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </com.google.android.material.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardView"
@@ -586,10 +569,13 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginBottom="@dimen/_8"
                     android:id="@+id/listView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
+                    android:layoutAnimation="@anim/layout_animation"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     android:paddingBottom="8dp"
                     app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
                     tools:listitem="@layout/cardview_profile" />
@@ -598,6 +584,7 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </FrameLayout>
 

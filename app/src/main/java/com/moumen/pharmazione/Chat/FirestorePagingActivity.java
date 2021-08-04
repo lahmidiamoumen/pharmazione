@@ -1,7 +1,9 @@
 package com.moumen.pharmazione.Chat;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,13 +18,23 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
 import com.moumen.pharmazione.R;
 import com.moumen.pharmazione.databinding.ActivityFirestorePagingBinding;
+import com.moumen.pharmazione.databinding.CardviewProfileBinding;
+import com.moumen.pharmazione.databinding.ItemItemBinding;
+import com.moumen.pharmazione.persistance.ChatCollector;
+import com.moumen.pharmazione.ui.home.DocumentViewHolderProfile;
+import com.moumen.pharmazione.utils.ClickListener;
+import com.moumen.pharmazione.utils.MedClickListener;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -33,12 +45,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class FirestorePagingActivity extends AppCompatActivity {
+import static com.moumen.pharmazione.utils.Util.PATH_CHAT;
+
+public class FirestorePagingActivity extends AppCompatActivity implements MedClickListener<String> {
 
     private static final String TAG = "FirestorePagingActivity";
 
     private ActivityFirestorePagingBinding mBinding;
 
+    private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
     private CollectionReference mItemsCollection;
 
@@ -49,13 +64,17 @@ public class FirestorePagingActivity extends AppCompatActivity {
         setContentView(mBinding.getRoot());
 
         mFirestore = FirebaseFirestore.getInstance();
-        mItemsCollection = mFirestore.collection("items");
+        mAuth = FirebaseAuth.getInstance();
+        mItemsCollection = FirebaseFirestore.getInstance().collection(PATH_CHAT);
+
+        mBinding.close.setOnClickListener(o -> finish());
 
         setUpAdapter();
     }
 
     private void setUpAdapter() {
-        Query baseQuery = mItemsCollection.orderBy("value", Query.Direction.ASCENDING);
+        if (mAuth.getUid() == null) return;
+        Query baseQuery = mItemsCollection.whereArrayContains("chatters", mAuth.getUid())/*.orderBy("lastSeen", Query.Direction.ASCENDING)*/;
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -63,26 +82,30 @@ public class FirestorePagingActivity extends AppCompatActivity {
                 .setPageSize(20)
                 .build();
 
-        FirestorePagingOptions<Item> options = new FirestorePagingOptions.Builder<Item>()
+        FirestorePagingOptions<ChatCollector> options = new FirestorePagingOptions.Builder<ChatCollector>()
                 .setLifecycleOwner(this)
-                .setQuery(baseQuery, config, Item.class)
+                .setQuery(baseQuery, config, ChatCollector.class)
                 .build();
 
-        final FirestorePagingAdapter<Item, ItemViewHolder> adapter =
-                new FirestorePagingAdapter<Item, ItemViewHolder>(options) {
+        final FirestorePagingAdapter<ChatCollector, ItemViewHolder> adapter =
+                new FirestorePagingAdapter<ChatCollector, ItemViewHolder>(options) {
                     @NonNull
                     @Override
                     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                              int viewType) {
-                        View view = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.item_item, parent, false);
-                        return new ItemViewHolder(view);
+                        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+                        ItemItemBinding binding = ItemItemBinding.inflate(layoutInflater, parent, false);
+                        return new ItemViewHolder(binding, FirestorePagingActivity.this, mAuth.getCurrentUser());
+
+//                        View view = LayoutInflater.from(parent.getContext())
+//                                .inflate(R.layout.item_item, parent, false);
+//                        return new ItemViewHolder(view, FirestorePagingActivity.this, mAuth.getCurrentUser());
                     }
 
                     @Override
                     protected void onBindViewHolder(@NonNull ItemViewHolder holder,
                                                     int position,
-                                                    @NonNull Item model) {
+                                                    @NonNull ChatCollector model) {
                         holder.bind(model);
                     }
 
@@ -98,7 +121,7 @@ public class FirestorePagingActivity extends AppCompatActivity {
                                 break;
                             case FINISHED:
                                 mBinding.swipeRefreshLayout.setRefreshing(false);
-                                showToast("Reached end of data set.");
+                                //showToast("Reached end of data set.");
                                 break;
                             case ERROR:
                                 showToast("An error occurred.");
@@ -117,12 +140,7 @@ public class FirestorePagingActivity extends AppCompatActivity {
         mBinding.pagingRecycler.setLayoutManager(new LinearLayoutManager(this));
         mBinding.pagingRecycler.setAdapter(adapter);
 
-        mBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                adapter.refresh();
-            }
-        });
+        mBinding.swipeRefreshLayout.setOnRefreshListener(() -> adapter.refresh());
     }
 
     @Override
@@ -135,15 +153,12 @@ public class FirestorePagingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.item_add_data) {
             showToast("Adding data...");
-            createItems().addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        showToast("Data added.");
-                    } else {
-                        Log.w(TAG, "addData", task.getException());
-                        showToast("Error adding data.");
-                    }
+            createItems().addOnCompleteListener(this, task -> {
+                if (task.isSuccessful()) {
+                    showToast("Data added.");
+                } else {
+                    Log.w(TAG, "addData", task.getException());
+                    showToast("Error adding data.");
                 }
             });
 
@@ -172,6 +187,14 @@ public class FirestorePagingActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+
+    @Override
+    public void onClick(View view, String item) {
+        Intent  chatActivity = new Intent(this, FirestoreChatActivity.class);
+        chatActivity.putExtra("chatID", item);
+        startActivity(chatActivity);
+    }
+
     public static class Item {
 
         @Nullable public String text;
@@ -187,18 +210,31 @@ public class FirestorePagingActivity extends AppCompatActivity {
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView mTextView;
-        TextView mValueView;
+        ItemItemBinding binding;
+        MedClickListener<String> clickListener;
+        FirebaseUser user;
 
-        ItemViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mTextView = itemView.findViewById(R.id.item_text);
-            mValueView = itemView.findViewById(R.id.item_value);
+        ItemViewHolder(@NonNull ItemItemBinding binding, MedClickListener<String> clickListener, FirebaseUser user) {
+            super(binding.getRoot());
+            this.clickListener = clickListener;
+            this.user = user;
+            this.binding = binding;
         }
 
-        void bind(@NonNull Item item) {
-            mTextView.setText(item.text);
-            mValueView.setText(String.valueOf(item.value));
+        void bind(@NonNull ChatCollector item) {
+            binding.setHandler(clickListener);
+
+            if(item.lastSeen != null) {
+                String niceDateStr = DateUtils.getRelativeTimeSpanString(item.lastSeen.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
+                binding.setTimeAgo(niceDateStr);
+            } else {
+                binding.setTimeAgo("-");
+            }
+
+            item.chattersNames.remove(user.getDisplayName());
+            item.chattersUrls.remove(user.getPhotoUrl().toString());
+
+            binding.setItem(item);
         }
     }
 

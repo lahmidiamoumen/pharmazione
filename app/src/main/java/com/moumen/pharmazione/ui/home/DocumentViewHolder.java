@@ -27,8 +27,12 @@ public class DocumentViewHolder extends RecyclerView.ViewHolder
     public void bindTo(Document word)
     {
         binding.setItem(word);
-        String niceDateStr = DateUtils.getRelativeTimeSpanString(word.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
-        binding.setTimeAgo(niceDateStr);
+        if(word.scanned != null){
+            String niceDateStr = DateUtils.getRelativeTimeSpanString(word.scanned.toDate().getTime() , Calendar.getInstance().getTimeInMillis(), DateUtils.MINUTE_IN_MILLIS).toString();
+            binding.setTimeAgo(niceDateStr);
+        } else {
+            binding.setTimeAgo("-");
+        }
         binding.senderTextView2.setVisibility(word.isToChange != null && word.isToChange ? View.VISIBLE : View.GONE);
         ShowFragmentImagesAdapter adapter = new ShowFragmentImagesAdapter(null);
         if(word.path != null){

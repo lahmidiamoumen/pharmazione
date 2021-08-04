@@ -4,12 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +24,7 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
@@ -61,7 +64,9 @@ public class BottomNavigation extends AppCompatActivity implements NavController
     BadgeDrawable badge = null;
     SharedViewModel sharedViewModel;
     private ListenerRegistration registration;
-
+    public static final String SETTINGS_TITLE = "settings";
+    public static final String SETTING_NOTIFICATION = "notification_state";
+    public static final String SETTING_ALREADY_SUBSCRIBED = "already_subscribed";
 
 
     @Override
@@ -75,7 +80,7 @@ public class BottomNavigation extends AppCompatActivity implements NavController
 //                .build());
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
+        subscribeToMessaging();
         if(mAuth.getUid() != null) {
             Task<DocumentSnapshot> task =  FirebaseFirestore.getInstance().collection(PATH_USER).document(mAuth.getUid()).get();
             task.addOnSuccessListener(documentSnapshot -> sharedViewModel.getUserData().setValue(documentSnapshot.toObject(User.class)));
@@ -223,5 +228,29 @@ public class BottomNavigation extends AppCompatActivity implements NavController
 //                    }
 //                })
 //        );
+    }
+
+    private void subscribeToMessaging(){
+        SharedPreferences prefs = getSharedPreferences(SETTINGS_TITLE, MODE_PRIVATE);
+
+        // Getting value from shared preferences
+        boolean isSubscriptionEnable = prefs.getBoolean(SETTING_NOTIFICATION, true);
+
+        // if "isSubscriptionEnable" is true then check whether its already subscribed or not
+        if (isSubscriptionEnable){
+
+            boolean alreadySubscribed = prefs.getBoolean(SETTING_ALREADY_SUBSCRIBED, false);
+            // if not already subscribed then subscribe to topic and save value to shared preferences
+            if (!alreadySubscribed){
+                FirebaseMessaging.getInstance().subscribeToTopic("global").addOnSuccessListener(aVoid -> Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_LONG).show());
+
+                SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_TITLE, MODE_PRIVATE).edit();
+                editor.putBoolean(SETTING_ALREADY_SUBSCRIBED, true);
+                editor.apply();
+                // Toast.makeText(this, "Subscribed", Toast.LENGTH_LONG).show();
+            } /*else {
+                Toast.makeText(this, "Already subscribed", Toast.LENGTH_LONG).show();
+            }*/
+        }
     }
 }

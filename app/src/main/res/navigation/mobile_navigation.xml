@@ -40,13 +40,14 @@
         android:id="@+id/doctorsShowFrag"
         android:name="com.moumen.pharmazione.ui.doctors.ShowDoctorFragment"
         android:label="ShowDoctorsFragment"/>
-
-
-
     <fragment
         android:id="@+id/showFragment"
         android:name="com.moumen.pharmazione.ui.home.ShowFragment"
-        android:label="ShowFragment"/>
+        android:label="ShowFragment">
+        <action
+            android:id="@+id/showFragment_to_ProfileFragment"
+            app:destination="@id/navigation_notifications" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications"

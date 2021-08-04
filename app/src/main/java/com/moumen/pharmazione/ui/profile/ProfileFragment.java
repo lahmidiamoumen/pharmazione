@@ -126,6 +126,7 @@ public class ProfileFragment extends Fragment {
     private Drawable icon;
     private FirestorePagingAdapter<Document, RecyclerView.ViewHolder> adapter;
     private FirebaseAuth mAuth;
+    private Intent chatActivity;
     private List<AuthUI.IdpConfig> providers;
 
     private UserViewModel sharedViewModel;
@@ -283,6 +284,8 @@ public class ProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //setHasOptionsMenu(true);
         mAuth = FirebaseAuth.getInstance();
+        chatActivity = new Intent(getContext(), FirestoreChatActivity.class);
+
 
         providers = Arrays.asList(
                 new AuthUI.IdpConfig.GoogleBuilder().build()
@@ -319,25 +322,13 @@ public class ProfileFragment extends Fragment {
             case R.id.menu_logout:
                 signOut();
                 return true;
-            case R.id.menu_contact:
-                nosContacter();
-                return true;
             case R.id.menu_meddwak:
-                deleteAccountClicked();
-                break;
-            case R.id.menu_paging:
-                startActivity(new Intent(getContext(), FirestorePagingActivity.class));
-                break;
-            case R.id.menu_chat:
-                startActivity(new Intent(getContext(), FirestoreChatActivity.class));
-                break;
+                if (user != null && user.getmPhoneNumber() != null && !user.getmPhoneNumber().isEmpty())
+                    initDialogPhone();
+                else
+                    showDigAskPhone();
+                return true;
             case R.id.menu_shar: {
-//                final String appPackageName = getActivity().getPackageName(); // getPackageName() from Context or Activity object
-//                try {
-//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-//                } catch (android.content.ActivityNotFoundException anfe) {
-//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-//                }
                 ShareCompat.IntentBuilder.from(getActivity())
                         .setType("text/plain")
                         .setChooserTitle("Pharmazione")
@@ -356,22 +347,27 @@ public class ProfileFragment extends Fragment {
         //ViewCompat.setNestedScrollingEnabled(binding.listView, false);
 
         scrollView = binding.signed;
-        binding.menu.setOnClickListener(this::onClick);
+        //binding.menu.setOnClickListener(this::onClick);
         constraintLayout = binding.constraintLayout;
-        //binding.imageButton.setOnClickListener( e -> goToNotifications());
+
 //        onBindNotification();
 //        mListener.onBindNotification(binding.imageButton,getContext());
-
-        sharedViewModel.getLiveBlogData().observe(getActivity(), doc ->  {
+        String uid = getActivity().getIntent().getStringExtra("id_user");
+        sharedViewModel.getLiveBlogData(uid).observe(getActivity(), doc -> {
             user = doc;
             dbCollection = FirebaseFirestore.getInstance().collection(PATH);
-            baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID",user.getUserId());
+            baseQuery = dbCollection.orderBy("scanned", Query.Direction.DESCENDING).whereEqualTo("userID", user.getUserId());
             adapter = setUpAdapter();
             setAdapt();
             updateUI(user);
         });
 
+        if(!isSignedIn()) {
+            binding.constraintLayout.setVisibility(View.VISIBLE);
+        }
+
         binding.btn.setOnClickListener(s -> signIn());
+        binding.menu.setOnClickListener(this::onClick);
         //updateUI(user);
         if(!Connectivity.isConnected(getContext())) {
             showSandbar(" la connexion internet est perdue");
@@ -382,6 +378,9 @@ public class ProfileFragment extends Fragment {
         //toolBarIcon();
     }
 
+    private boolean isSignedIn() {
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
+    }
 
     private void setAdapt(){
         swipeRefreshLayout = binding.swipeContainer;
@@ -443,7 +442,6 @@ public class ProfileFragment extends Fragment {
             protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder,
                                             int position,
                                             @NonNull Document model) {
-
                 DocumentViewHolderProfile doc = (DocumentViewHolderProfile) holder;
                 doc.bindToProfile(model);
             }
@@ -486,22 +484,29 @@ public class ProfileFragment extends Fragment {
                 adapter.stopListening();
                 adapter = null;
             }
-            binding.edit.setVisibility(View.GONE);
+            binding.constraintLayout.setVisibility(View.VISIBLE);
+            binding.menu.setVisibility(View.GONE);
+            binding.parameters.setVisibility(View.GONE);
             binding.imageButton.setVisibility(View.GONE);
             binding.notifications.setVisibility(View.GONE);
-            scrollView.setVisibility(View.GONE);
-            constraintLayout.setVisibility(View.VISIBLE);
+            binding.signed.setVisibility(View.GONE);
         } else {
+
             binding.imageButton.setVisibility(View.VISIBLE);
             binding.notifications.setVisibility(View.VISIBLE);
             if( mAuth.getUid() != null && currentUser.userId != null && currentUser.userId.equals(mAuth.getUid())) {
-                binding.edit.setVisibility(View.VISIBLE);
-                if (user.getmPhoneNumber() != null && !user.getmPhoneNumber().isEmpty())
-                    binding.edit.setOnClickListener(l-> initDialogPhone());
-                else
-                    binding.edit.setOnClickListener(l-> showDigAskPhone());
+                binding.menu.setVisibility(View.VISIBLE);
+                binding.parameters.setVisibility(View.VISIBLE);
+                binding.imageButton.setOnClickListener( e -> startActivity(new Intent(getContext(), FirestorePagingActivity.class)));
             } else {
-                binding.edit.setVisibility(View.GONE);
+                binding.menu.setVisibility(View.GONE);
+                binding.parameters.setVisibility(View.GONE);
+                binding.imageButton.setOnClickListener( e -> {
+                    chatActivity.putExtra("chatWith",currentUser.userId);
+                    chatActivity.putExtra("chatWithName",currentUser.getmName());
+                    chatActivity.putExtra("chatWithUrl",currentUser.getmPhotoUri());
+                    startActivity(chatActivity);
+                });
             }
 
             scrollView.setVisibility(View.VISIBLE);
@@ -537,7 +542,6 @@ public class ProfileFragment extends Fragment {
                 .setNegativeButton("Annuler", (dialogInterface, i) -> {})
                 .show();
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -726,7 +730,6 @@ public class ProfileFragment extends Fragment {
             }
         }
     }
-
 
     @Override
     public void onStart() {

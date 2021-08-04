@@ -4,6 +4,11 @@ package com.moumen.pharmazione.Chat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
 /**
  * Common interface for chat messages, helps share code between RTDB and Firestore examples.
  */
